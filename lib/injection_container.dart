@@ -2,6 +2,8 @@ import 'package:get_it/get_it.dart';
 import 'package:hatley/core/network.dart';
 import 'package:hatley/data/datasources/getAllGovernorate_datasource/get_all_governorate_datasource_impl.dart';
 import 'package:hatley/data/datasources/getAllGovernorate_datasource/get_all_governorate_remote_datasource.dart';
+import 'package:hatley/data/datasources/getAllZoneById_datasource/get_all_zoneBy_gov_name_datasource_impl.dart';
+import 'package:hatley/data/datasources/getAllZoneById_datasource/get_all_zoneBy_gov_name_remote_datasource.dart';
 import 'package:hatley/data/datasources/logout_datasource/logout_datasource_impl.dart';
 import 'package:hatley/data/datasources/logout_datasource/logout_remote_datasource.dart';
 import 'package:hatley/data/datasources/signIn_datasource/signIn_datasource_impl.dart';
@@ -9,15 +11,17 @@ import 'package:hatley/data/datasources/signIn_datasource/signIn_remote_datasour
 import 'package:hatley/data/repo_impl/location_repo_impl.dart';
 import 'package:hatley/domain/repo/location_repo.dart';
 import 'package:hatley/domain/usecases/getAllGovernorate_usecase.dart';
+import 'package:hatley/domain/usecases/getAllZoneByGovName_usecase.dart';
 import 'package:hatley/domain/usecases/logout_usecase.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
-import 'package:hatley/presentation/cubit/location_cubit/location_cubit.dart';
+import 'package:hatley/presentation/cubit/governorate_cubit/governorate_cubit.dart';
 import 'package:hatley/presentation/cubit/register_cubit/register_cubit.dart';
 import 'package:hatley/data/datasources/register_datasource/register_data_source_impl.dart';
 import 'package:hatley/data/datasources/register_datasource/register_remote_datasource.dart';
 import 'package:hatley/data/repo_impl/user_repo_impl.dart';
 import 'package:hatley/domain/repo/user_repo.dart';
 import 'package:hatley/domain/usecases/register_usecase.dart';
+import 'package:hatley/presentation/cubit/zone_cubit/zone_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/local/token_storage.dart';
 import 'domain/usecases/signIn_usecase.dart';
@@ -46,21 +50,26 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton<GetAllGovernorateRemoteDataSource>(
       ()=>GetAllGovernorateDataSourceImpl(dio:sl())
   );
+  sl.registerLazySingleton<GetAllZoneByGovNameRemoteDataSource>(
+      ()=>GetAllZoneByGovNameDatasourceImpl(dio: sl())
+  );
 
   // Repository
   sl.registerLazySingleton<UserRepo>(() => UserRepoImpl(sl(), sl(),sl()));
-  sl.registerLazySingleton<LocationRepo>(() => LocationRepoImpl(sl()));
+  sl.registerLazySingleton<LocationRepo>(() => LocationRepoImpl(sl(),sl()));
 
   // UseCases
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => SignInUseCase(sl(), sl()));
   sl.registerLazySingleton(() => LogOutUseCase(sl()));
   sl.registerLazySingleton(() => GetAllGovernorateUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllZoneByGovNameUseCase(sl()));
 
 
   // Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
   sl.registerFactory(() => AuthCubit(sl(), sl(),sl()));
-  sl.registerFactory(() => LocationCubit(sl()));
+  sl.registerFactory(() => GovernorateCubit(sl()));
+  sl.registerFactory(() => ZoneCubit(sl()));
 
 }
