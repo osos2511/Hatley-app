@@ -9,26 +9,31 @@ class AuthCubit extends Cubit<AuthState> {
   final LogOutUseCase logOutUseCase;
   final TokenStorage tokenStorage;
 
-  AuthCubit(this.useCase, this.tokenStorage,this.logOutUseCase) : super(SignInInitial());
+  AuthCubit(
+      this.useCase,
+      this.tokenStorage,
+      this.logOutUseCase,
+      ) : super(SignInInitial());
 
   Future<void> signIn({
     required String email,
     required String password,
   }) async {
     emit(SignInLoading());
+
     final result = await useCase.call(email: email, password: password);
+
     result.fold(
           (failure) {
-        print('login failed: ${failure.message}');
+        print('❌ Login failed: ${failure.message}');
         emit(SignInFailure(failure.message));
       },
           (authEntity) {
-        print('login success: ${authEntity.token}');
+        print('✅ Login success: ${authEntity.token}');
         emit(SignInSuccess(authEntity.token));
       },
     );
   }
-
 
   Future<void> logOut() async {
     emit(LogoutLoading());
@@ -37,21 +42,19 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.fold(
           (failure) {
-        print('logout failed: ${failure.message}');
+        print('❌ Logout failed: ${failure.message}');
         emit(LogoutFailure(failure.message));
       },
-          (success) async {
-        print('logout success: $success');
+          (_) async {
+        print('✅ Logout success');
         await tokenStorage.clearToken();
         emit(LogoutSuccess());
       },
     );
   }
 
-
-
-
-  void checkTokenAndNavigate() async {
+  /// هذه الميثود لا تُرجع أي قيمة، فقط تحدّث الحالة حسب صلاحية التوكن
+  Future<void> checkTokenAndNavigate() async {
     final token = await tokenStorage.getToken();
     final expirationStr = await tokenStorage.getExpiration();
 
@@ -59,7 +62,7 @@ class AuthCubit extends Cubit<AuthState> {
     print('📦 Stored expiration string: $expirationStr');
 
     if (expirationStr == null) {
-      print('! No expiration date found. Token considered expired.');
+      print('⚠️ No expiration date found. Token considered expired.');
       await tokenStorage.clearToken();
       emit(TokenInvalid());
       return;
@@ -75,6 +78,4 @@ class AuthCubit extends Cubit<AuthState> {
       emit(TokenValid());
     }
   }
-
-
 }

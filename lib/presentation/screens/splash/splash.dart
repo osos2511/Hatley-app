@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hatley/core/routes_manager.dart';
+import '../../cubit/auth_cubit/auth_cubit.dart';
+import '../../cubit/auth_cubit/auth_state.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -12,7 +15,28 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  bool hasCheckedToken = false;
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(const Duration(seconds: 3), () async {
+      final authCubit = context.read<AuthCubit>();
+
+      // تحقق من التوكن بدون محاولة استخدام نتيجته
+      await authCubit.checkTokenAndNavigate();
+
+      // تأكد أن الواجهة لا تزال موجودة
+      if (!mounted) return;
+
+      final state = authCubit.state;
+
+      if (state is TokenValid) {
+        Navigator.pushReplacementNamed(context, RoutesManager.homeRoute);
+      } else {
+        Navigator.pushReplacementNamed(context, RoutesManager.signInRoute);
+      }
+    });
+  }
 
   double responsiveFontSize(BuildContext context, double baseFontSize) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -33,12 +57,6 @@ class _SplashState extends State<Splash> {
           AnimatedTextKit(
             totalRepeatCount: 1,
             isRepeatingAnimation: false,
-            onFinished: () {
-              Future.delayed(Duration.zero, () {
-                Navigator.pushReplacementNamed(context, RoutesManager.signInRoute);
-              });
-            },
-
             animatedTexts: [
               ScaleAnimatedText(
                 'HATLEY',
@@ -70,5 +88,4 @@ class _SplashState extends State<Splash> {
       ),
     );
   }
-
 }

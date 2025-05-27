@@ -34,27 +34,29 @@ class _HomeState extends State<Home> {
     super.didChangeDependencies();
     if (!_hasCheckedToken) {
       _hasCheckedToken = true;
-      context.read<AuthCubit>().checkTokenAndNavigate();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<AuthCubit>().checkTokenAndNavigate();
+      });
     }
   }
 
   void _showSessionExpiredDialog() {
-   showMissingFieldsDialog(
+    showMissingFieldsDialog(
       context,
-     'Your session has expired. Please log in again.',
-            onOkPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                RoutesManager.signInRoute,
-                    (route) => false,
-              );
-            },
-
+      'Your session has expired. Please log in again.',
+      onOkPressed: () {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          RoutesManager.signInRoute,
+              (route) => false,
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
+      listenWhen: (previous, current) => current is TokenInvalid,
       listener: (context, state) {
         if (state is TokenInvalid) {
           _showSessionExpiredDialog();
