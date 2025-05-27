@@ -14,124 +14,165 @@ import 'package:hatley/presentation/screens/home/home_drawer/pages/profile.dart'
 import 'package:hatley/presentation/screens/home/home_drawer/pages/track_orders.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_drawer.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/my_orders.dart';
+import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
+import 'package:hatley/presentation/cubit/auth_cubit/auth_state.dart';
 
-class Home extends StatelessWidget {
+import '../../../../../core/missing_fields_dialog.dart';
+
+class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  bool _hasCheckedToken = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasCheckedToken) {
+      _hasCheckedToken = true;
+      context.read<AuthCubit>().checkTokenAndNavigate();
+    }
+  }
+
+  void _showSessionExpiredDialog() {
+   showMissingFieldsDialog(
+      context,
+     'Your session has expired. Please log in again.',
+            onOkPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                RoutesManager.signInRoute,
+                    (route) => false,
+              );
+            },
+
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(56.h),
-        child: BlocBuilder<NavigationCubit, int>(
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is TokenInvalid) {
+          _showSessionExpiredDialog();
+        }
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(56.h),
+          child: BlocBuilder<NavigationCubit, int>(
+            builder: (context, state) {
+              String appBarTitle;
+              switch (state) {
+                case 1:
+                  appBarTitle = 'Track Orders';
+                  break;
+                case 2:
+                  appBarTitle = 'Contact Us';
+                  break;
+                case 3:
+                  appBarTitle = 'About Us';
+                  break;
+                case 4:
+                  appBarTitle = 'Our Team';
+                  break;
+                case 5:
+                  appBarTitle = 'My Orders';
+                  break;
+                case 6:
+                  appBarTitle = 'Deliveries';
+                  break;
+                case 7:
+                  appBarTitle = 'Profile';
+                  break;
+                default:
+                  appBarTitle = 'Home';
+              }
+
+              return AppBar(
+                title: Text(
+                  appBarTitle,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                centerTitle: true,
+                iconTheme: const IconThemeData(color: Colors.white),
+                backgroundColor: ColorsManager.blue,
+              );
+            },
+          ),
+        ),
+        drawer: const CustomDrawer(),
+        body: BlocBuilder<NavigationCubit, int>(
           builder: (context, state) {
-            String appBarTitle;
             switch (state) {
               case 1:
-                appBarTitle = 'Track Orders';
-                break;
+                return const TrackOrders();
               case 2:
-                appBarTitle = 'Contact Us';
-                break;
+                return const ContactUs();
               case 3:
-                appBarTitle = 'About Us';
-                break;
+                return const AboutUs();
               case 4:
-                appBarTitle = 'Our Team';
-                break;
+                return const OurTeam();
               case 5:
-                appBarTitle = 'My Orders';
-                break;
+                return const MyOrders();
               case 6:
-                appBarTitle = 'Deliveries';
-                break;
+                return const Deliveries();
               case 7:
-                appBarTitle = 'Profile';
-                break;
+                return const Profile();
               default:
-                appBarTitle = 'Home';
+                return SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hatley – The easiest way to get your orders delivered',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 22.sp,
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Image.asset(
+                          'assets/delivery.jpg',
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      Text(
+                        'Post your order now and let our delivery staff provide you with the best offers!',
+                        style: GoogleFonts.inter(
+                          fontSize: 15.sp,
+                          color: Colors.grey[700],
+                          height: 1.5,
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+                      Center(
+                        child: CustomButton(
+                          bgColor: ColorsManager.white,
+                          foColor: ColorsManager.blue,
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(RoutesManager.makeOrdersRoute);
+                          },
+                          text: 'Make Order Now',
+                        ),
+                      ),
+                    ],
+                  ),
+                );
             }
-
-            return AppBar(
-              title: Text(
-                appBarTitle,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              centerTitle: true,
-              iconTheme: const IconThemeData(color: Colors.white),
-              backgroundColor: ColorsManager.blue,
-            );
           },
         ),
-      ),
-      drawer: const CustomDrawer(),
-      body: BlocBuilder<NavigationCubit, int>(
-        builder: (context, state) {
-          switch (state) {
-            case 1:
-              return const TrackOrders();
-            case 2:
-              return const ContactUs();
-            case 3:
-              return const AboutUs();
-            case 4:
-              return const OurTeam();
-            case 5:
-              return const MyOrders();
-            case 6:
-              return const Deliveries();
-            case 7:
-              return const Profile();
-            default:
-              return SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hatley – The easiest way to get your orders delivered',
-                      style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 22.sp,
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12.r),
-                      child: Image.asset(
-                        'assets/delivery.jpg',
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-                    Text(
-                      'Post your order now and let our delivery staff provide you with the best offers!',
-                      style: GoogleFonts.inter(
-                        fontSize: 15.sp,
-                        color: Colors.grey[700],
-                        height: 1.5,
-                      ),
-                    ),
-                    SizedBox(height: 24.h),
-                    Center(
-                      child: CustomButton(
-                        bgColor: ColorsManager.white,
-                        foColor: ColorsManager.blue,
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(RoutesManager.makeOrdersRoute);
-                        },
-                        text: 'Make Order Now',
-                      ),
-                    ),
-                  ],
-                ),
-              );
-          }
-        },
       ),
     );
   }

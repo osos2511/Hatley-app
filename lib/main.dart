@@ -7,19 +7,19 @@ import 'package:hatley/presentation/cubit/navigation_cubit.dart';
 import 'core/routes_manager.dart';
 import 'injection_container.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupGetIt();
   runApp(
-      MultiBlocProvider(
+    MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => NavigationCubit(),),
-        BlocProvider(create: (context) => MakeOrderCubit(),),
-        BlocProvider(
-          create: (context) => sl<AuthCubit>(),
-        ),
+        BlocProvider(create: (context) => NavigationCubit()),
+        BlocProvider(create: (context) => MakeOrderCubit()),
+        BlocProvider(create: (context) => sl<AuthCubit>()),
       ],
-      child: const MyApp()));
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -39,4 +39,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

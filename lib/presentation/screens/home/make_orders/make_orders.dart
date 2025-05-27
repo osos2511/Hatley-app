@@ -23,19 +23,20 @@ class MakeOrders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   return MultiBlocProvider(providers: [
-      BlocProvider<GovernorateCubit>(
-        create: (context) =>
-        sl<GovernorateCubit>()
-          ..fetchGovernorates(),),
-     BlocProvider<ZoneCubit>(create: (context) => sl<ZoneCubit>(),)
-    ],
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<GovernorateCubit>(
+          create: (context) => sl<GovernorateCubit>()..fetchGovernorates(),
+        ),
+        BlocProvider<ZoneCubit>(
+          create: (context) => sl<ZoneCubit>(),
+        ),
+      ],
       child: BlocBuilder<MakeOrderCubit, MakeOrderState>(
         builder: (context, state) {
           final cubit = context.read<MakeOrderCubit>();
-          final screenSize = MediaQuery
-              .of(context)
-              .size;
+          final screenSize = MediaQuery.of(context).size;
+
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(
@@ -84,8 +85,7 @@ class MakeOrders extends StatelessWidget {
                         const SizedBox(height: 12),
                         DateTimePickerRow(
                           dateText: state.selectedDate != null
-                              ? DateFormat('MM/dd/yyyy').format(
-                              state.selectedDate!)
+                              ? DateFormat('MM/dd/yyyy').format(state.selectedDate!)
                               : 'Date',
                           timeText: state.selectedTime != null
                               ? state.selectedTime!.format(context)
@@ -94,44 +94,30 @@ class MakeOrders extends StatelessWidget {
                           onTimeTap: () => cubit.pickTime(context),
                         ),
                         const SizedBox(height: 20),
-                        CustomContainer(
-                            title: "From: Where you want to order From"),
+                        CustomContainer(title: "From: Where you want to order From"),
                         const SizedBox(height: 12),
-                        BlocSelector<GovernorateCubit,
-                            GovernorateState,
-                            List<GovernorateEntity>>(
-                          selector: (selected) =>
-                          selected is GovernorateLoaded
-                              ? selected.governorates
-                              : [],
+                        BlocSelector<GovernorateCubit, GovernorateState, List<GovernorateEntity>>(
+                          selector: (state) => state is GovernorateLoaded ? state.governorates : [],
                           builder: (context, governorates) {
-                            final makeOrderState = context.watch<MakeOrderCubit>().state;
                             return CustomDropdown(
-                              value: makeOrderState.selectedGovernorateFrom,
+                              value: state.selectedGovernorateFrom,
                               hint: 'Governorate',
                               items: governorates.map((g) => g.name).toList(),
                               onChanged: (value) {
                                 if (value != null) {
-                                  final cubit = context.read<MakeOrderCubit>();
-                                  final zoneCubit = context.read<ZoneCubit>();
                                   cubit.selectGovernorateFrom(value);
-                                  zoneCubit.fetchZones(govName: value);
+                                  context.read<ZoneCubit>().fetchZones(govName: value);
                                 }
                               },
-
                             );
                           },
                         ),
                         const SizedBox(height: 12),
-                        BlocSelector<ZoneCubit,ZoneState,List<ZoneEntity>>(
-                          selector: (selected) =>
-                          selected is ZonesLoaded
-                              ? selected.zones
-                              : [],
+                        BlocSelector<ZoneCubit, ZoneState, List<ZoneEntity>>(
+                          selector: (state) => state is ZonesLoaded ? state.zones : [],
                           builder: (context, zones) {
-                            final makeOrderState = context.watch<MakeOrderCubit>().state;
                             return CustomDropdown(
-                              value: makeOrderState.selectedCityFrom,
+                              value: state.selectedCityFrom,
                               hint: 'Select a City',
                               items: zones.map((z) => z.name).toList(),
                               onChanged: cubit.selectCityFrom,
@@ -142,7 +128,7 @@ class MakeOrders extends StatelessWidget {
                         CustomDropdown(
                           value: state.selectedStateFrom,
                           hint: 'Select a State',
-                          items: ['East', 'West', 'North'],
+                          items: ['Al-Nemis Street', 'Al-Mohafza Street', 'Al-Gomhoriah Street', 'Al-Maktabat Street'],
                           onChanged: cubit.selectStateFrom,
                         ),
                         const SizedBox(height: 12),
@@ -156,46 +142,30 @@ class MakeOrders extends StatelessWidget {
                         const SizedBox(height: 20),
                         const Icon(Icons.arrow_downward, size: 40),
                         const SizedBox(height: 12),
-                        CustomContainer(
-                            title: "To: Where you want to order To"),
+                        CustomContainer(title: "To: Where you want to order To"),
                         const SizedBox(height: 12),
-                        BlocSelector<GovernorateCubit,
-                            GovernorateState,
-                            List<
-                                GovernorateEntity>>(
-                          selector: (selected) =>
-                          selected is GovernorateLoaded
-                              ? selected.governorates
-                              : [],
+                        BlocSelector<GovernorateCubit, GovernorateState, List<GovernorateEntity>>(
+                          selector: (state) => state is GovernorateLoaded ? state.governorates : [],
                           builder: (context, governorates) {
-                            final makeOrderState = context
-                                .watch<MakeOrderCubit>()
-                                .state;
                             return CustomDropdown(
-                              value: makeOrderState.selectedGovernorateTo,
+                              value: state.selectedGovernorateTo,
                               hint: 'Governorate',
                               items: governorates.map((g) => g.name).toList(),
                               onChanged: (value) {
                                 if (value != null) {
-                                  final cubit = context.read<MakeOrderCubit>();
-                                  final zoneCubit = context.read<ZoneCubit>();
-                                  cubit.selectGovernorateFrom(value);
-                                  zoneCubit.fetchZones(govName: value);
+                                  cubit.selectGovernorateTo(value);
+                                  context.read<ZoneCubit>().fetchZones(govName: value);
                                 }
                               },
                             );
                           },
                         ),
                         const SizedBox(height: 12),
-                        BlocSelector<ZoneCubit,ZoneState,List<ZoneEntity>>(
-                          selector: (selected) =>
-                          selected is ZonesLoaded
-                              ? selected.zones
-                              : [],
+                        BlocSelector<ZoneCubit, ZoneState, List<ZoneEntity>>(
+                          selector: (state) => state is ZonesLoaded ? state.zones : [],
                           builder: (context, zones) {
-                            final makeOrderState = context.watch<MakeOrderCubit>().state;
                             return CustomDropdown(
-                              value: makeOrderState.selectedCityTo,
+                              value: state.selectedCityTo,
                               hint: 'Select a City',
                               items: zones.map((z) => z.name).toList(),
                               onChanged: cubit.selectCityTo,
@@ -206,7 +176,7 @@ class MakeOrders extends StatelessWidget {
                         CustomDropdown(
                           value: state.selectedStateTo,
                           hint: 'Select a State',
-                          items: ['East', 'West', 'North'],
+                          items: ['Al-Nemis Street', 'Al-Mohafza Street', 'Al-Gomhoriah Street', 'Al-Maktabat Street'],
                           onChanged: cubit.selectStateTo,
                         ),
                         const SizedBox(height: 12),
@@ -219,11 +189,11 @@ class MakeOrders extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         CustomButton(
-                            onPressed: () => cubit.submitOrder(context),
-                            text: 'Send Order',
-                            foColor: ColorsManager.blue,
-                            bgColor: ColorsManager.white)
-
+                          onPressed: () => cubit.submitOrder(context),
+                          text: 'Send Order',
+                          foColor: ColorsManager.blue,
+                          bgColor: ColorsManager.white,
+                        ),
                       ],
                     ),
                   ),
@@ -235,5 +205,4 @@ class MakeOrders extends StatelessWidget {
       ),
     );
   }
-
 }

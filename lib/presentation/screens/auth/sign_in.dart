@@ -24,23 +24,27 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final isSessionExpired = args != null && args['sessionExpired'] == true;
 
     if (isSessionExpired) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Session Expired'),
-            content: const Text('Your session has expired. Please sign in again.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
+          builder:
+              (context) => AlertDialog(
+                title: const Text('Session Expired'),
+                content: const Text(
+                  'Your session has expired. Please sign in again.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
               ),
-            ],
-          ),
         );
       });
     }
@@ -135,7 +139,10 @@ class _SignInScreenState extends State<SignInScreen> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, RoutesManager.forgotPassRoute);
+                          Navigator.pushNamed(
+                            context,
+                            RoutesManager.forgotPassRoute,
+                          );
                         },
                         child: const Text(
                           'Forgot Password?',
@@ -144,20 +151,23 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                     ),
                     const SizedBox(height: 40),
-
                     BlocConsumer<AuthCubit, AuthState>(
                       listener: (context, state) {
                         if (state is SignInLoading) {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (context) => const Center(
-                              child: CircularProgressIndicator(color: Colors.white),
-                            ),
+                            builder:
+                                (context) => const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
                           );
                         } else {
-                          // Close the loading dialog if any state other than loading
-                          Navigator.of(context, rootNavigator: true).pop();
+                          if (mounted && Navigator.canPop(context)) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                          }
                         }
 
                         if (state is SignInSuccess) {
@@ -188,7 +198,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         );
                       },
                     ),
-
                     const SizedBox(height: 20),
                     TextButton(
                       onPressed: () {

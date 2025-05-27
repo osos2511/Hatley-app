@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-void showMissingFieldsDialog(BuildContext context, String message) {
+void showMissingFieldsDialog(
+    BuildContext context,
+    String message, {
+      VoidCallback? onOkPressed,
+    }) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -12,8 +16,8 @@ void showMissingFieldsDialog(BuildContext context, String message) {
         padding: const EdgeInsets.all(16),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors:[Color(0xFFDC3545), Color(0xFFB02A37)],
-          begin: Alignment.topLeft,
+            colors: [Color(0xFFDC3545), Color(0xFFB02A37)],
+            begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -50,8 +54,10 @@ void showMissingFieldsDialog(BuildContext context, String message) {
               elevation: 2,
             ),
             onPressed: () {
-              Navigator.pop(context);
-              //Navigator.pushReplacementNamed(context, nextRoute);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+              if (onOkPressed != null) onOkPressed();
             },
             child: const Text(
               "OK",
