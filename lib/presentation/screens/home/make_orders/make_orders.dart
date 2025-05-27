@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hatley/domain/entities/governorate_entity.dart';
+import 'package:hatley/presentation/cubit/location_cubit/location_cubit.dart';
+import 'package:hatley/presentation/cubit/location_cubit/location_state.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
 import 'package:hatley/presentation/screens/home/make_orders/widgets/custom_container.dart';
 import 'package:hatley/presentation/screens/home/make_orders/widgets/custom_drop_down.dart';
@@ -8,6 +11,7 @@ import 'package:hatley/presentation/screens/home/make_orders/widgets/custom_orde
 import 'package:hatley/presentation/screens/home/make_orders/widgets/date_time_picker.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/colors_manager.dart';
+import '../../../../injection_container.dart';
 import '../../../cubit/make_orders_cubit/make_order_state.dart';
 import '../../../cubit/make_orders_cubit/make_orders_cubit.dart';
 
@@ -16,11 +20,12 @@ class MakeOrders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MakeOrderCubit, MakeOrderState>(
+    return BlocProvider<LocationCubit>(
+  create: (context) => sl<LocationCubit>()..fetchGovernorates(),
+  child: BlocBuilder<MakeOrderCubit, MakeOrderState>(
       builder: (context, state) {
         final cubit = context.read<MakeOrderCubit>();
         final screenSize = MediaQuery.of(context).size;
-
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -77,15 +82,20 @@ class MakeOrders extends StatelessWidget {
                         onDateTap: () => cubit.pickDate(context),
                         onTimeTap: () => cubit.pickTime(context),
                       ),
-
                       const SizedBox(height: 20),
                       CustomContainer(title: "From: Where you want to order From"),
                       const SizedBox(height: 12),
-                      CustomDropdown(
-                        value: state.selectedGovernorateFrom,
-                        hint: 'Governorate',
-                        items: ['Cairo', 'Giza', 'Alexandria'],
-                        onChanged: cubit.selectGovernorateFrom,
+                      BlocSelector<LocationCubit,LocationState,List<GovernorateEntity>>(
+                        selector: (selected)=>selected is LocationLoaded? selected.governorates:[],
+                        builder: (context, governorates) {
+                          final makeOrderState = context.watch<MakeOrderCubit>().state;
+                          return CustomDropdown(
+                            value: makeOrderState.selectedGovernorateFrom,
+                            hint: 'Governorate',
+                            items: governorates.map((g)=>g.name).toList(),
+                            onChanged: context.read<MakeOrderCubit>().selectGovernorateFrom,
+                          );
+                        },
                       ),
                       const SizedBox(height: 12),
                       CustomDropdown(
@@ -155,7 +165,8 @@ class MakeOrders extends StatelessWidget {
           ),
         );
       },
-    );
+    ),
+);
   }
 
 }

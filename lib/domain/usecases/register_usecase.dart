@@ -3,8 +3,8 @@ import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/domain/repo/user_repo.dart';
 
 class RegisterUseCase{
-  final UserRepo registerRepo;
-  RegisterUseCase(this.registerRepo);
+  final UserRepo userRepo;
+  RegisterUseCase(this.userRepo);
   Future<Either<Failure,String>> call({
     required String userName,
     required String phone,
@@ -12,6 +12,6 @@ class RegisterUseCase{
     required String password
 }
 ){
- return registerRepo.registerUser(userName: userName, phone: phone, email: email, password: password);
+ return userRepo.registerUser(userName: userName, phone: phone, email: email, password: password);
   }
 }

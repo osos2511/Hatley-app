@@ -5,16 +5,16 @@ import 'package:hatley/domain/repo/user_repo.dart';
 import '../../core/local/token_storage.dart';
 
 class SignInUseCase {
-  final UserRepo loginRepo;
+  final UserRepo userRepo;
   final TokenStorage tokenStorage;
 
-  SignInUseCase(this.loginRepo, this.tokenStorage);
+  SignInUseCase(this.userRepo, this.tokenStorage);
 
   Future<Either<Failure, AuthEntity>> call({
     required String email,
     required String password,
   }) async {
-    final result = await loginRepo.loginUser(email: email, password: password);
+    final result = await userRepo.loginUser(email: email, password: password);
 
     result.fold(
           (_) {},

@@ -6,8 +6,12 @@ import 'package:hatley/data/datasources/logout_datasource/logout_datasource_impl
 import 'package:hatley/data/datasources/logout_datasource/logout_remote_datasource.dart';
 import 'package:hatley/data/datasources/signIn_datasource/signIn_datasource_impl.dart';
 import 'package:hatley/data/datasources/signIn_datasource/signIn_remote_datasource.dart';
+import 'package:hatley/data/repo_impl/location_repo_impl.dart';
+import 'package:hatley/domain/repo/location_repo.dart';
+import 'package:hatley/domain/usecases/getAllGovernorate_usecase.dart';
 import 'package:hatley/domain/usecases/logout_usecase.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
+import 'package:hatley/presentation/cubit/location_cubit/location_cubit.dart';
 import 'package:hatley/presentation/cubit/register_cubit/register_cubit.dart';
 import 'package:hatley/data/datasources/register_datasource/register_data_source_impl.dart';
 import 'package:hatley/data/datasources/register_datasource/register_remote_datasource.dart';
@@ -45,14 +49,18 @@ Future<void> setupGetIt() async {
 
   // Repository
   sl.registerLazySingleton<UserRepo>(() => UserRepoImpl(sl(), sl(),sl()));
+  sl.registerLazySingleton<LocationRepo>(() => LocationRepoImpl(sl()));
 
   // UseCases
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => SignInUseCase(sl(), sl()));
   sl.registerLazySingleton(() => LogOutUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllGovernorateUseCase(sl()));
 
 
   // Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
   sl.registerFactory(() => AuthCubit(sl(), sl(),sl()));
+  sl.registerFactory(() => LocationCubit(sl()));
+
 }
