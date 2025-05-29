@@ -34,6 +34,13 @@ class _HomeState extends State<Home> {
     super.didChangeDependencies();
     if (!_hasCheckedToken) {
       _hasCheckedToken = true;
+
+      final int? initialPage =
+          ModalRoute.of(context)?.settings.arguments as int?;
+      if (initialPage != null) {
+        context.read<NavigationCubit>().changePage(initialPage);
+      }
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<AuthCubit>().checkTokenAndNavigate();
       });
@@ -45,10 +52,9 @@ class _HomeState extends State<Home> {
       context,
       'Your session has expired. Please log in again.',
       onOkPressed: () {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          RoutesManager.signInRoute,
-              (route) => false,
-        );
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil(RoutesManager.signInRoute, (route) => false);
       },
     );
   }
@@ -129,7 +135,10 @@ class _HomeState extends State<Home> {
                 return const Profile();
               default:
                 return SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 20.h,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -164,7 +173,9 @@ class _HomeState extends State<Home> {
                           bgColor: ColorsManager.white,
                           foColor: ColorsManager.blue,
                           onPressed: () {
-                            Navigator.of(context).pushNamed(RoutesManager.makeOrdersRoute);
+                            Navigator.of(
+                              context,
+                            ).pushNamed(RoutesManager.makeOrdersRoute);
                           },
                           text: 'Make Order Now',
                         ),

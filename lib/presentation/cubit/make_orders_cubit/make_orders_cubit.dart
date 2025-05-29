@@ -82,6 +82,12 @@ class MakeOrderCubit extends Cubit<MakeOrderState> {
     emit(state.copyWith(toAddress: value));
   }
 
+  DateTime? combineDateAndTime(DateTime? date, TimeOfDay? time) {
+    if (date == null || time == null) return null;
+
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
   void pickDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
@@ -124,6 +130,32 @@ class MakeOrderCubit extends Cubit<MakeOrderState> {
     emit(state.copyWith(selectedStateTo: value));
   }
 
+  void resetOrder() {
+    detailsController.clear();
+    priceController.clear();
+    fromAddressController.clear();
+    toAddressController.clear();
+
+    emit(
+      state.copyWith(
+        id: '',
+        price: '',
+        details: '',
+        fromAddress: '',
+        toAddress: '',
+        selectedDate: null,
+        selectedTime: null,
+        selectedGovernorateFrom: null,
+        selectedCityFrom: null,
+        selectedStateFrom: null,
+        selectedGovernorateTo: null,
+        selectedCityTo: null,
+        selectedStateTo: null,
+        // لاحظ أننا لم نغير قيمة orders هنا!
+      ),
+    );
+  }
+
   void submitOrder(BuildContext context) {
     final price = priceController.text.trim();
     final details = detailsController.text.trim();
@@ -157,7 +189,7 @@ class MakeOrderCubit extends Cubit<MakeOrderState> {
       );
       return;
     }
-    showConfirmOrderDialog(context, state);
+    showConfirmOrderDialog(context, context.read<MakeOrderCubit>().state);
   }
 
   @override

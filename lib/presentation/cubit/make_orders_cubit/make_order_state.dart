@@ -51,6 +51,7 @@ class MakeOrderState {
       selectedCityTo: null,
       selectedStateTo: null,
       isLoading: false,
+      orders: [],
     );
   }
 

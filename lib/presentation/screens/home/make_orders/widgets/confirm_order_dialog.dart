@@ -6,8 +6,8 @@ import '../../../../../core/success_dialog.dart';
 import '../../../../cubit/make_orders_cubit/make_order_state.dart';
 import '../../../../cubit/make_orders_cubit/make_orders_cubit.dart';
 
-
-void showConfirmOrderDialog(BuildContext context ,MakeOrderState state) {
+void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
+  final cubit = context.read<MakeOrderCubit>();
   showDialog(
     context: context,
     builder: (_) {
@@ -35,7 +35,10 @@ void showConfirmOrderDialog(BuildContext context ,MakeOrderState state) {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Order Details:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text(
+                          'Order Details:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 4),
                         Container(
                           padding: const EdgeInsets.all(8),
@@ -52,7 +55,10 @@ void showConfirmOrderDialog(BuildContext context ,MakeOrderState state) {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Price:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        'Price:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         '${state.price} EGP',
@@ -69,7 +75,10 @@ void showConfirmOrderDialog(BuildContext context ,MakeOrderState state) {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Text('Date:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Date:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(width: 8),
                   Text(state.selectedDate?.toString().split(' ').first ?? ''),
                 ],
@@ -77,7 +86,10 @@ void showConfirmOrderDialog(BuildContext context ,MakeOrderState state) {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  const Text('Time:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Time:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(width: 8),
                   Text(state.selectedTime?.format(context) ?? ''),
                 ],
@@ -85,11 +97,18 @@ void showConfirmOrderDialog(BuildContext context ,MakeOrderState state) {
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 8),
-              const Text('From:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('${state.selectedGovernorateFrom ?? ''}, ${state.selectedCityFrom ?? ''}, ${state.selectedStateFrom ?? ''}'),
+              const Text(
+                'From:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '${state.selectedGovernorateFrom ?? ''}, ${state.selectedCityFrom ?? ''}, ${state.selectedStateFrom ?? ''}',
+              ),
               const SizedBox(height: 8),
               const Text('To:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('${state.selectedGovernorateTo ?? ''}, ${state.selectedCityTo ?? ''}, ${state.selectedStateTo ?? ''}'),
+              Text(
+                '${state.selectedGovernorateTo ?? ''}, ${state.selectedCityTo ?? ''}, ${state.selectedStateTo ?? ''}',
+              ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,9 +124,21 @@ void showConfirmOrderDialog(BuildContext context ,MakeOrderState state) {
                     onPressed: () {
                       context.read<MakeOrderCubit>().addOrder(state);
                       Navigator.pop(context);
-                      showSuccessDialog(context,'thank you! send order has been successfully!',RoutesManager.myOrdersRoute,arguments: [state]);
+
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        cubit.resetOrder();
+                      });
+
+                      showSuccessDialog(
+                        context,
+                        'thank you! send order has been successfully!',
+                        RoutesManager.homeRoute,
+                        arguments: 5,
+                      );
                     },
-                  )],)
+                  ),
+                ],
+              ),
             ],
           ),
         ),

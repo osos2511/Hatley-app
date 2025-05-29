@@ -11,8 +11,6 @@ import '../presentation/screens/auth/sign_in.dart';
 import '../presentation/screens/auth/sign_up.dart';
 import '../presentation/screens/home/home_drawer/pages/my_orders.dart';
 
-
-
 class RoutesManager {
   static const String splashRoute = '/';
   static const String signInRoute = '/signIn';
@@ -26,67 +24,59 @@ class RoutesManager {
   static const String deliveriesRoute = '/deliveries';
   static const String profileRoute = '/Profile';
 
-    
-
-
-
-
   static Route<dynamic>? router(RouteSettings settings) {
     switch (settings.name) {
-
-      case splashRoute: {
-        return MaterialPageRoute(
-          builder: (context) => const Splash(),
-        );
-      }
+      case splashRoute:
+        {
+          return MaterialPageRoute(builder: (context) => const Splash());
+        }
       case signUpRoute:
         {
-          return MaterialPageRoute(
-              builder: (context) =>SignUpScreen());
+          return MaterialPageRoute(builder: (context) => SignUpScreen());
         }
 
-        case signInRoute:
+      case signInRoute:
         {
-          return MaterialPageRoute(
-              builder: (context) =>SignInScreen());
+          return MaterialPageRoute(builder: (context) => SignInScreen());
         }
-          case forgotPassRoute:
+      case forgotPassRoute:
         {
-          return MaterialPageRoute(
-              builder: (context) =>EnterEmailOrPass());
+          return MaterialPageRoute(builder: (context) => EnterEmailOrPass());
         }
-        case otpRoute:
+      case otpRoute:
         {
-          return MaterialPageRoute(
-              builder: (context) =>Otp());
+          return MaterialPageRoute(builder: (context) => Otp());
         }
-         case resetPassRoute:
+      case resetPassRoute:
         {
-          return MaterialPageRoute(
-              builder: (context) =>ResetPass());
+          return MaterialPageRoute(builder: (context) => ResetPass());
         }
       case homeRoute:
         {
           return MaterialPageRoute(
-              builder: (context) =>Home());
+            settings: settings,
+            builder: (context) => Home(),
+          );
         }
 
-      case makeOrdersRoute:{
-        return MaterialPageRoute(builder: (context) => MakeOrders());
-      }
+      case makeOrdersRoute:
+        {
+          return MaterialPageRoute(builder: (context) => MakeOrders());
+        }
 
-      case myOrdersRoute:{
-        return MaterialPageRoute(builder: (context) => MyOrders(),);
-      }
-      case deliveriesRoute:{
-        return MaterialPageRoute(builder: (context) => Deliveries(),);
-      }
-      case profileRoute:{
-        return MaterialPageRoute(builder: (context) => Profile(),);
-      }
-
+      case myOrdersRoute:
+        {
+          return MaterialPageRoute(builder: (context) => MyOrders());
+        }
+      case deliveriesRoute:
+        {
+          return MaterialPageRoute(builder: (context) => Deliveries());
+        }
+      case profileRoute:
+        {
+          return MaterialPageRoute(builder: (context) => Profile());
+        }
     }
     return null;
-    
   }
 }

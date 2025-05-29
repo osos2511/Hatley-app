@@ -1,23 +1,45 @@
+import 'package:hatley/domain/entities/order_entity.dart';
+
 class OrderModel {
+  num? orderId;
+  String? description;
+  String? orderGovernorateFrom;
+  String? orderZoneFrom;
+  String? orderCityFrom;
+  String? detailesAddressFrom;
+  String? orderGovernorateTo;
+  String? orderZoneTo;
+  String? orderCityTo;
+  String? detailesAddressTo;
+  dynamic north;
+  dynamic east;
+  DateTime? created;
+  DateTime? orderTime;
+  num? price;
+  num? status;
+  num? userID;
+  num? deliveryID;
+
   OrderModel({
-      this.orderId, 
-      this.description, 
-      this.orderGovernorateFrom, 
-      this.orderZoneFrom, 
-      this.orderCityFrom, 
-      this.detailesAddressFrom, 
-      this.orderGovernorateTo, 
-      this.orderZoneTo, 
-      this.orderCityTo, 
-      this.detailesAddressTo, 
-      this.north, 
-      this.east, 
-      this.created, 
-      this.orderTime, 
-      this.price, 
-      this.status, 
-      this.userID, 
-      this.deliveryID,});
+    this.orderId,
+    this.description,
+    this.orderGovernorateFrom,
+    this.orderZoneFrom,
+    this.orderCityFrom,
+    this.detailesAddressFrom,
+    this.orderGovernorateTo,
+    this.orderZoneTo,
+    this.orderCityTo,
+    this.detailesAddressTo,
+    this.north,
+    this.east,
+    this.created,
+    this.orderTime,
+    this.price,
+    this.status,
+    this.userID,
+    this.deliveryID,
+  });
 
   OrderModel.fromJson(dynamic json) {
     orderId = json['order_id'];
@@ -32,31 +54,14 @@ class OrderModel {
     detailesAddressTo = json['detailes_address_to'];
     north = json['north'];
     east = json['east'];
-    created = json['created'];
-    orderTime = json['order_time'];
+    created = json['created'] != null ? DateTime.parse(json['created']) : null;
+    orderTime =
+        json['order_time'] != null ? DateTime.parse(json['order_time']) : null;
     price = json['price'];
     status = json['status'];
     userID = json['user_ID'];
     deliveryID = json['delivery_ID'];
   }
-  num? orderId;
-  String? description;
-  String? orderGovernorateFrom;
-  String? orderZoneFrom;
-  String? orderCityFrom;
-  String? detailesAddressFrom;
-  String? orderGovernorateTo;
-  String? orderZoneTo;
-  String? orderCityTo;
-  String? detailesAddressTo;
-  dynamic north;
-  dynamic east;
-  String? created;
-  String? orderTime;
-  num? price;
-  num? status;
-  num? userID;
-  num? deliveryID;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -72,8 +77,8 @@ class OrderModel {
     map['detailes_address_to'] = detailesAddressTo;
     map['north'] = north;
     map['east'] = east;
-    map['created'] = created;
-    map['order_time'] = orderTime;
+    map['created'] = created?.toUtc().toIso8601String();
+    map['order_time'] = orderTime?.toUtc().toIso8601String();
     map['price'] = price;
     map['status'] = status;
     map['user_ID'] = userID;
@@ -81,4 +86,19 @@ class OrderModel {
     return map;
   }
 
+  OrderEntity toEntity() {
+    return OrderEntity(
+      description: description ?? '',
+      detailesAddressFrom: detailesAddressFrom ?? '',
+      detailesAddressTo: detailesAddressTo ?? '',
+      orderCityFrom: orderCityFrom ?? '',
+      orderCityTo: orderCityTo ?? '',
+      orderGovernorateFrom: orderGovernorateFrom ?? '',
+      orderGovernorateTo: orderGovernorateTo ?? '',
+      orderTime: orderTime ?? DateTime.now(),
+      orderZoneFrom: orderZoneFrom ?? '',
+      orderZoneTo: orderZoneTo ?? '',
+      price: price ?? 0,
+    );
+  }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hatley/core/utils.dart';
 import 'package:hatley/domain/entities/governorate_entity.dart';
 import 'package:hatley/domain/entities/zone_entity.dart';
+import 'package:hatley/presentation/cubit/order_cubit/order_cubit.dart';
+import 'package:hatley/presentation/cubit/order_cubit/order_state.dart';
 import 'package:hatley/presentation/cubit/zone_cubit/zone_cubit.dart';
 import 'package:hatley/presentation/cubit/zone_cubit/zone_state.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
@@ -28,180 +31,256 @@ class MakeOrders extends StatelessWidget {
         BlocProvider<GovernorateCubit>(
           create: (context) => sl<GovernorateCubit>()..fetchGovernorates(),
         ),
-        BlocProvider<ZoneCubit>(
-          create: (context) => sl<ZoneCubit>(),
-        ),
+        BlocProvider<ZoneCubit>(create: (context) => sl<ZoneCubit>()),
+        BlocProvider<OrderCubit>(create: (context) => sl<OrderCubit>()),
       ],
-      child: BlocBuilder<MakeOrderCubit, MakeOrderState>(
-        builder: (context, state) {
-          final cubit = context.read<MakeOrderCubit>();
-          final screenSize = MediaQuery.of(context).size;
+      child: BlocListener<OrderCubit, OrderState>(
+        listener: (context, state) {},
+        child: BlocBuilder<MakeOrderCubit, MakeOrderState>(
+          builder: (context, state) {
+            final cubit = context.read<MakeOrderCubit>();
+            final screenSize = MediaQuery.of(context).size;
 
-          return Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
-              ),
-              title: Text(
-                'Make Orders',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+            return Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(context),
                 ),
+                title: Text(
+                  'Make Orders',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                centerTitle: true,
+                iconTheme: const IconThemeData(color: Colors.white),
+                backgroundColor: ColorsManager.blue,
               ),
-              centerTitle: true,
-              iconTheme: const IconThemeData(color: Colors.white),
-              backgroundColor: ColorsManager.blue,
-            ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Center(
-                  child: Container(
-                    width: screenSize.width * 0.85,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: ColorsManager.blue),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        CustomOrderTextField(
-                          controller: cubit.detailsController,
-                          label: 'Order Details',
-                          hint: 'Enter Your Order Details',
-                          maxLines: 3,
-                          keyboardType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 12),
-                        CustomOrderTextField(
-                          controller: cubit.priceController,
-                          label: 'Order Price',
-                          hint: 'Enter Your Order Price',
-                          keyboardType: TextInputType.number,
-                        ),
-                        const SizedBox(height: 12),
-                        DateTimePickerRow(
-                          dateText: state.selectedDate != null
-                              ? DateFormat('MM/dd/yyyy').format(state.selectedDate!)
-                              : 'Date',
-                          timeText: state.selectedTime != null
-                              ? state.selectedTime!.format(context)
-                              : 'Time',
-                          onDateTap: () => cubit.pickDate(context),
-                          onTimeTap: () => cubit.pickTime(context),
-                        ),
-                        const SizedBox(height: 20),
-                        CustomContainer(title: "From: Where you want to order From"),
-                        const SizedBox(height: 12),
-                        BlocSelector<GovernorateCubit, GovernorateState, List<GovernorateEntity>>(
-                          selector: (state) => state is GovernorateLoaded ? state.governorates : [],
-                          builder: (context, governorates) {
-                            return CustomDropdown(
-                              value: state.selectedGovernorateFrom,
-                              hint: 'Governorate',
-                              items: governorates.map((g) => g.name).toList(),
-                              onChanged: (value) {
-                                if (value != null) {
-                                  cubit.selectGovernorateFrom(value);
-                                  context.read<ZoneCubit>().fetchZones(govName: value);
-                                }
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        BlocSelector<ZoneCubit, ZoneState, List<ZoneEntity>>(
-                          selector: (state) => state is ZonesLoaded ? state.zones : [],
-                          builder: (context, zones) {
-                            return CustomDropdown(
-                              value: state.selectedCityFrom,
-                              hint: 'Select a City',
-                              items: zones.map((z) => z.name).toList(),
-                              onChanged: cubit.selectCityFrom,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        CustomDropdown(
-                          value: state.selectedStateFrom,
-                          hint: 'Select a State',
-                          items: ['Al-Nemis Street', 'Al-Mohafza Street', 'Al-Gomhoriah Street', 'Al-Maktabat Street'],
-                          onChanged: cubit.selectStateFrom,
-                        ),
-                        const SizedBox(height: 12),
-                        CustomOrderTextField(
-                          controller: cubit.fromAddressController,
-                          label: 'Details Address',
-                          hint: 'Enter Your Detailed Address',
-                          maxLines: 2,
-                          keyboardType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 20),
-                        const Icon(Icons.arrow_downward, size: 40),
-                        const SizedBox(height: 12),
-                        CustomContainer(title: "To: Where you want to order To"),
-                        const SizedBox(height: 12),
-                        BlocSelector<GovernorateCubit, GovernorateState, List<GovernorateEntity>>(
-                          selector: (state) => state is GovernorateLoaded ? state.governorates : [],
-                          builder: (context, governorates) {
-                            return CustomDropdown(
-                              value: state.selectedGovernorateTo,
-                              hint: 'Governorate',
-                              items: governorates.map((g) => g.name).toList(),
-                              onChanged: (value) {
-                                if (value != null) {
-                                  cubit.selectGovernorateTo(value);
-                                  context.read<ZoneCubit>().fetchZones(govName: value);
-                                }
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        BlocSelector<ZoneCubit, ZoneState, List<ZoneEntity>>(
-                          selector: (state) => state is ZonesLoaded ? state.zones : [],
-                          builder: (context, zones) {
-                            return CustomDropdown(
-                              value: state.selectedCityTo,
-                              hint: 'Select a City',
-                              items: zones.map((z) => z.name).toList(),
-                              onChanged: cubit.selectCityTo,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        CustomDropdown(
-                          value: state.selectedStateTo,
-                          hint: 'Select a State',
-                          items: ['Al-Nemis Street', 'Al-Mohafza Street', 'Al-Gomhoriah Street', 'Al-Maktabat Street'],
-                          onChanged: cubit.selectStateTo,
-                        ),
-                        const SizedBox(height: 12),
-                        CustomOrderTextField(
-                          controller: cubit.toAddressController,
-                          label: 'Details Address',
-                          hint: 'Enter Your Detailed Address',
-                          maxLines: 2,
-                          keyboardType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 20),
-                        CustomButton(
-                          onPressed: () => cubit.submitOrder(context),
-                          text: 'Send Order',
-                          foColor: ColorsManager.blue,
-                          bgColor: ColorsManager.white,
-                        ),
-                      ],
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Center(
+                    child: Container(
+                      width: screenSize.width * 0.85,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 2, color: ColorsManager.blue),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          CustomOrderTextField(
+                            controller: cubit.detailsController,
+                            label: 'Order Details',
+                            hint: 'Enter Your Order Details',
+                            maxLines: 3,
+                            keyboardType: TextInputType.text,
+                          ),
+                          const SizedBox(height: 12),
+                          CustomOrderTextField(
+                            controller: cubit.priceController,
+                            label: 'Order Price',
+                            hint: 'Enter Your Order Price',
+                            keyboardType: TextInputType.number,
+                          ),
+                          const SizedBox(height: 12),
+                          DateTimePickerRow(
+                            dateText:
+                                state.selectedDate != null
+                                    ? DateFormat(
+                                      'MM/dd/yyyy',
+                                    ).format(state.selectedDate!)
+                                    : 'Date',
+                            timeText:
+                                state.selectedTime != null
+                                    ? state.selectedTime!.format(context)
+                                    : 'Time',
+                            onDateTap: () => cubit.pickDate(context),
+                            onTimeTap: () => cubit.pickTime(context),
+                          ),
+                          const SizedBox(height: 20),
+                          CustomContainer(
+                            title: "From: Where you want to order From",
+                          ),
+                          const SizedBox(height: 12),
+                          BlocSelector<
+                            GovernorateCubit,
+                            GovernorateState,
+                            List<GovernorateEntity>
+                          >(
+                            selector:
+                                (state) =>
+                                    state is GovernorateLoaded
+                                        ? state.governorates
+                                        : [],
+                            builder: (context, governorates) {
+                              return CustomDropdown(
+                                value: state.selectedGovernorateFrom,
+                                hint: 'Governorate',
+                                items: governorates.map((g) => g.name).toList(),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    cubit.selectGovernorateFrom(value);
+                                    context.read<ZoneCubit>().fetchZones(
+                                      govName: value,
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          BlocSelector<ZoneCubit, ZoneState, List<ZoneEntity>>(
+                            selector:
+                                (state) =>
+                                    state is ZonesLoaded ? state.zones : [],
+                            builder: (context, zones) {
+                              return CustomDropdown(
+                                value: state.selectedCityFrom,
+                                hint: 'Select a City',
+                                items: zones.map((z) => z.name).toList(),
+                                onChanged: cubit.selectCityFrom,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          CustomDropdown(
+                            value: state.selectedStateFrom,
+                            hint: 'Select a State',
+                            items: [
+                              'Al-Nemis Street',
+                              'Al-Mohafza Street',
+                              'Al-Gomhoriah Street',
+                              'Al-Maktabat Street',
+                            ],
+                            onChanged: cubit.selectStateFrom,
+                          ),
+                          const SizedBox(height: 12),
+                          CustomOrderTextField(
+                            controller: cubit.fromAddressController,
+                            label: 'Details Address',
+                            hint: 'Enter Your Detailed Address',
+                            maxLines: 2,
+                            keyboardType: TextInputType.text,
+                          ),
+                          const SizedBox(height: 20),
+                          const Icon(Icons.arrow_downward, size: 40),
+                          const SizedBox(height: 12),
+                          CustomContainer(
+                            title: "To: Where you want to order To",
+                          ),
+                          const SizedBox(height: 12),
+                          BlocSelector<
+                            GovernorateCubit,
+                            GovernorateState,
+                            List<GovernorateEntity>
+                          >(
+                            selector:
+                                (state) =>
+                                    state is GovernorateLoaded
+                                        ? state.governorates
+                                        : [],
+                            builder: (context, governorates) {
+                              return CustomDropdown(
+                                value: state.selectedGovernorateTo,
+                                hint: 'Governorate',
+                                items: governorates.map((g) => g.name).toList(),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    cubit.selectGovernorateTo(value);
+                                    context.read<ZoneCubit>().fetchZones(
+                                      govName: value,
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          BlocSelector<ZoneCubit, ZoneState, List<ZoneEntity>>(
+                            selector:
+                                (state) =>
+                                    state is ZonesLoaded ? state.zones : [],
+                            builder: (context, zones) {
+                              return CustomDropdown(
+                                value: state.selectedCityTo,
+                                hint: 'Select a City',
+                                items: zones.map((z) => z.name).toList(),
+                                onChanged: cubit.selectCityTo,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          CustomDropdown(
+                            value: state.selectedStateTo,
+                            hint: 'Select a State',
+                            items: [
+                              'Al-Nemis Street',
+                              'Al-Mohafza Street',
+                              'Al-Gomhoriah Street',
+                              'Al-Maktabat Street',
+                            ],
+                            onChanged: cubit.selectStateTo,
+                          ),
+                          const SizedBox(height: 12),
+                          CustomOrderTextField(
+                            controller: cubit.toAddressController,
+                            label: 'Details Address',
+                            hint: 'Enter Your Detailed Address',
+                            maxLines: 2,
+                            keyboardType: TextInputType.text,
+                          ),
+                          const SizedBox(height: 20),
+                          CustomButton(
+                            onPressed: () {
+                              final makeOrderCubit =
+                                  context.read<MakeOrderCubit>();
+                              final state = makeOrderCubit.state;
+                              context.read<OrderCubit>().addOrder(
+                                description:
+                                    makeOrderCubit.detailsController.text,
+                                price:
+                                    int.tryParse(
+                                      makeOrderCubit.priceController.text,
+                                    ) ??
+                                    0,
+                                orderGovernorateFrom:
+                                    state.selectedGovernorateFrom ?? '',
+                                orderZoneFrom: state.selectedCityFrom ?? '',
+                                orderCityFrom: state.selectedStateFrom ?? '',
+                                detailesAddressFrom:
+                                    makeOrderCubit.fromAddressController.text,
+                                orderGovernorateTo:
+                                    state.selectedGovernorateTo ?? '',
+                                orderZoneTo: state.selectedCityTo ?? '',
+                                orderCityTo: state.selectedStateTo ?? '',
+                                detailesAddressTo:
+                                    makeOrderCubit.toAddressController.text,
+                                orderTime:
+                                    combineDateAndTime(
+                                      state.selectedDate,
+                                      state.selectedTime,
+                                    ) ??
+                                    DateTime.now(),
+                              );
+                              cubit.submitOrder(context);
+                            },
+                            text: 'Send Order',
+                            foColor: ColorsManager.blue,
+                            bgColor: ColorsManager.white,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
