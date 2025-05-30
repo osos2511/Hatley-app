@@ -17,4 +17,6 @@ abstract class OrderRepo {
     required num price,
   });
   Future<Either<Failure, List<OrderEntity>>> getAllOrders();
+
+  Future<Either<Failure, void>> deleteOrder(int orderId);
 }

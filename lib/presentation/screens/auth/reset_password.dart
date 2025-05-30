@@ -16,7 +16,8 @@ class ResetPass extends StatefulWidget {
 class _ResetPassState extends State<ResetPass> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -35,9 +36,12 @@ class _ResetPassState extends State<ResetPass> {
       body: Container(
         width: double.infinity,
         height: screenSize.height,
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [ColorsManager.primaryGradientStart, ColorsManager.primaryGradientEnd],
+            colors: [
+              ColorsManager.primaryGradientStart,
+              ColorsManager.primaryGradientEnd,
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -97,14 +101,16 @@ class _ResetPassState extends State<ResetPass> {
                     bgColor: ColorsManager.white,
                     foColor: ColorsManager.blue,
                     onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      showSuccessDialog(
-                        context,
-                        "Your password has been reset successfully!",
-                        RoutesManager.signInRoute,
-                      );
-                    }
-                  }, text: 'Reset Password',),
+                      if (_formKey.currentState!.validate()) {
+                        showSuccessDialog(
+                          context,
+                          "Your password has been reset successfully!",
+                          nextRoute: RoutesManager.signInRoute,
+                        );
+                      }
+                    },
+                    text: 'Reset Password',
+                  ),
                 ],
               ),
             ),

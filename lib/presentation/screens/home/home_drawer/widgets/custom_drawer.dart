@@ -46,45 +46,85 @@ class CustomDrawer extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                CustomListTile(onPress: (){
-                  context.read<NavigationCubit>().changePage(0);
-                  Navigator.pop(context);
-                },icon: Icons.home, text: 'Home'),
-                CustomListTile(onPress: (){
-                  context.read<NavigationCubit>().changePage(1);
-                  Navigator.pop(context);
-                },icon: Icons.local_shipping, text: 'Track Orders'),
-                CustomListTile(onPress: (){
-                  context.read<NavigationCubit>().changePage(2);
-                  Navigator.pop(context);
-                },icon: Icons.phone, text: 'Contact Us'),
-                CustomListTile(onPress: (){
-                  context.read<NavigationCubit>().changePage(3);
-                  Navigator.pop(context);
-                },icon: Icons.info_outline, text: 'About Us'),
-                CustomListTile(onPress: (){
-                  context.read<NavigationCubit>().changePage(4);
-                  Navigator.pop(context);
-                },icon: Icons.group, text: 'Our Team'),
-                CustomListTile(onPress: (){
-                  context.read<NavigationCubit>().changePage(5);
-                  Navigator.pop(context);
-                },icon: Icons.shopping_cart, text: 'My Orders'),
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(0);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.home,
+                  text: 'Home',
+                ),
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(1);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.local_shipping,
+                  text: 'Track Orders',
+                ),
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(2);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.phone,
+                  text: 'Contact Us',
+                ),
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(3);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.info_outline,
+                  text: 'About Us',
+                ),
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(4);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.group,
+                  text: 'Our Team',
+                ),
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(5);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.shopping_cart,
+                  text: 'My Orders',
+                ),
 
-                CustomListTile(onPress: (){
-                  context.read<NavigationCubit>().changePage(6);
-                  Navigator.pop(context);
-                },icon: Icons.delivery_dining, text: 'Deliveries'),
-                CustomListTile(onPress: (){
-                  context.read<NavigationCubit>().changePage(7);
-                  Navigator.pop(context);
-                },icon: Icons.person, text: 'Profile'),
-                CustomListTile(onPress: (){
-                  Navigator.pop(context);
-                  showSuccessDialog(context, 'Are you sure you want to log out?', RoutesManager.signInRoute,showCancelButton: true);
-                  context.read<AuthCubit>().logOut();
-                  },icon: Icons.logout, text: 'Logout'),
-
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(6);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.delivery_dining,
+                  text: 'Deliveries',
+                ),
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(7);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.person,
+                  text: 'Profile',
+                ),
+                CustomListTile(
+                  onPress: () {
+                    Navigator.pop(context);
+                    showSuccessDialog(
+                      context,
+                      'Are you sure you want to log out?',
+                      nextRoute: RoutesManager.signInRoute,
+                      showCancelButton: true,
+                    );
+                    context.read<AuthCubit>().logOut();
+                  },
+                  icon: Icons.logout,
+                  text: 'Logout',
+                ),
               ],
             ),
           ),

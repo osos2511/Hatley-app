@@ -174,7 +174,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           showSuccessDialog(
                             context,
                             "Logged In Successfully",
-                            RoutesManager.homeRoute,
+                            nextRoute: RoutesManager.homeRoute,
                           );
                         } else if (state is SignInFailure) {
                           ScaffoldMessenger.of(context).showSnackBar(

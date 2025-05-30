@@ -6,7 +6,6 @@ import '../../../core/colors_manager.dart';
 import '../../../core/routes_manager.dart';
 import '../../../core/success_dialog.dart';
 
-
 class EnterEmailOrPass extends StatefulWidget {
   const EnterEmailOrPass({super.key});
 
@@ -30,17 +29,20 @@ class _EnterEmailOrPassState extends State<EnterEmailOrPass> {
     final double screenWidth = screenSize.width;
     final double screenHeight = screenSize.height;
 
-
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: screenSize.height,
         decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [ColorsManager.primaryGradientStart, ColorsManager.primaryGradientEnd],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-        )),
+          gradient: LinearGradient(
+            colors: [
+              ColorsManager.primaryGradientStart,
+              ColorsManager.primaryGradientEnd,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(
@@ -52,7 +54,7 @@ class _EnterEmailOrPassState extends State<EnterEmailOrPass> {
               key: _formKey,
               child: Column(
                 children: [
-                   Text(
+                  Text(
                     "Enter your email address to receive a reset code",
                     style: GoogleFonts.exo2(
                       fontSize: 16,
@@ -84,24 +86,29 @@ class _EnterEmailOrPassState extends State<EnterEmailOrPass> {
                     bgColor: ColorsManager.white,
                     foColor: ColorsManager.blue,
                     onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) => Center(
-                          child: CircularProgressIndicator(color: ColorsManager.white),
-                        ),
-                      );
+                      if (_formKey.currentState!.validate()) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder:
+                              (context) => Center(
+                                child: CircularProgressIndicator(
+                                  color: ColorsManager.white,
+                                ),
+                              ),
+                        );
 
-                      await Future.delayed(const Duration(seconds: 1));
-                      Navigator.pop(context); // remove loading
-                      showSuccessDialog(
-                        context,
-                        "Reset code sent to your email",
-                        RoutesManager.otpRoute,
-                      );
-                    }
-                  }, text: 'Send Code',),
+                        await Future.delayed(const Duration(seconds: 1));
+                        Navigator.pop(context); // remove loading
+                        showSuccessDialog(
+                          context,
+                          "Reset code sent to your email",
+                          nextRoute: RoutesManager.otpRoute,
+                        );
+                      }
+                    },
+                    text: 'Send Code',
+                  ),
                   const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
@@ -117,6 +124,7 @@ class _EnterEmailOrPassState extends State<EnterEmailOrPass> {
             ),
           ),
         ),
-      ));
+      ),
+    );
   }
 }

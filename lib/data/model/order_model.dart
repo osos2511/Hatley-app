@@ -88,6 +88,7 @@ class OrderModel {
 
   OrderEntity toEntity() {
     return OrderEntity(
+      orderId: orderId?.toInt() ?? 0,
       description: description ?? '',
       detailesAddressFrom: detailesAddressFrom ?? '',
       detailesAddressTo: detailesAddressTo ?? '',

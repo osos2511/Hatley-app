@@ -1,5 +1,3 @@
-import 'package:hatley/data/model/order_model.dart';
-
 abstract class AddOrderRemoteDatasource {
   Future<void> addOrder({
     required String description,

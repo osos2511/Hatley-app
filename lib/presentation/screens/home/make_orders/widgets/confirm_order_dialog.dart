@@ -132,7 +132,8 @@ void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
                       showSuccessDialog(
                         context,
                         'thank you! send order has been successfully!',
-                        RoutesManager.homeRoute,
+
+                        nextRoute: RoutesManager.homeRoute,
                         arguments: 5,
                       );
                     },

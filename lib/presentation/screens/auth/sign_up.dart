@@ -89,18 +89,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       showDialog(
                         context: context,
                         barrierDismissible: false,
-                        builder: (context) => const Center(
-                          child: CircularProgressIndicator(
-                            color: ColorsManager.white,
-                          ),
-                        ),
+                        builder:
+                            (context) => const Center(
+                              child: CircularProgressIndicator(
+                                color: ColorsManager.white,
+                              ),
+                            ),
                       );
                     } else if (state is RegisterSuccess) {
                       Navigator.pop(context);
                       showSuccessDialog(
                         context,
                         "Signed Up Successfully",
-                        RoutesManager.signInRoute,
+                        nextRoute: RoutesManager.signInRoute,
                       );
                     } else if (state is RegisterFailure) {
                       Navigator.pop(context);
@@ -119,8 +120,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             controller: userNameController,
                             hint: "Your name",
                             icon: Icons.person_outline,
-                            validator: (value) =>
-                            value == null || value.isEmpty ? "Name is required" : null,
+                            validator:
+                                (value) =>
+                                    value == null || value.isEmpty
+                                        ? "Name is required"
+                                        : null,
                           ),
                           const SizedBox(height: 20),
                           CustomTextField(
@@ -148,7 +152,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Phone number is required";
-                              } else if (!RegExp(r'^\d{9,15}$').hasMatch(value)) {
+                              } else if (!RegExp(
+                                r'^\d{9,15}$',
+                              ).hasMatch(value)) {
                                 return "Enter a valid phone number";
                               }
                               return null;

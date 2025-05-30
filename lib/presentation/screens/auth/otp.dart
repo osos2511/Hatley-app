@@ -63,9 +63,12 @@ class _OtpState extends State<Otp> {
       body: Container(
         width: double.infinity,
         height: screenSize.height,
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [ColorsManager.primaryGradientStart, ColorsManager.primaryGradientEnd],
+            colors: [
+              ColorsManager.primaryGradientStart,
+              ColorsManager.primaryGradientEnd,
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -89,7 +92,10 @@ class _OtpState extends State<Otp> {
                 Text(
                   'Enter the 4-digit code sent to\nexample@email.com',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.exo2(color: ColorsManager.white70, fontSize: 14.sp),
+                  style: GoogleFonts.exo2(
+                    color: ColorsManager.white70,
+                    fontSize: 14.sp,
+                  ),
                 ),
                 SizedBox(height: 40.h),
 
@@ -121,7 +127,9 @@ class _OtpState extends State<Otp> {
                       : "Resend code in $secondsRemaining s",
                   style: TextStyle(
                     color:
-                        enableResend ? ColorsManager.blue : ColorsManager.white70,
+                        enableResend
+                            ? ColorsManager.blue
+                            : ColorsManager.white70,
                     fontSize: 14.sp,
                   ),
                 ),
@@ -130,26 +138,26 @@ class _OtpState extends State<Otp> {
                 CustomButton(
                   bgColor: ColorsManager.white,
                   foColor: ColorsManager.blue,
-                  onPressed: () async{
+                  onPressed: () async {
                     if (otp.length == 4) {
                       showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
-                      ),);
+                        context: context,
+                        barrierDismissible: false,
+                        builder:
+                            (context) => const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                      );
                       await Future.delayed(const Duration(seconds: 1));
                       Navigator.pop(context);
                       showSuccessDialog(
                         context,
                         "Your account is ready",
-                        RoutesManager.resetPassRoute,
+                        nextRoute: RoutesManager.resetPassRoute,
                       );
-
                     }
-
                   },
                   text: "Continue",
                 ),

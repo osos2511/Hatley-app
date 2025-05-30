@@ -1,4 +1,5 @@
 class OrderEntity {
+  final int orderId;
   final String description;
   final String orderGovernorateFrom;
   final String orderZoneFrom;
@@ -12,6 +13,7 @@ class OrderEntity {
   final DateTime orderTime;
 
   OrderEntity({
+    required this.orderId,
     required this.description,
     required this.detailesAddressFrom,
     required this.detailesAddressTo,
