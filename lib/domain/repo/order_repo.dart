@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:hatley/core/error/failure.dart';
+import 'package:hatley/domain/entities/order_entity.dart';
 
 abstract class OrderRepo {
   Future<Either<Failure, void>> addOrder({
@@ -15,4 +16,5 @@ abstract class OrderRepo {
     required DateTime orderTime,
     required num price,
   });
+  Future<Either<Failure, List<OrderEntity>>> getAllOrders();
 }

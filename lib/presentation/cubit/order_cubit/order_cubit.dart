@@ -1,11 +1,10 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/domain/usecases/addOrder_usecase.dart';
 import 'package:hatley/presentation/cubit/order_cubit/order_state.dart';
 
 class OrderCubit extends Cubit<OrderState> {
   AddorderUsecase addOrderUsecase;
+
   OrderCubit(this.addOrderUsecase) : super(OrderInitial());
 
   Future<void> addOrder({

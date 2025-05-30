@@ -1,11 +1,18 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/data/datasources/addOrder_datasource/add_order_remote_datasource.dart';
+import 'package:hatley/data/datasources/getAllOrders_datasource/getAll_orders_remote_datasource.dart';
+import 'package:hatley/domain/entities/order_entity.dart';
 import 'package:hatley/domain/repo/order_repo.dart';
 
 class OrderRepoImpl implements OrderRepo {
   AddOrderRemoteDatasource addOrderRemoteDatasource;
-  OrderRepoImpl(this.addOrderRemoteDatasource);
+  GetAllOrdersRemoteDataSource getAllOrdersRemoteDataSource;
+  OrderRepoImpl(
+    this.addOrderRemoteDatasource,
+    this.getAllOrdersRemoteDataSource,
+  );
   @override
   Future<Either<Failure, void>> addOrder({
     required String description,
@@ -35,6 +42,19 @@ class OrderRepoImpl implements OrderRepo {
         price: price,
       );
       return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<OrderEntity>>> getAllOrders() async {
+    try {
+      final result = await getAllOrdersRemoteDataSource.getAllOrders();
+      final entityList = result.map((e) => e.toEntity()).toList();
+      return Right(entityList);
+    } on DioException catch (e) {
+      return Left(NetworkFailure(e.message ?? 'Network error'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

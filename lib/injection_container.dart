@@ -5,6 +5,8 @@ import 'package:hatley/data/datasources/addOrder_datasource/add_order_datasource
 import 'package:hatley/data/datasources/addOrder_datasource/add_order_remote_datasource.dart';
 import 'package:hatley/data/datasources/getAllGovernorate_datasource/get_all_governorate_datasource_impl.dart';
 import 'package:hatley/data/datasources/getAllGovernorate_datasource/get_all_governorate_remote_datasource.dart';
+import 'package:hatley/data/datasources/getAllOrders_datasource/getAll_orders_datasource_impl.dart';
+import 'package:hatley/data/datasources/getAllOrders_datasource/getAll_orders_remote_datasource.dart';
 import 'package:hatley/data/datasources/getAllZoneById_datasource/get_all_zoneBy_gov_name_datasource_impl.dart';
 import 'package:hatley/data/datasources/getAllZoneById_datasource/get_all_zoneBy_gov_name_remote_datasource.dart';
 import 'package:hatley/data/datasources/logout_datasource/logout_datasource_impl.dart';
@@ -17,10 +19,12 @@ import 'package:hatley/domain/repo/location_repo.dart';
 import 'package:hatley/domain/repo/order_repo.dart';
 import 'package:hatley/domain/usecases/addOrder_usecase.dart';
 import 'package:hatley/domain/usecases/getAllGovernorate_usecase.dart';
+import 'package:hatley/domain/usecases/getAllOrders_usecase.dart';
 import 'package:hatley/domain/usecases/getAllZoneByGovName_usecase.dart';
 import 'package:hatley/domain/usecases/logout_usecase.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:hatley/presentation/cubit/governorate_cubit/governorate_cubit.dart';
+import 'package:hatley/presentation/cubit/order_cubit/getAllOrders_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/order_cubit.dart';
 import 'package:hatley/presentation/cubit/register_cubit/register_cubit.dart';
 import 'package:hatley/data/datasources/register_datasource/register_data_source_impl.dart';
@@ -69,11 +73,14 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton<AddOrderRemoteDatasource>(
     () => AddOrderDatasourceImpl(dio: sl()),
   );
+  sl.registerLazySingleton<GetAllOrdersRemoteDataSource>(
+    () => GetallOrdersDatasourceImpl(dio: sl()),
+  );
 
   // ✅ Repositories
   sl.registerLazySingleton<UserRepo>(() => UserRepoImpl(sl(), sl(), sl()));
   sl.registerLazySingleton<LocationRepo>(() => LocationRepoImpl(sl(), sl()));
-  sl.registerLazySingleton<OrderRepo>(() => OrderRepoImpl(sl()));
+  sl.registerLazySingleton<OrderRepo>(() => OrderRepoImpl(sl(), sl()));
 
   // ✅ UseCases
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
@@ -82,6 +89,7 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton(() => GetAllGovernorateUseCase(sl()));
   sl.registerLazySingleton(() => GetAllZoneByGovNameUseCase(sl()));
   sl.registerLazySingleton(() => AddorderUsecase(sl()));
+  sl.registerLazySingleton(() => GetallordersUseCase(sl()));
 
   // ✅ Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
@@ -89,6 +97,7 @@ Future<void> setupGetIt() async {
   sl.registerFactory(() => GovernorateCubit(sl()));
   sl.registerFactory(() => ZoneCubit(sl()));
   sl.registerFactory(() => OrderCubit(sl()));
+  sl.registerFactory(() => GetAllOrdersCubit(sl()));
 
   // ✅ تأكد أن كل شيء أصبح جاهزًا
   await sl.allReady();
