@@ -8,6 +8,8 @@ import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart'
 import '../../../core/colors_manager.dart';
 import '../../cubit/auth_cubit/auth_cubit.dart';
 import '../../cubit/auth_cubit/auth_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hatley/core/local/token_storage.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -25,26 +27,25 @@ class _SignInScreenState extends State<SignInScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final isSessionExpired = args != null && args['sessionExpired'] == true;
 
     if (isSessionExpired) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,
-          builder:
-              (context) => AlertDialog(
-                title: const Text('Session Expired'),
-                content: const Text(
-                  'Your session has expired. Please sign in again.',
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('OK'),
-                  ),
-                ],
+          builder: (context) => AlertDialog(
+            title: const Text('Session Expired'),
+            content: const Text(
+              'Your session has expired. Please sign in again.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
               ),
+            ],
+          ),
         );
       });
     }
@@ -152,17 +153,16 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 40),
                     BlocConsumer<AuthCubit, AuthState>(
-                      listener: (context, state) {
+                      listener: (context, state) async {
                         if (state is SignInLoading) {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder:
-                                (context) => const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ),
+                            builder: (context) => const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
                           );
                         } else {
                           if (mounted && Navigator.canPop(context)) {
@@ -177,6 +177,11 @@ class _SignInScreenState extends State<SignInScreen> {
                             nextRoute: RoutesManager.homeRoute,
                           );
                         } else if (state is SignInFailure) {
+                          final prefs = await SharedPreferences.getInstance();
+                          final TokenStorage tokenStorage = TokenStorageImpl(prefs);
+                          await tokenStorage.saveEmail("");
+                          print("⚠️ Sign-in failed, email cleared from storage.");
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(state.errorMessage)),
                           );
@@ -186,8 +191,17 @@ class _SignInScreenState extends State<SignInScreen> {
                         return CustomButton(
                           bgColor: ColorsManager.white,
                           foColor: ColorsManager.blue,
-                          onPressed: () {
+                          onPressed: () async { // جعل الدالة onPressed async
                             if (_formKey.currentState!.validate()) {
+                              // **** إضافة الكود لحفظ البريد الإلكتروني هنا ****
+                              // حفظ البريد الإلكتروني الذي تم إدخاله في SharedPreferences
+                              // قبل محاولة تسجيل الدخول
+                              final prefs = await SharedPreferences.getInstance();
+                              final TokenStorage tokenStorage = TokenStorageImpl(prefs);
+                              await tokenStorage.saveEmail(emailController.text.trim());
+                              print("📧 Email saved to storage BEFORE sign-in attempt: ${emailController.text.trim()}");
+                              // ************************************************
+
                               context.read<AuthCubit>().signIn(
                                 email: emailController.text.trim(),
                                 password: passwordController.text.trim(),

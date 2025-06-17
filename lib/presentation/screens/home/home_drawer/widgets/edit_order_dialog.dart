@@ -1,127 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_order_button.dart';
-import '../../../../cubit/make_orders_cubit/make_order_state.dart';
+import 'package:hatley/core/reusable_order_form.dart';
+import 'package:hatley/domain/entities/order_entity.dart';
+import 'package:hatley/injection_container.dart';
+import 'package:hatley/presentation/cubit/edit_order_cubit/edit_order_cubit.dart';
+import 'package:hatley/presentation/cubit/governorate_cubit/governorate_cubit.dart';
+import 'package:hatley/presentation/cubit/order_cubit/order_state.dart';
+import 'package:hatley/presentation/cubit/zone_cubit/zone_cubit.dart';
 import '../../../../cubit/make_orders_cubit/make_orders_cubit.dart';
 
-void showEditOrderDialog(BuildContext context, MakeOrderCubit cubit, int index) {
+void showEditOrderDialog(
+  BuildContext context,
+  MakeOrderCubit makeOrderCubit,
+  OrderEntity order,
+) {
+  makeOrderCubit.loadOrderForEdit(order);
+
   showDialog(
     context: context,
-    builder: (_) {
-      return BlocBuilder<MakeOrderCubit, MakeOrderState>(
-        bloc: cubit,
-        builder: (context, state) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            contentPadding: const EdgeInsets.all(20),
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      'Edit Order',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue[900],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextField(
-                    controller: cubit.detailsController,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'Order Details',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextField(
-                    controller: cubit.priceController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Price (EGP)',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => cubit.pickDate(context),
-                          child: Text(
-                            state.selectedDate?.toString().split(' ').first ?? 'Select Date',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => cubit.pickTime(context),
-                          child: Text(
-                            state.selectedTime?.format(context) ?? 'Select Time',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextField(
-                    controller: cubit.fromAddressController,
-                    decoration: const InputDecoration(
-                      labelText: 'From Address',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextField(
-                    controller: cubit.toAddressController,
-                    decoration: const InputDecoration(
-                      labelText: 'To Address',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CustomOrderButton(
-                        text:'Cancel' ,
-                        backgroundColor: Colors.red,
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      CustomOrderButton(
-                        backgroundColor:Colors.blue,
-                        text: 'Save',
-                        onPressed: () {
-                          cubit.updateOrder(
-                            index,
-                            state.copyWith(
-                              details: cubit.detailsController.text,
-                              price: cubit.priceController.text,
-                              fromAddress: cubit.fromAddressController.text,
-                              toAddress: cubit.toAddressController.text,
-                            ),
-                          );
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  )
-                ],
+    builder: (context) {
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: makeOrderCubit),
+          BlocProvider(create: (_) => sl<EditOrderCubit>()),
+          BlocProvider(
+            create: (_) => sl<GovernorateCubit>()..fetchGovernorates(),
+          ),
+          BlocProvider(create: (_) => sl<ZoneCubit>()),
+        ],
+        child: BlocConsumer<EditOrderCubit, OrderState>(
+          listener: (context, state) {
+            if (state is OrderSuccess) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('تم تعديل الطلب بنجاح')),
+              );
+            } else if (state is OrderFailure) {
+              print("خطأ أثناء التعديل: ${state.error}");
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.error)));
+            }
+          },
+          builder: (context, state) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-            ),
-          );
-        },
+              contentPadding: const EdgeInsets.all(20),
+              content: SingleChildScrollView(
+                child: ReusableOrderForm(
+                  isEdit: true,
+                  orderId: order.orderId,
+                  submitButtonText: 'Save Changes',
+                  onSubmit: () {},
+                ),
+              ),
+            );
+          },
+        ),
       );
     },
   );

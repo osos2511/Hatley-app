@@ -16,14 +16,20 @@ class CustomDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uniqueItems = items.toSet().toList(); // إزالة التكرار
+    final filteredValue = uniqueItems.contains(value) ? value : null;
+
     return DropdownButtonFormField<String>(
-      value: value,
+      value: filteredValue,
       hint: Text(hint),
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      items:
+          uniqueItems
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .toList(),
       onChanged: onChanged,
     );
   }

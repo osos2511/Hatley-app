@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatley/presentation/cubit/make_orders_cubit/make_orders_cubit.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/deliveries.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/home.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/profile.dart';
@@ -65,9 +67,14 @@ class RoutesManager {
         }
 
       case myOrdersRoute:
-        {
-          return MaterialPageRoute(builder: (context) => MyOrders());
-        }
+        return MaterialPageRoute(
+          builder:
+              (context) => BlocProvider.value(
+                value: context.read<MakeOrderCubit>(), // ✅ نأخذ نفس النسخة
+                child: MyOrders(),
+              ),
+        );
+
       case deliveriesRoute:
         {
           return MaterialPageRoute(builder: (context) => Deliveries());

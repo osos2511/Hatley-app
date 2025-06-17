@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:hatley/core/local/token_storage.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioFactory {
@@ -29,6 +30,17 @@ class DioFactory {
           }
           return handler.next(options);
         },
+      ),
+    );
+
+    dio.interceptors.add(
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        error: true,
+        compact: true,
+        maxWidth: 90,
       ),
     );
 

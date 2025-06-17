@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/core/success_dialog.dart';
 import 'package:hatley/injection_container.dart';
+import 'package:hatley/presentation/cubit/make_orders_cubit/make_orders_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/delete_order_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/getAllOrders_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/order_state.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_address_block.dart';
+import 'package:hatley/presentation/screens/home/home_drawer/widgets/edit_order_dialog.dart';
 import '../../../../../core/missing_fields_dialog.dart';
 import '../widgets/custom_info_row.dart';
 import '../widgets/custom_order_button.dart';
+import '../widgets/delivery_offer_listView.dart';
 
 class MyOrders extends StatefulWidget {
   const MyOrders({super.key});
@@ -27,6 +30,7 @@ class _MyOrdersState extends State<MyOrders> {
       providers: [
         BlocProvider(create: (_) => sl<GetAllOrdersCubit>()..getAllOrders()),
         BlocProvider(create: (_) => sl<DeleteOrderCubit>()),
+        BlocProvider.value(value: context.read<MakeOrderCubit>()),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -155,7 +159,15 @@ class _MyOrdersState extends State<MyOrders> {
                                   backgroundColor: Colors.blue,
                                   text: "Edit",
                                   onPressed: () {
-                                    // تعديل الطلب (لاحقًا)
+                                    print('Edit button clicked');
+                                    final makeOrderCubit =
+                                        context.read<MakeOrderCubit>();
+
+                                    showEditOrderDialog(
+                                      context,
+                                      makeOrderCubit,
+                                      order,
+                                    );
                                   },
                                 ),
                                 CustomOrderButton(
@@ -175,6 +187,7 @@ class _MyOrdersState extends State<MyOrders> {
                                 ),
                               ],
                             ),
+                            DeliveryOffersWidget()
                           ],
                         ),
                       ),

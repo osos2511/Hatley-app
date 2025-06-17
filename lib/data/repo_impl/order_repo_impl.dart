@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/data/datasources/addOrder_datasource/add_order_remote_datasource.dart';
 import 'package:hatley/data/datasources/deleteOrder_datasource/delete_order_remote_datasource.dart';
+import 'package:hatley/data/datasources/editOrder_datasource/edit_order_remote_datasource.dart';
 import 'package:hatley/data/datasources/getAllOrders_datasource/getAll_orders_remote_datasource.dart';
 import 'package:hatley/domain/entities/order_entity.dart';
 import 'package:hatley/domain/repo/order_repo.dart';
@@ -11,7 +12,9 @@ class OrderRepoImpl implements OrderRepo {
   AddOrderRemoteDatasource addOrderRemoteDatasource;
   GetAllOrdersRemoteDataSource getAllOrdersRemoteDataSource;
   DeleteOrderRemoteDataSource deleteOrderRemoteDataSource;
+  EditOrderRemoteDataSource editOrderRemoteDataSource;
   OrderRepoImpl(
+    this.editOrderRemoteDataSource,
     this.addOrderRemoteDatasource,
     this.getAllOrdersRemoteDataSource,
     this.deleteOrderRemoteDataSource,
@@ -67,6 +70,45 @@ class OrderRepoImpl implements OrderRepo {
   Future<Either<Failure, void>> deleteOrder(int orderId) async {
     try {
       await deleteOrderRemoteDataSource.deleteOrder(orderId);
+      return Future.value(Right(null));
+    } on DioException catch (e) {
+      return Left(NetworkFailure(e.message ?? 'Network error'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> editOrder({
+    required int orderId,
+    required String description,
+    required String orderGovernorateFrom,
+    required String orderZoneFrom,
+    required String orderCityFrom,
+    required String detailesAddressFrom,
+    required String orderGovernorateTo,
+    required String orderZoneTo,
+    required String orderCityTo,
+    required String detailesAddressTo,
+    required DateTime orderTime,
+    required num price,
+  }) async {
+    try {
+      await editOrderRemoteDataSource.editOrder(
+        orderId: orderId,
+        description: description,
+        orderGovernorateFrom: orderGovernorateFrom,
+        orderZoneFrom: orderZoneFrom,
+        orderCityFrom: orderCityFrom,
+        detailesAddressFrom: detailesAddressFrom,
+        orderGovernorateTo: orderGovernorateTo,
+        orderZoneTo: orderZoneTo,
+        orderCityTo: orderCityTo,
+        detailesAddressTo: detailesAddressTo,
+        orderTime: orderTime,
+        price: price,
+      );
+
       return Future.value(Right(null));
     } on DioException catch (e) {
       return Left(NetworkFailure(e.message ?? 'Network error'));

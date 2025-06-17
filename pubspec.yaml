@@ -46,13 +46,20 @@ dependencies:
   dartz: ^0.10.1
   get_it: ^8.0.3
   shared_preferences: ^2.5.3
-  equatable: ^2.0.7
+  pretty_dio_logger: ^1.4.0
+  mockito: ^5.4.6
+  web_socket_channel: ^3.0.3
+  signalr_netcore: ^1.4.3
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.5
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.4.15
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

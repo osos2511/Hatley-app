@@ -28,12 +28,18 @@ class AuthCubit extends Cubit<AuthState> {
         print('❌ Login failed: ${failure.message}');
         emit(SignInFailure(failure.message));
       },
-          (authEntity) {
+          (authEntity) async {
         print('✅ Login success: ${authEntity.token}');
+        await tokenStorage.saveEmail(email);
+
+        // ✅ حفظ التوكن وتاريخ الانتهاء بعد الدخول
+        await tokenStorage.saveToken(authEntity.token, authEntity.expiration);
+
         emit(SignInSuccess(authEntity.token));
       },
     );
   }
+
 
   Future<void> logOut() async {
     emit(LogoutLoading());

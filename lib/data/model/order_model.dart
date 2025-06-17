@@ -99,7 +99,7 @@ class OrderModel {
       orderTime: orderTime ?? DateTime.now(),
       orderZoneFrom: orderZoneFrom ?? '',
       orderZoneTo: orderZoneTo ?? '',
-      price: price ?? 0,
+      price: price?.toInt() ?? 0,
     );
   }
 }

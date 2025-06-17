@@ -6,6 +6,9 @@ abstract class TokenStorage {
   Future<void> clearToken();
   Future<bool> isTokenExpired();
   Future<String?> getExpiration();
+  Future<void> saveEmail(String email);
+  Future<String?> getEmail();
+
 }
 
 class TokenStorageImpl implements TokenStorage {
@@ -15,6 +18,8 @@ class TokenStorageImpl implements TokenStorage {
 
   static const _tokenKey = 'auth_token';
   static const _expirationKey = 'token_expiration';
+  static const _emailKey = 'user_email';
+
 
   @override
   Future<void> saveToken(String token, String expiration) async {
@@ -73,4 +78,16 @@ class TokenStorageImpl implements TokenStorage {
     print("📦 Retrieved expiration from storage: $expiration");
     return expiration;
   }
+@override
+  Future<void> saveEmail(String email) async {
+    print("📧 Saving email: $email");
+    await prefs.setString(_emailKey, email);
+  }
+@override
+  Future<String?> getEmail() async {
+    final email = prefs.getString(_emailKey);
+    print("📨 Retrieved email: $email");
+    return email;
+  }
+
 }

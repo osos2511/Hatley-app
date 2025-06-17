@@ -122,7 +122,6 @@ void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
                     backgroundColor: Colors.blue,
                     text: 'Confirm',
                     onPressed: () {
-                      context.read<MakeOrderCubit>().addOrder(state);
                       Navigator.pop(context);
 
                       Future.delayed(const Duration(milliseconds: 300), () {

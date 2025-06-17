@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/domain/entities/order_entity.dart';
 
 class MakeOrderState {
-  final String id;
+  final int id;
   final String price;
   final String details;
   final DateTime? selectedDate;
@@ -15,7 +16,7 @@ class MakeOrderState {
   final String? selectedStateTo;
   final String toAddress;
   final bool isLoading;
-  final List<MakeOrderState> orders;
+  final List<OrderEntity> orders;
 
   const MakeOrderState({
     required this.id,
@@ -37,7 +38,7 @@ class MakeOrderState {
 
   factory MakeOrderState.initial() {
     return const MakeOrderState(
-      id: '',
+      id: 0,
       price: '',
       details: '',
       fromAddress: '',
@@ -56,7 +57,7 @@ class MakeOrderState {
   }
 
   MakeOrderState copyWith({
-    String? id,
+    int? id,
     String? price,
     String? details,
     DateTime? selectedDate,
@@ -69,7 +70,7 @@ class MakeOrderState {
     String? selectedCityTo,
     String? selectedStateTo,
     String? toAddress,
-    List<MakeOrderState>? orders,
+    List<OrderEntity>? orders,
     bool? isLoading,
   }) {
     return MakeOrderState(

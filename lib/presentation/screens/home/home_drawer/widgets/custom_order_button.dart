@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/core/colors_manager.dart';
 
 class CustomOrderButton extends StatelessWidget {
   final String text;
@@ -18,14 +19,10 @@ class CustomOrderButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        foregroundColor: ColorsManager.blue,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.white),
-      ),
+      child: Text(text, style: TextStyle(color: Colors.white)),
     );
   }
 }

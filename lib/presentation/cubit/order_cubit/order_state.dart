@@ -9,7 +9,7 @@ class OrderLoading extends OrderState {}
 class OrderSuccess extends OrderState {}
 
 class GetAllOrdersSuccess extends OrderState {
-  final List<OrderEntity> orders; // Replace dynamic with your order model
+  final List<OrderEntity> orders;
   GetAllOrdersSuccess(this.orders);
 }
 
