@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hatley/core/success_dialog.dart';
 import 'package:hatley/injection_container.dart';
 import 'package:hatley/presentation/cubit/make_orders_cubit/make_orders_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/delete_order_cubit.dart';
@@ -10,6 +9,7 @@ import 'package:hatley/presentation/cubit/order_cubit/order_state.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_address_block.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/edit_order_dialog.dart';
 import '../../../../../core/missing_fields_dialog.dart';
+import '../../../../cubit/offer_cubit/offer_cubit.dart';
 import '../widgets/custom_info_row.dart';
 import '../widgets/custom_order_button.dart';
 import '../widgets/delivery_offer_listView.dart';
@@ -31,6 +31,8 @@ class _MyOrdersState extends State<MyOrders> {
         BlocProvider(create: (_) => sl<GetAllOrdersCubit>()..getAllOrders()),
         BlocProvider(create: (_) => sl<DeleteOrderCubit>()),
         BlocProvider.value(value: context.read<MakeOrderCubit>()),
+        BlocProvider(create: (_) => sl<OfferCubit>(),
+        )
       ],
       child: Scaffold(
         backgroundColor: Colors.white,

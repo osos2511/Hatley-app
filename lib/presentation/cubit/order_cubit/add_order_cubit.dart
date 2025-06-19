@@ -3,7 +3,7 @@ import 'package:hatley/domain/usecases/addOrder_usecase.dart';
 import 'package:hatley/presentation/cubit/order_cubit/order_state.dart';
 
 class AddOrderCubit extends Cubit<OrderState> {
-  AddorderUsecase addOrderUsecase;
+  AddOrderUseCase addOrderUsecase;
 
   AddOrderCubit(this.addOrderUsecase) : super(OrderInitial());
 

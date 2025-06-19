@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // تأكد من وجود هذا الاستيراد
+import 'package:hatley/presentation/cubit/offer_cubit/offer_cubit.dart'; // تأكد من وجود هذا الاستيراد
+import 'package:hatley/presentation/cubit/offer_cubit/offer_state.dart'; // تأكد من وجود هذا الاستيراد
 import 'package:signalr_netcore/signalr_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hatley/core/local/token_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'custom_order_button.dart';
 
 class DeliveryOffersWidget extends StatefulWidget {
-  final int? orderId; // Optional order ID
+  final int? orderId;
   const DeliveryOffersWidget({super.key, this.orderId});
 
   @override
@@ -29,7 +31,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   }
 
   Future<void> _initialize() async {
-    // Initialize Hive if not already open
     if (!Hive.isBoxOpen('delivery_offers')) {
       await Hive.initFlutter();
     }
@@ -37,13 +38,15 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     _tokenStorage = TokenStorageImpl(prefs);
     _userEmail = await _tokenStorage.getEmail();
 
-    // Open Hive box for offers
     _offersBox = await Hive.openBox('delivery_offers');
 
-    // Retrieve saved offers and filter by orderId if provided
-    final List<Map<String, dynamic>> savedOffers = _offersBox.values
+    final List<Map<String, dynamic>> savedOffers =
+    _offersBox.values
         .map((e) => Map<String, dynamic>.from(e))
-        .where((offer) => widget.orderId == null || offer["order_id"] == widget.orderId)
+        .where(
+          (offer) =>
+      widget.orderId == null || offer["order_id"] == widget.orderId,
+    )
         .toList();
 
     setState(() {
@@ -54,13 +57,16 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   }
 
   Future<void> _startSignalRConnection() async {
-    _hubConnection = HubConnectionBuilder()
-        .withUrl(
-      _serverUrl,
-      options: HttpConnectionOptions(transport: HttpTransportType.WebSockets),
-    )
-        .withAutomaticReconnect()
-        .build();
+    _hubConnection =
+        HubConnectionBuilder()
+            .withUrl(
+          _serverUrl,
+          options: HttpConnectionOptions(
+            transport: HttpTransportType.WebSockets,
+          ),
+        )
+            .withAutomaticReconnect()
+            .build();
 
     _hubConnection.onclose(({Exception? error}) {
       // Print statements removed
@@ -90,7 +96,8 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
         final String? checkType = checkData["type"];
 
         if (checkEmail == _userEmail && checkType == "User") {
-          final int? orderId = offerData["order_id"] is int
+          final int? orderId =
+          offerData["order_id"] is int
               ? offerData["order_id"]
               : int.tryParse(offerData["order_id"].toString());
 
@@ -104,14 +111,19 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
               "order_id": orderId,
               "name": offerData["delivery_name"],
               "price": offerData["offer_value"].toString(),
-              "rating": double.tryParse(offerData["delivery_avg_rate"].toString()) ?? 0.0,
+              "rating":
+              double.tryParse(offerData["delivery_avg_rate"].toString()) ??
+                  0.0,
               "image": offerData["delivery_photo"] ?? "",
+              // تأكد أن هذه البيانات موجودة في offerData القادمة من SignalR
+              "delivery_email": offerData["delivery_email"], // **إضافة هذا السطر**
+              "offer_value": offerData["offer_value"], // **إضافة هذا السطر** (لأنها مطلوبة في API القبول)
             };
 
             _offersBox.add(newOffer);
 
-            // Add offer to displayed list only if it matches current orderId
-            if (widget.orderId == null || newOffer["order_id"] == widget.orderId) {
+            if (widget.orderId == null ||
+                newOffer["order_id"] == widget.orderId) {
               _offers.add(newOffer);
               // Print statements removed
             } else {
@@ -131,13 +143,23 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   void _handleOfferResponse(int index, bool accepted) {
     final offer = _offers[index];
     if (accepted) {
-      // Print statements removed
-      // Add backend acceptance logic here
-    } else {
-      // Print statements removed
-      // Add backend decline logic here
-    }
+      final int? orderId = offer["order_id"] as int?;
+      final String? deliveryEmail = offer["delivery_email"] as String?;
+      final int? priceOfOffer = int.tryParse(offer["offer_value"].toString()); // استخدم offer_value هنا
 
+      if (orderId != null && deliveryEmail != null && priceOfOffer != null) {
+        // استدعاء دالة acceptOffer من OfferCubit
+        context.read<OfferCubit>().acceptOffer(orderId, priceOfOffer, deliveryEmail);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Missing offer details to accept.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    }
+    // بعد الرد على العرض، نحذف العرض من القائمة والصندوق المحلي
     setState(() {
       _offers.removeAt(index); // Remove offer from displayed list
     });
@@ -182,125 +204,157 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
       return const Text("No offers received yet for this order or user.");
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Simplified title
-        const Text(
-          'Delivery Offers:',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 190, // Fixed height for horizontal offers list
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal, // Horizontal scrolling
-            itemCount: _offers.length, // Number of offers
-            separatorBuilder: (_, __) => const SizedBox(width: 12), // Space between offers
-            itemBuilder: (context, index) {
-              final offer = _offers[index];
-              final imageUrl = offer["image"] as String;
-
-              return Container(
-                width: 250,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.25),
-                      blurRadius: 5,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 28,
-                          backgroundImage: imageUrl.isNotEmpty
-                              ? NetworkImage(imageUrl)
-                              : const AssetImage("assets/images/default_user.png") as ImageProvider,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                offer["name"],
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.amber[700],
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    offer["rating"].toString(),
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Offer Price: ${offer["price"]} EGP",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: Colors.green,
-                      ),
-                    ),
-                    const Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: CustomOrderButton(
-                            onPressed: () {
-                              _handleOfferResponse(index, true); // Accept offer
-                            },
-                            backgroundColor: Colors.blue,
-                            text: "Accept",
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: CustomOrderButton(
-                            onPressed: () {
-                              _handleOfferResponse(index, false); // Decline offer
-                            },
-                            backgroundColor: Colors.red,
-                            text: "Decline",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
+    return BlocListener<OfferCubit, OfferState>( // إضافة BlocListener هنا
+      listener: (context, state) {
+        if (state is OfferSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Offer accepted successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // هنا يمكنك تحديث UI بشكل أكبر إذا لزم الأمر،
+          // مثلاً، إعادة تحميل الطلبات أو الانتقال لشاشة أخرى
+        } else if (state is OfferFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to accept offer: ${state.errorMessage}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Simplified title
+          const Text(
+            'Delivery Offers:',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
-        ),
-      ],
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 190, // Fixed height for horizontal offers list
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal, // Horizontal scrolling
+              itemCount: _offers.length, // Number of offers
+              separatorBuilder:
+                  (_, __) => const SizedBox(width: 12), // Space between offers
+              itemBuilder: (context, index) {
+                final offer = _offers[index];
+                final imageUrl = offer["image"] as String;
+
+                return Container(
+                  width: 250,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blue),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.25),
+                        blurRadius: 5,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 28,
+                            backgroundImage:
+                            imageUrl.isNotEmpty
+                                ? NetworkImage(imageUrl)
+                                : const AssetImage(
+                              "assets/images/default_user.png",
+                            )
+                            as ImageProvider,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  offer["name"],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.amber[700],
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      offer["rating"].toString(),
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Offer Price: ${offer["price"]} EGP",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Colors.green,
+                        ),
+                      ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: CustomOrderButton(
+                              onPressed: () {
+                                _handleOfferResponse(
+                                  index,
+                                  true,
+                                ); // Accept offer
+                              },
+                              backgroundColor: Colors.blue,
+                              text: "Accept",
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: CustomOrderButton(
+                              onPressed: () {
+                                _handleOfferResponse(
+                                  index,
+                                  false,
+                                ); // Decline offer
+                              },
+                              backgroundColor: Colors.red,
+                              text: "Decline",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

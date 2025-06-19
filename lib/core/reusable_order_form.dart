@@ -257,7 +257,7 @@ class ReusableOrderForm extends StatelessWidget {
                 )
                 : Center(
                   child: CustomOrderButton(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
                     text: submitButtonText,
                     onPressed: onSubmit,
                   ),

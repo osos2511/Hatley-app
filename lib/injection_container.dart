@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hatley/core/network.dart';
+import 'package:hatley/data/datasources/acceptOffer_datasource/accept_offer_datasource.dart';
+import 'package:hatley/data/datasources/acceptOffer_datasource/accept_offer_datasource_impl.dart';
 import 'package:hatley/data/datasources/addOrder_datasource/add_order_datasource_impl.dart';
 import 'package:hatley/data/datasources/addOrder_datasource/add_order_remote_datasource.dart';
 import 'package:hatley/data/datasources/deleteOrder_datasource/delete_order_datasource_impl.dart';
@@ -18,9 +20,12 @@ import 'package:hatley/data/datasources/logout_datasource/logout_remote_datasour
 import 'package:hatley/data/datasources/signIn_datasource/signIn_datasource_impl.dart';
 import 'package:hatley/data/datasources/signIn_datasource/signIn_remote_datasource.dart';
 import 'package:hatley/data/repo_impl/location_repo_impl.dart';
+import 'package:hatley/data/repo_impl/offer_repo_impl.dart';
 import 'package:hatley/data/repo_impl/order_repo_impl.dart';
 import 'package:hatley/domain/repo/location_repo.dart';
+import 'package:hatley/domain/repo/offer_repo.dart';
 import 'package:hatley/domain/repo/order_repo.dart';
+import 'package:hatley/domain/usecases/acceptOffer_usecase.dart';
 import 'package:hatley/domain/usecases/addOrder_usecase.dart';
 import 'package:hatley/domain/usecases/deleteOrder_usecase.dart';
 import 'package:hatley/domain/usecases/editOrder_usecase.dart';
@@ -31,6 +36,7 @@ import 'package:hatley/domain/usecases/logout_usecase.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:hatley/presentation/cubit/edit_order_cubit/edit_order_cubit.dart';
 import 'package:hatley/presentation/cubit/governorate_cubit/governorate_cubit.dart';
+import 'package:hatley/presentation/cubit/offer_cubit/offer_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/delete_order_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/getAllOrders_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/add_order_cubit.dart';
@@ -90,12 +96,18 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton<EditOrderRemoteDataSource>(
     () => EditOrderDatasourceImpl(dio: sl()),
   );
+  sl.registerLazySingleton<AcceptOfferDataSource>(
+      ()=>AcceptOfferDataSourceImpl(dio: sl())
+  );
 
   // ✅ Repositories
   sl.registerLazySingleton<UserRepo>(() => UserRepoImpl(sl(), sl(), sl()));
   sl.registerLazySingleton<LocationRepo>(() => LocationRepoImpl(sl(), sl()));
   sl.registerLazySingleton<OrderRepo>(
     () => OrderRepoImpl(sl(), sl(), sl(), sl()),
+  );
+  sl.registerLazySingleton<OfferRepo>(
+      ()=>OfferRepoImpl(sl())
   );
 
   // ✅ UseCases
@@ -104,10 +116,11 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton(() => LogOutUseCase(sl()));
   sl.registerLazySingleton(() => GetAllGovernorateUseCase(sl()));
   sl.registerLazySingleton(() => GetAllZoneByGovNameUseCase(sl()));
-  sl.registerLazySingleton(() => AddorderUsecase(sl()));
+  sl.registerLazySingleton(() => AddOrderUseCase(sl()));
   sl.registerLazySingleton(() => GetallordersUseCase(sl()));
   sl.registerLazySingleton(() => DeleteOrderUsecase(sl()));
   sl.registerLazySingleton(() => EditOrderUseCase(sl()));
+  sl.registerLazySingleton(()=>AcceptOfferUseCase(sl()));
 
   // ✅ Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
@@ -118,7 +131,7 @@ Future<void> setupGetIt() async {
   sl.registerFactory(() => GetAllOrdersCubit(sl()));
   sl.registerFactory(() => DeleteOrderCubit(sl()));
   sl.registerFactory(() => EditOrderCubit(sl()));
+  sl.registerFactory(()=>OfferCubit(sl()));
 
-  // ✅ تأكد أن كل شيء أصبح جاهزًا
   await sl.allReady();
 }

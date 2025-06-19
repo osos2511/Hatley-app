@@ -2,9 +2,9 @@ import 'package:dartz/dartz.dart';
 import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/domain/repo/order_repo.dart';
 
-class AddorderUsecase {
+class AddOrderUseCase {
   OrderRepo orderRepo;
-  AddorderUsecase(this.orderRepo);
+  AddOrderUseCase(this.orderRepo);
   Future<Either<Failure, void>> call({
     required String description,
     required String orderGovernorateFrom,
