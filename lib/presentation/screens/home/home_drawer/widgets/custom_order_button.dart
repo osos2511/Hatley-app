@@ -22,7 +22,7 @@ class CustomOrderButton extends StatelessWidget {
         foregroundColor: ColorsManager.blue,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: Text(text, style: TextStyle(color: Colors.white)),
+      child: Text(text, style: TextStyle(color: Colors.blue)),
     );
   }
 }

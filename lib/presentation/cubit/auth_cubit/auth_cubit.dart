@@ -30,6 +30,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
           (authEntity) async {
         print('✅ Login success: ${authEntity.token}');
+        await tokenStorage.clearDeliveryOffersBox();
         await tokenStorage.saveEmail(email);
 
         // ✅ حفظ التوكن وتاريخ الانتهاء بعد الدخول
@@ -59,7 +60,6 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  /// هذه الميثود لا تُرجع أي قيمة، فقط تحدّث الحالة حسب صلاحية التوكن
   Future<void> checkTokenAndNavigate() async {
     final token = await tokenStorage.getToken();
     final expirationStr = await tokenStorage.getExpiration();

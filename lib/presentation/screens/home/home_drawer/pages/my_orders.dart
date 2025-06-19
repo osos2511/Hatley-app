@@ -37,7 +37,6 @@ class _MyOrdersState extends State<MyOrders> {
         body: BlocListener<DeleteOrderCubit, OrderState>(
           listener: (context, state) {
             if (state is OrderSuccess) {
-              showSuccessDialog(context, 'delete order successfully');
               if (lastDeletedOrderId != null) {
                 context.read<GetAllOrdersCubit>().removeOrderById(
                   lastDeletedOrderId!,
@@ -178,16 +177,18 @@ class _MyOrdersState extends State<MyOrders> {
                                     showMissingFieldsDialog(
                                       context,
                                       'Are you sure you want to cancel the order?',
-                                      onOkPressed:
-                                          () => context
-                                              .read<DeleteOrderCubit>()
-                                              .deleteOrder(order.orderId),
+
+                                      onOkPressed: () {
+                                        Navigator.of(context).pop();
+                                        context.read<DeleteOrderCubit>().deleteOrder(order.orderId);
+                                      },
+
                                     );
                                   },
                                 ),
                               ],
                             ),
-                            DeliveryOffersWidget()
+                            DeliveryOffersWidget(orderId: order.orderId)
                           ],
                         ),
                       ),

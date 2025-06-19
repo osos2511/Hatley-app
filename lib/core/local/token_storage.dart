@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:hive/hive.dart';
 abstract class TokenStorage {
   Future<void> saveToken(String token, String expiration);
   Future<String?> getToken();
@@ -8,6 +8,7 @@ abstract class TokenStorage {
   Future<String?> getExpiration();
   Future<void> saveEmail(String email);
   Future<String?> getEmail();
+  Future<void> clearDeliveryOffersBox();
 
 }
 
@@ -88,6 +89,18 @@ class TokenStorageImpl implements TokenStorage {
     final email = prefs.getString(_emailKey);
     print("📨 Retrieved email: $email");
     return email;
+  }
+
+  @override
+  Future<void> clearDeliveryOffersBox() async {
+    // **3. أضف تنفيذ الدالة هنا**
+    try {
+      final box = await Hive.openBox('delivery_offers');
+      await box.clear();
+      print("🧹 DEBUG: Hive 'delivery_offers' box cleared successfully.");
+    } catch (e) {
+      print("❌ DEBUG: Error clearing 'delivery_offers' box: $e");
+    }
   }
 
 }

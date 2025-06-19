@@ -3,10 +3,12 @@ import 'package:signalr_netcore/signalr_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hatley/core/local/token_storage.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'custom_order_button.dart';
 
 class DeliveryOffersWidget extends StatefulWidget {
-  const DeliveryOffersWidget({super.key});
+  final int? orderId; // Optional order ID
+  const DeliveryOffersWidget({super.key, this.orderId});
 
   @override
   State<DeliveryOffersWidget> createState() => _DeliveryOffersWidgetState();
@@ -14,13 +16,10 @@ class DeliveryOffersWidget extends StatefulWidget {
 
 class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   final List<Map<String, dynamic>> _offers = [];
-
   late final HubConnection _hubConnection;
   final String _serverUrl = "https://hatley.runasp.net/NotifyNewOfferForUser";
-
   String? _userEmail;
   late final TokenStorage _tokenStorage;
-
   late Box _offersBox;
 
   @override
@@ -30,16 +29,21 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   }
 
   Future<void> _initialize() async {
+    // Initialize Hive if not already open
+    if (!Hive.isBoxOpen('delivery_offers')) {
+      await Hive.initFlutter();
+    }
     final prefs = await SharedPreferences.getInstance();
     _tokenStorage = TokenStorageImpl(prefs);
     _userEmail = await _tokenStorage.getEmail();
 
-    // فتح صندوق Hive للعروض
+    // Open Hive box for offers
     _offersBox = await Hive.openBox('delivery_offers');
 
-    // استرجاع العروض المخزنة مسبقاً
-    final savedOffers = _offersBox.values
+    // Retrieve saved offers and filter by orderId if provided
+    final List<Map<String, dynamic>> savedOffers = _offersBox.values
         .map((e) => Map<String, dynamic>.from(e))
+        .where((offer) => widget.orderId == null || offer["order_id"] == widget.orderId)
         .toList();
 
     setState(() {
@@ -53,29 +57,31 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     _hubConnection = HubConnectionBuilder()
         .withUrl(
       _serverUrl,
-      options: HttpConnectionOptions(
-        transport: HttpTransportType.WebSockets,
-      ),
+      options: HttpConnectionOptions(transport: HttpTransportType.WebSockets),
     )
         .withAutomaticReconnect()
         .build();
 
     _hubConnection.onclose(({Exception? error}) {
-      print("❗ SignalR connection closed: $error");
+      // Print statements removed
     });
 
     _hubConnection.onreconnecting(({Exception? error}) {
-      print("♻️ SignalR reconnecting: $error");
+      // Print statements removed
     });
 
-    await _hubConnection.start();
-    print("✅ SignalR connection started");
-    _registerSignalRListeners();
+    try {
+      await _hubConnection.start();
+      // Print statements removed
+      _registerSignalRListeners();
+    } catch (e) {
+      // Print statements removed
+    }
   }
 
   void _registerSignalRListeners() {
     _hubConnection.on("NotifyNewOfferForUser", (arguments) {
-      print("📩 Received SignalR event: NotifyNewOfferForUser");
+      // Print statements removed
       if (arguments != null && arguments.length == 2) {
         final offerData = arguments[0] as Map<dynamic, dynamic>;
         final checkData = arguments[1] as Map<dynamic, dynamic>;
@@ -84,62 +90,61 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
         final String? checkType = checkData["type"];
 
         if (checkEmail == _userEmail && checkType == "User") {
+          final int? orderId = offerData["order_id"] is int
+              ? offerData["order_id"]
+              : int.tryParse(offerData["order_id"].toString());
+
+          if (orderId == null) {
+            // Print statements removed
+            return;
+          }
+
           setState(() {
             final newOffer = {
+              "order_id": orderId,
               "name": offerData["delivery_name"],
               "price": offerData["offer_value"].toString(),
               "rating": double.tryParse(offerData["delivery_avg_rate"].toString()) ?? 0.0,
               "image": offerData["delivery_photo"] ?? "",
             };
 
-            _offers.add(newOffer);
-
-            // حفظ العرض في Hive
             _offersBox.add(newOffer);
 
-            print("✅ Offer added and saved locally.");
+            // Add offer to displayed list only if it matches current orderId
+            if (widget.orderId == null || newOffer["order_id"] == widget.orderId) {
+              _offers.add(newOffer);
+              // Print statements removed
+            } else {
+              // Print statements removed
+            }
           });
         } else {
-          print("❌ Offer rejected: email/type mismatch");
+          // Print statements removed
         }
       } else {
-        print("⚠️ Invalid arguments received from SignalR");
+        // Print statements removed
       }
     });
   }
 
-  // دالة لمسح كل العروض محلياً وعرضياً
-  Future<void> _clearOffers() async {
-    await _offersBox.clear();
-    setState(() {
-      _offers.clear();
-    });
-    print("🧹 All offers cleared locally.");
-  }
-
-  // دالة تناديها عند قبول أو رفض العرض
+  // Function called when an offer is accepted or declined
   void _handleOfferResponse(int index, bool accepted) {
     final offer = _offers[index];
     if (accepted) {
-      print("✅ Accepted offer from ${offer["name"]}");
-      // هنا ممكن تضيف كود إضافي مثلا إرسال قبول للـ backend
+      // Print statements removed
+      // Add backend acceptance logic here
     } else {
-      print("❌ Declined offer from ${offer["name"]}");
-      // كود رفض العرض إذا تريد
+      // Print statements removed
+      // Add backend decline logic here
     }
 
-    // بعد الرد على العرض، نحذف العرض من القائمة والصندوق المحلي
     setState(() {
-      _offers.removeAt(index);
+      _offers.removeAt(index); // Remove offer from displayed list
     });
-
-    // لازم نمسح العرض من Hive أيضًا
-    // لان Hive تدعم حذف عنصر حسب المفتاح (key)
-    // الصندوق يخزن القيم بدون مفتاح واضح، لذلك لازم نبحث المفتاح و نمسحه
-    _removeOfferFromHive(offer);
+    _removeOfferFromHive(offer); // Remove offer from Hive
   }
 
-  // دالة لإزالة العرض من Hive حسب المحتوى
+  // Function to remove an offer from Hive based on its content
   void _removeOfferFromHive(Map<String, dynamic> offer) {
     final Map<dynamic, dynamic> boxMap = _offersBox.toMap();
     dynamic keyToDelete;
@@ -150,11 +155,11 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     });
     if (keyToDelete != null) {
       _offersBox.delete(keyToDelete);
-      print("🗑️ Offer removed from Hive.");
+      // Print statements removed
     }
   }
 
-  // دالة للمقارنة بين خريطتين (Maps)
+  // Function to compare two maps
   bool _mapsEqual(Map a, Map b) {
     if (a.length != b.length) return false;
     for (final key in a.keys) {
@@ -165,31 +170,33 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
 
   @override
   void dispose() {
-    _hubConnection.stop();
-    _offersBox.close();
+    _hubConnection.stop(); // Stop SignalR connection
+    _offersBox.close(); // Close Hive box
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Message displayed if no offers
     if (_offers.isEmpty) {
-      return const Text("No offers received yet.");
+      return const Text("No offers received yet for this order or user.");
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Simplified title
         const Text(
           'Delivery Offers:',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 190,
+          height: 190, // Fixed height for horizontal offers list
           child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _offers.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            scrollDirection: Axis.horizontal, // Horizontal scrolling
+            itemCount: _offers.length, // Number of offers
+            separatorBuilder: (_, __) => const SizedBox(width: 12), // Space between offers
             itemBuilder: (context, index) {
               final offer = _offers[index];
               final imageUrl = offer["image"] as String;
@@ -269,7 +276,7 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                         Expanded(
                           child: CustomOrderButton(
                             onPressed: () {
-                              _handleOfferResponse(index, true); // قبول العرض
+                              _handleOfferResponse(index, true); // Accept offer
                             },
                             backgroundColor: Colors.blue,
                             text: "Accept",
@@ -279,7 +286,7 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                         Expanded(
                           child: CustomOrderButton(
                             onPressed: () {
-                              _handleOfferResponse(index, false); // رفض العرض
+                              _handleOfferResponse(index, false); // Decline offer
                             },
                             backgroundColor: Colors.red,
                             text: "Decline",

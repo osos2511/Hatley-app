@@ -8,7 +8,7 @@ class GetallOrdersDatasourceImpl implements GetAllOrdersRemoteDataSource {
   @override
   Future<List<OrderModel>> getAllOrders() async {
     try {
-      final response = await dio.get('Order');
+      final response = await dio.get('Order/Orders');
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data as List;
         return data.map((e) => OrderModel.fromJson(e)).toList();

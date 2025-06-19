@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/core/routes_manager.dart';
-import 'package:hatley/core/success_dialog.dart';
 import 'package:hatley/presentation/cubit/navigation_cubit.dart';
 import '../../../../../core/colors_manager.dart';
+import '../../../../../core/missing_fields_dialog.dart';
 import '../../../../cubit/auth_cubit/auth_cubit.dart';
 import 'custom_listTile.dart';
 
@@ -112,17 +112,19 @@ class CustomDrawer extends StatelessWidget {
                   text: 'Profile',
                 ),
 
-
                 CustomListTile(
                   onPress: () {
-                    Navigator.pop(context);
-                    showSuccessDialog(
+                    showMissingFieldsDialog(
                       context,
                       'Are you sure you want to log out?',
-                      nextRoute: RoutesManager.signInRoute,
-                      showCancelButton: true,
+                      onOkPressed: () {
+                        context.read<AuthCubit>().logOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          RoutesManager.signInRoute,
+                          (route) => false,
+                        );
+                      },
                     );
-                    context.read<AuthCubit>().logOut();
                   },
                   icon: Icons.logout,
                   text: 'Logout',

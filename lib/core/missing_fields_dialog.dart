@@ -54,10 +54,9 @@ void showMissingFieldsDialog(
               elevation: 2,
             ),
             onPressed: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
+              if (onOkPressed != null) {
+                onOkPressed();
               }
-              if (onOkPressed != null) onOkPressed();
             },
             child: const Text(
               "OK",
