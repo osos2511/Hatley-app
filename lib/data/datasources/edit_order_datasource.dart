@@ -1,5 +1,21 @@
 import 'package:dio/dio.dart';
-import 'package:hatley/data/datasources/editOrder_datasource/edit_order_remote_datasource.dart';
+
+abstract class EditOrderRemoteDataSource {
+  Future<void> editOrder({
+    required int orderId,
+    required String description,
+    required String orderGovernorateFrom,
+    required String orderZoneFrom,
+    required String orderCityFrom,
+    required String detailesAddressFrom,
+    required String orderGovernorateTo,
+    required String orderZoneTo,
+    required String orderCityTo,
+    required String detailesAddressTo,
+    required DateTime orderTime,
+    required num price,
+  });
+}
 
 class EditOrderDatasourceImpl implements EditOrderRemoteDataSource {
   final Dio dio;

@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:hatley/data/datasources/getAllOrders_datasource/getAll_orders_remote_datasource.dart';
 import 'package:hatley/data/model/order_model.dart';
+
+abstract class GetAllOrdersRemoteDataSource {
+  Future<List<OrderModel>> getAllOrders();
+}
 
 class GetallOrdersDatasourceImpl implements GetAllOrdersRemoteDataSource {
   final Dio dio;

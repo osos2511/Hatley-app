@@ -1,6 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:hatley/data/datasources/signIn_datasource/signIn_remote_datasource.dart';
 import 'package:hatley/data/model/sign_in_response.dart';
+
+abstract class SignInRemoteDataSource {
+  Future<SignInResponse> signInUser({
+    required String email,
+    required String password,
+  });
+}
 
 class SignInDataSourceImpl implements SignInRemoteDataSource {
   final Dio dio;
@@ -15,10 +21,7 @@ class SignInDataSourceImpl implements SignInRemoteDataSource {
     try {
       final response = await dio.post(
         'userAccount/login',
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

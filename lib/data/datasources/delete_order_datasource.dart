@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:hatley/data/datasources/deleteOrder_datasource/delete_order_remote_datasource.dart';
+
+abstract class DeleteOrderRemoteDataSource {
+  Future<void> deleteOrder(int orderId);
+}
 
 class DeleteOrderDatasourceImpl implements DeleteOrderRemoteDataSource {
   final Dio dio;
