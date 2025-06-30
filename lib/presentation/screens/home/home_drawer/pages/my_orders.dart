@@ -31,8 +31,7 @@ class _MyOrdersState extends State<MyOrders> {
         BlocProvider(create: (_) => sl<GetAllOrdersCubit>()..getAllOrders()),
         BlocProvider(create: (_) => sl<DeleteOrderCubit>()),
         BlocProvider.value(value: context.read<MakeOrderCubit>()),
-        BlocProvider(create: (_) => sl<OfferCubit>(),
-        )
+        BlocProvider(create: (_) => sl<OfferCubit>()),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -44,7 +43,6 @@ class _MyOrdersState extends State<MyOrders> {
                   lastDeletedOrderId!,
                 );
               }
-              //context.read<GetAllOrdersCubit>().getAllOrders(); // تحديث الطلبات
             } else if (state is OrderFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("فشل الحذف: ${state.error}")),
@@ -54,7 +52,7 @@ class _MyOrdersState extends State<MyOrders> {
           child: BlocBuilder<GetAllOrdersCubit, OrderState>(
             builder: (context, state) {
               if (state is OrderLoading) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (state is OrderFailure) {
                 return Center(child: Text("خطأ: ${state.error}"));
               } else if (state is GetAllOrdersSuccess) {
@@ -78,8 +76,8 @@ class _MyOrdersState extends State<MyOrders> {
                     final order = orders[index];
                     return Center(
                       child: Container(
-                        margin: EdgeInsets.all(16),
-                        padding: EdgeInsets.all(16),
+                        margin: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(color: Colors.blue),
@@ -115,14 +113,14 @@ class _MyOrdersState extends State<MyOrders> {
                                       .split('.')
                                       .first,
                             ),
-                            SizedBox(height: 16),
-                            Text(
+                            const SizedBox(height: 16),
+                            const Text(
                               "Order Details:",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Container(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               height: 80,
                               width: double.infinity,
                               decoration: BoxDecoration(
@@ -131,7 +129,7 @@ class _MyOrdersState extends State<MyOrders> {
                               ),
                               child: Text(order.description),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             _sectionTitle("From:"),
                             CustomAddressBlock(
                               values: [
@@ -141,7 +139,7 @@ class _MyOrdersState extends State<MyOrders> {
                                 order.detailesAddressFrom,
                               ],
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             _sectionTitle("To:"),
                             CustomAddressBlock(
                               values: [
@@ -152,7 +150,7 @@ class _MyOrdersState extends State<MyOrders> {
                               ],
                               isArabic: false,
                             ),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -160,10 +158,8 @@ class _MyOrdersState extends State<MyOrders> {
                                   backgroundColor: Colors.blue,
                                   text: "Edit",
                                   onPressed: () {
-                                    print('Edit button clicked');
                                     final makeOrderCubit =
                                         context.read<MakeOrderCubit>();
-
                                     showEditOrderDialog(
                                       context,
                                       makeOrderCubit,
@@ -172,25 +168,25 @@ class _MyOrdersState extends State<MyOrders> {
                                   },
                                 ),
                                 CustomOrderButton(
-                                  text: "Cancel",
                                   backgroundColor: Colors.red,
+                                  text: "Cancel",
                                   onPressed: () {
                                     lastDeletedOrderId = order.orderId;
                                     showMissingFieldsDialog(
                                       context,
                                       'Are you sure you want to cancel the order?',
-
                                       onOkPressed: () {
                                         Navigator.of(context).pop();
-                                        context.read<DeleteOrderCubit>().deleteOrder(order.orderId);
+                                        context
+                                            .read<DeleteOrderCubit>()
+                                            .deleteOrder(order.orderId);
                                       },
-
                                     );
                                   },
                                 ),
                               ],
                             ),
-                            DeliveryOffersWidget(orderId: order.orderId)
+                            DeliveryOffersWidget(orderId: order.orderId),
                           ],
                         ),
                       ),
@@ -198,7 +194,7 @@ class _MyOrdersState extends State<MyOrders> {
                   },
                 );
               } else {
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
             },
           ),
@@ -210,7 +206,7 @@ class _MyOrdersState extends State<MyOrders> {
   Widget _sectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
     );
   }
 }

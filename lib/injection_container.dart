@@ -18,6 +18,7 @@ import 'package:hatley/domain/repo/offer_repo.dart';
 import 'package:hatley/domain/repo/order_repo.dart';
 import 'package:hatley/domain/usecases/acceptOffer_usecase.dart';
 import 'package:hatley/domain/usecases/addOrder_usecase.dart';
+import 'package:hatley/domain/usecases/declineOffer_usecase.dart';
 import 'package:hatley/domain/usecases/deleteOrder_usecase.dart';
 import 'package:hatley/domain/usecases/editOrder_usecase.dart';
 import 'package:hatley/domain/usecases/getAllGovernorate_usecase.dart';
@@ -86,8 +87,8 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton<EditOrderRemoteDataSource>(
     () => EditOrderDatasourceImpl(dio: sl()),
   );
-  sl.registerLazySingleton<AcceptOfferDataSource>(
-    () => AcceptOfferDataSourceImpl(dio: sl()),
+  sl.registerLazySingleton<OfferDataSource>(
+    () => OfferDataSourceImpl(dio: sl()),
   );
 
   // ✅ Repositories
@@ -109,6 +110,7 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton(() => DeleteOrderUsecase(sl()));
   sl.registerLazySingleton(() => EditOrderUseCase(sl()));
   sl.registerLazySingleton(() => AcceptOfferUseCase(sl()));
+  sl.registerLazySingleton(() => DeclineofferUsecase(sl()));
 
   // ✅ Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
@@ -119,7 +121,7 @@ Future<void> setupGetIt() async {
   sl.registerFactory(() => GetAllOrdersCubit(sl()));
   sl.registerFactory(() => DeleteOrderCubit(sl()));
   sl.registerFactory(() => EditOrderCubit(sl()));
-  sl.registerFactory(() => OfferCubit(sl()));
+  sl.registerFactory(() => OfferCubit(sl(), sl()));
 
   await sl.allReady();
 }
