@@ -11,12 +11,13 @@ import 'package:hatley/presentation/screens/home/home_drawer/pages/contact_us.da
 import 'package:hatley/presentation/screens/home/home_drawer/pages/deliveries.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/our_team.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/profile.dart';
-import 'package:hatley/presentation/screens/home/home_drawer/pages/track_orders.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_drawer.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/my_orders.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_state.dart';
-
+import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
+import 'package:hatley/presentation/screens/home/home_drawer/pages/all_tracking_orders.dart';
+import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
 import '../../../../../core/missing_fields_dialog.dart';
 
 class Home extends StatefulWidget {
@@ -36,7 +37,7 @@ class _HomeState extends State<Home> {
       _hasCheckedToken = true;
 
       final int? initialPage =
-          ModalRoute.of(context)?.settings.arguments as int?;
+      ModalRoute.of(context)?.settings.arguments as int?;
       if (initialPage != null) {
         context.read<NavigationCubit>().changePage(initialPage);
       }
@@ -50,7 +51,7 @@ class _HomeState extends State<Home> {
   void _showSessionExpiredDialog() {
     showMissingFieldsDialog(
       context,
-      'Your session has expired. Please log in again.',
+      'Your session has expired. Please log in again.', // النص الإنجليزي الأصلي
       onOkPressed: () {
         Navigator.of(
           context,
@@ -61,13 +62,35 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
-      listenWhen: (previous, current) => current is TokenInvalid,
-      listener: (context, state) {
-        if (state is TokenInvalid) {
-          _showSessionExpiredDialog();
-        }
-      },
+    // ✅ MultiBlocListener لدمج Listener للـ AuthCubit و TrackingCubit
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AuthCubit, AuthState>(
+          listenWhen: (previous, current) => current is TokenInvalid,
+          listener: (context, state) {
+            if (state is TokenInvalid) {
+              _showSessionExpiredDialog();
+            }
+          },
+        ),
+        // ✅ BlocListener الجديد لأخطاء TrackingCubit
+        BlocListener<TrackingCubit, TrackingState>(
+          listenWhen: (previous, current) => current is TrackingError,
+          listener: (context, state) {
+            if (state is TrackingError) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted && ScaffoldMessenger.maybeOf(context) != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                } else {
+                  print("ScaffoldMessenger not available or widget not mounted for tracking errors SnackBar.");
+                }
+              });
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(56.h),
@@ -76,28 +99,28 @@ class _HomeState extends State<Home> {
               String appBarTitle;
               switch (state) {
                 case 1:
-                  appBarTitle = 'Track Orders';
+                  appBarTitle = 'Track Orders'; // الكلمة الإنجليزية
                   break;
                 case 2:
-                  appBarTitle = 'Contact Us';
+                  appBarTitle = 'Contact Us'; // الكلمة الإنجليزية
                   break;
                 case 3:
-                  appBarTitle = 'About Us';
+                  appBarTitle = 'About Us'; // الكلمة الإنجليزية
                   break;
                 case 4:
-                  appBarTitle = 'Our Team';
+                  appBarTitle = 'Our Team'; // الكلمة الإنجليزية
                   break;
                 case 5:
-                  appBarTitle = 'My Orders';
+                  appBarTitle = 'My Orders'; // الكلمة الإنجليزية
                   break;
                 case 6:
-                  appBarTitle = 'Deliveries';
+                  appBarTitle = 'Deliveries'; // الكلمة الإنجليزية
                   break;
                 case 7:
-                  appBarTitle = 'Profile';
+                  appBarTitle = 'Profile'; // الكلمة الإنجليزية
                   break;
                 default:
-                  appBarTitle = 'Home';
+                  appBarTitle = 'Home'; // الكلمة الإنجليزية
               }
 
               return AppBar(
@@ -120,7 +143,7 @@ class _HomeState extends State<Home> {
           builder: (context, state) {
             switch (state) {
               case 1:
-                return const TrackOrders();
+                return const AllTrackingOrdersScreen();
               case 2:
                 return const ContactUs();
               case 3:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hatley/core/routes_manager.dart';
 import 'package:hatley/injection_container.dart';
 import 'package:hatley/presentation/cubit/make_orders_cubit/make_orders_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/delete_order_cubit.dart';
@@ -10,6 +11,7 @@ import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_addr
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/edit_order_dialog.dart';
 import '../../../../../core/missing_fields_dialog.dart';
 import '../../../../cubit/offer_cubit/offer_cubit.dart';
+import '../../../../cubit/offer_cubit/offer_state.dart';
 import '../widgets/custom_info_row.dart';
 import '../widgets/custom_order_button.dart';
 import '../widgets/delivery_offer_listView.dart';
@@ -30,25 +32,60 @@ class _MyOrdersState extends State<MyOrders> {
       providers: [
         BlocProvider(create: (_) => sl<GetAllOrdersCubit>()..getAllOrders()),
         BlocProvider(create: (_) => sl<DeleteOrderCubit>()),
+        // تأكد أن MakeOrderCubit متاح بالفعل في الـ Widget Tree الأعلى
+        // وإلا، استخدم BlocProvider(create: (_) => sl<MakeOrderCubit>())
         BlocProvider.value(value: context.read<MakeOrderCubit>()),
         BlocProvider(create: (_) => sl<OfferCubit>()),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: BlocListener<DeleteOrderCubit, OrderState>(
-          listener: (context, state) {
-            if (state is OrderSuccess) {
-              if (lastDeletedOrderId != null) {
-                context.read<GetAllOrdersCubit>().removeOrderById(
-                  lastDeletedOrderId!,
-                );
-              }
-            } else if (state is OrderFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("فشل الحذف: ${state.error}")),
-              );
-            }
-          },
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<DeleteOrderCubit, OrderState>(
+              listener: (context, state) {
+                if (state is OrderSuccess) {
+                  // بعد حذف الطلب، قم بإعادة جلب جميع الطلبات لتحديث الـ UI
+                  context.read<GetAllOrdersCubit>().getAllOrders();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Order cancelled successfully!"),
+                    ),
+                  );
+                } else if (state is OrderFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("فشل الحذف: ${state.error}")),
+                  );
+                }
+              },
+            ),
+            BlocListener<OfferCubit, OfferState>(
+              listener: (context, state) {
+                if (state is OfferAcceptedSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Offer accepted successfully! Redirecting to tracking...",
+                      ),
+                    ),
+                  );
+                } else if (state is OfferDeclinedSuccess) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                  context.read<GetAllOrdersCubit>().getAllOrders();
+                } else if (state is OfferFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Failed to process offer: ${state.errorMessage}",
+                      ),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
           child: BlocBuilder<GetAllOrdersCubit, OrderState>(
             builder: (context, state) {
               if (state is OrderLoading) {
@@ -60,12 +97,37 @@ class _MyOrdersState extends State<MyOrders> {
 
                 if (orders.isEmpty) {
                   return Center(
-                    child: Text(
-                      'لا توجد طلبات حالياً',
-                      style: GoogleFonts.inter(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'لا توجد طلبات حالياً',
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacementNamed(
+                              RoutesManager.makeOrdersRoute,
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text('أضف طلب جديد'),
+                        ),
+                      ],
                     ),
                   );
                 }
@@ -186,6 +248,7 @@ class _MyOrdersState extends State<MyOrders> {
                                 ),
                               ],
                             ),
+                            // هذا هو المكان الذي يتم فيه عرض Offers
                             DeliveryOffersWidget(orderId: order.orderId),
                           ],
                         ),

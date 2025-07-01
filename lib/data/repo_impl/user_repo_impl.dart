@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/data/datasources/logout_remote_datasource.dart';
-import 'package:hatley/data/datasources/register_remote_datasource.dart';
-import 'package:hatley/data/datasources/signIn_remote_datasource.dart';
+import 'package:hatley/data/datasources/register_datasource.dart';
+import 'package:hatley/data/datasources/signIn_datasource.dart';
 import 'package:hatley/domain/entities/auth_entity.dart';
 import '../../domain/repo/user_repo.dart';
 

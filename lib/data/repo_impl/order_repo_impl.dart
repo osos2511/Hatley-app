@@ -4,7 +4,7 @@ import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/data/datasources/add_order_datasource.dart';
 import 'package:hatley/data/datasources/delete_order_datasource.dart';
 import 'package:hatley/data/datasources/edit_order_datasource.dart';
-import 'package:hatley/data/datasources/getAll_orders_remote_datasource.dart';
+import 'package:hatley/data/datasources/getAll_orders_datasource.dart';
 import 'package:hatley/domain/entities/order_entity.dart';
 import 'package:hatley/domain/repo/order_repo.dart';
 

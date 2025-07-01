@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:hatley/presentation/cubit/make_orders_cubit/make_orders_cubit.dart';
 import 'package:hatley/presentation/cubit/navigation_cubit.dart';
+import 'presentation/cubit/tracking_cubit/tracking_cubit.dart';
 import 'core/local/token_storage.dart';
 import 'core/routes_manager.dart';
 import 'injection_container.dart';
@@ -54,8 +55,9 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => NavigationCubit()),
-          BlocProvider(create: (context) => MakeOrderCubit()),
+          BlocProvider(create: (context) => sl<MakeOrderCubit>()),
           BlocProvider(create: (context) => sl<AuthCubit>()),
+          BlocProvider(create: (context) => sl<TrackingCubit>(),)
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
