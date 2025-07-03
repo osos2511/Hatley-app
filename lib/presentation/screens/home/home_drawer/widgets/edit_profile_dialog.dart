@@ -5,40 +5,15 @@ class EditProfileDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final usernameController = TextEditingController(text: "John Doe");
-    final emailController = TextEditingController(text: "johndoe@example.com");
-    final phoneController = TextEditingController(text: "+1234567890");
-    final passwordController = TextEditingController();
-
     return AlertDialog(
       title: const Text('Edit Profile'),
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            const CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage('assets/profile.jpg'),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: phoneController,
-              decoration: const InputDecoration(labelText: 'Phone'),
-            ),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'New Password'),
-            ),
-          ],
-        ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(decoration: const InputDecoration(labelText: 'Username')),
+          TextField(decoration: const InputDecoration(labelText: 'Email')),
+          TextField(decoration: const InputDecoration(labelText: 'Phone')),
+        ],
       ),
       actions: [
         TextButton(
@@ -47,7 +22,7 @@ class EditProfileDialog extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            // هنا تضيف منطق حفظ التعديلات
+            // TODO: اضافة منطق التحديث
             Navigator.pop(context);
           },
           child: const Text('Save'),

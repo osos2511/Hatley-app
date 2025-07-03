@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/presentation/screens/home/home_drawer/pages/change_password.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/deliveries.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/home.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/profile.dart';
@@ -11,8 +12,6 @@ import '../presentation/screens/auth/reset_password.dart';
 import '../presentation/screens/auth/sign_in.dart';
 import '../presentation/screens/auth/sign_up.dart';
 import '../presentation/screens/home/home_drawer/pages/my_orders.dart';
-import '../presentation/screens/home/home_drawer/widgets/track_order_widget.dart'; // **** أضف هذا الاستيراد ****
-
 
 class RoutesManager {
   static const String splashRoute = '/';
@@ -26,7 +25,8 @@ class RoutesManager {
   static const String myOrdersRoute = '/myOrder';
   static const String deliveriesRoute = '/deliveries';
   static const String profileRoute = '/Profile';
-  static const String trakingRoute = '/traking'; // **** أضف هذا ****
+  static const String trakingRoute = '/traking';
+  static const String changePasswordRoute = '/ChangePasswordPage';
 
   static Route<dynamic>? router(RouteSettings settings) {
     switch (settings.name) {
@@ -69,9 +69,7 @@ class RoutesManager {
         }
 
       case myOrdersRoute:
-        return MaterialPageRoute(
-          builder: (context) => MyOrders(),
-        );
+        return MaterialPageRoute(builder: (context) => MyOrders());
 
       case deliveriesRoute:
         {
@@ -85,6 +83,12 @@ class RoutesManager {
         {
           return MaterialPageRoute(
             builder: (context) => AllTrackingOrdersScreen(),
+          );
+        }
+      case changePasswordRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => const ChangePasswordPage(),
           );
         }
     }

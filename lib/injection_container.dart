@@ -1,5 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hatley/data/datasources/profile_datasource.dart';
+import 'package:hatley/data/repo_impl/profile_repo_impl.dart';
+import 'package:hatley/domain/repo/profile_repo.dart';
+import 'package:hatley/domain/usecases/get_profile_info_usecase.dart';
+import 'package:hatley/presentation/cubit/profile_cubit/profile_cubit.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_cubit.dart';
 import 'package:hatley/core/network.dart';
 import 'package:hatley/data/datasources/offer_datasource.dart';
@@ -92,6 +97,9 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton<OfferDataSource>(
     () => OfferDataSourceImpl(dio: sl()),
   );
+  sl.registerLazySingleton<ProfileDatasource>(
+    () => ProfileDataSourceImpl(dio: sl()),
+  );
 
   // ✅ Repositories
   sl.registerLazySingleton<UserRepo>(() => UserRepoImpl(sl(), sl(), sl()));
@@ -100,7 +108,7 @@ Future<void> setupGetIt() async {
     () => OrderRepoImpl(sl(), sl(), sl(), sl()),
   );
   sl.registerLazySingleton<OfferRepo>(() => OfferRepoImpl(sl()));
-
+  sl.registerLazySingleton<ProfileRepo>(() => ProfileRepoImpl(sl()));
 
   // ✅ UseCases
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
@@ -114,6 +122,7 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton(() => EditOrderUseCase(sl()));
   sl.registerLazySingleton(() => AcceptOfferUseCase(sl()));
   sl.registerLazySingleton(() => DeclineofferUsecase(sl()));
+  sl.registerLazySingleton(() => GetProfileInfoUsecase(sl()));
 
   // ✅ Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
@@ -123,14 +132,14 @@ Future<void> setupGetIt() async {
   sl.registerFactory(() => AddOrderCubit(sl()));
   sl.registerFactory(() => GetAllOrdersCubit(sl()));
   sl.registerFactory(() => MakeOrderCubit());
-
   sl.registerFactory(() => DeleteOrderCubit(sl()));
   sl.registerFactory(() => EditOrderCubit(sl()));
   sl.registerFactory(() => OfferCubit(sl(), sl()));
-  sl.registerFactory(()=>TrackingCubit(trakingApiManager: sl()));
+  sl.registerFactory(() => TrackingCubit(trakingApiManager: sl()));
   sl.registerLazySingleton<TrakingApiManager>(
-        () => TrakingApiManager(dio: sl()),
+    () => TrakingApiManager(dio: sl()),
   );
+  sl.registerFactory(() => ProfileCubit(getProfileInfoUseCase: sl()));
 
   await sl.allReady();
 }
