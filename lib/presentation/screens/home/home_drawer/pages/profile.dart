@@ -19,12 +19,28 @@ class Profile extends StatelessWidget {
       create: (_) => sl<ProfileCubit>()..getProfileInfo(),
       child: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
-          if (state is ProfileLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is ProfileError) {
-            return Center(child: Text(state.message));
-          } else if (state is ProfileLoaded) {
-            final profile = state.profile;
+          // عرض سبينر لو جاري تحميل بيانات البروفايل
+          if (state.isLoadingProfile) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          // عرض رسالة خطأ لو فيه مشكلة
+          if (state.errorMessage != null) {
+            return Scaffold(
+              body: Center(
+                child: Text(
+                  state.errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            );
+          }
+
+          // عرض محتوى البروفايل لو البيانات متاحة
+          if (state.profile != null) {
+            final profile = state.profile!;
             return Scaffold(
               backgroundColor: Colors.white,
               body: Padding(
@@ -32,14 +48,24 @@ class Profile extends StatelessWidget {
                 child: Center(
                   child: Column(
                     children: [
-                      ProfileImgAvatar(
-                        imageUrl:
-                            profile.photo != null && profile.photo!.isNotEmpty
-                                ? profile.photo!
-                                : 'assets/person.png',
-                        size: 120,
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ProfileImgAvatar(
+                            imageUrl:
+                                profile.photo?.isNotEmpty == true
+                                    ? profile.photo!
+                                    : 'assets/person.png',
+                            size: 120,
+                          ),
+                          // ✅ لو بيتم رفع الصورة دلوقتي اعرض سبينر صغير فوق الصورة
+                          if (state.isUploadingImage)
+                            const Positioned(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                        ],
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       ProfileInfoTile(label: 'Username', value: profile.name),
                       ProfileInfoTile(label: 'Email', value: profile.email),
                       ProfileInfoTile(label: 'Phone', value: profile.phone),
@@ -72,8 +98,11 @@ class Profile extends StatelessWidget {
               ),
             );
           }
-          // Always return a widget if none of the above conditions are met
-          return const SizedBox.shrink();
+
+          // لو مفيش بيانات ولا حالة تحميل ولا خطأ
+          return const Scaffold(
+            body: Center(child: Text("No profile data available")),
+          );
         },
       ),
     );

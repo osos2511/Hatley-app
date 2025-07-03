@@ -4,6 +4,7 @@ import 'package:hatley/data/datasources/profile_datasource.dart';
 import 'package:hatley/data/repo_impl/profile_repo_impl.dart';
 import 'package:hatley/domain/repo/profile_repo.dart';
 import 'package:hatley/domain/usecases/get_profile_info_usecase.dart';
+import 'package:hatley/domain/usecases/upload_profile_img_usecase.dart';
 import 'package:hatley/presentation/cubit/profile_cubit/profile_cubit.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_cubit.dart';
 import 'package:hatley/core/network.dart';
@@ -123,6 +124,7 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton(() => AcceptOfferUseCase(sl()));
   sl.registerLazySingleton(() => DeclineofferUsecase(sl()));
   sl.registerLazySingleton(() => GetProfileInfoUsecase(sl()));
+  sl.registerLazySingleton(() => UploadProfileImgUsecase(sl()));
 
   // ✅ Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
@@ -139,7 +141,12 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton<TrakingApiManager>(
     () => TrakingApiManager(dio: sl()),
   );
-  sl.registerFactory(() => ProfileCubit(getProfileInfoUseCase: sl()));
+  sl.registerFactory(
+    () => ProfileCubit(
+      getProfileInfoUseCase: sl(),
+      uploadProfileImgUsecase: sl(),
+    ),
+  );
 
   await sl.allReady();
 }

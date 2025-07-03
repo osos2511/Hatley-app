@@ -1,8 +1,5 @@
-// lib/presentation/cubit/tracking_cubit/tracking_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dartz/dartz.dart';
 import 'package:hatley/data/model/traking_response.dart';
-import 'package:collection/collection.dart'; // ✅ إضافة هذا الاستيراد المهم
 import 'tracking_state.dart';
 import '../../../core/api_manager/api_manager.dart';
 import '../../../core/error/failure.dart';
@@ -17,7 +14,7 @@ class TrackingCubit extends Cubit<TrackingState> {
     final result = await trakingApiManager.getAllTrackingData();
 
     result.fold(
-          (failure) {
+      (failure) {
         String errorMessage;
         if (failure is ServerFailure) {
           errorMessage = 'Server Error: ${failure.message}';
@@ -28,7 +25,7 @@ class TrackingCubit extends Cubit<TrackingState> {
         }
         emit(TrackingError(message: errorMessage));
       },
-          (allTrackingData) {
+      (allTrackingData) {
         if (allTrackingData.isNotEmpty) {
           emit(TrackingLoaded(trackingData: allTrackingData));
         } else {
@@ -37,7 +34,6 @@ class TrackingCubit extends Cubit<TrackingState> {
       },
     );
   }
-
 
   // دالة updateOrderStatus تبقى كما هي بدون تغيير
   void updateOrderStatus({
@@ -48,10 +44,12 @@ class TrackingCubit extends Cubit<TrackingState> {
   }) {
     if (state is TrackingLoaded) {
       final currentState = state as TrackingLoaded;
-      final List<TrakingResponse> currentOrders = List.from(currentState.trackingData);
+      final List<TrakingResponse> currentOrders = List.from(
+        currentState.trackingData,
+      );
 
       final int index = currentOrders.indexWhere(
-            (order) => order.orderId == orderId,
+        (order) => order.orderId == orderId,
       );
 
       if (index != -1) {
@@ -64,7 +62,9 @@ class TrackingCubit extends Cubit<TrackingState> {
         emit(TrackingLoaded(trackingData: currentOrders));
         print('Cubit: Order $orderId status updated to $newStatus');
       } else {
-        print('Cubit: Order $orderId not found in current tracking list. Cannot update.');
+        print(
+          'Cubit: Order $orderId not found in current tracking list. Cannot update.',
+        );
       }
     } else {
       print(

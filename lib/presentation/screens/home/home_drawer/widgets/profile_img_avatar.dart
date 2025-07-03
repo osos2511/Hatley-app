@@ -1,4 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatley/presentation/cubit/profile_cubit/profile_cubit.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileImgAvatar extends StatelessWidget {
   final String imageUrl;
@@ -6,7 +10,6 @@ class ProfileImgAvatar extends StatelessWidget {
 
   const ProfileImgAvatar({super.key, required this.imageUrl, this.size = 120});
 
-  // دالة تصحيح الرابط لو كانت ناقصة شرطة
   String get fixedImageUrl {
     if (imageUrl.startsWith('https:/') && !imageUrl.startsWith('https://')) {
       return imageUrl.replaceFirst('https:/', 'https://');
@@ -15,6 +18,47 @@ class ProfileImgAvatar extends StatelessWidget {
       return imageUrl.replaceFirst('http:/', 'http://');
     }
     return imageUrl;
+  }
+
+  Future<void> _pickImage(BuildContext context, ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source, imageQuality: 75);
+
+    if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+      // استدعاء الكوبيوت لرفع الصورة
+      context.read<ProfileCubit>().uploadProfileImage(imageFile);
+    }
+  }
+
+  void _showImagePickerOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Take Photo'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage(context, ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage(context, ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -47,11 +91,7 @@ class ProfileImgAvatar extends StatelessWidget {
           bottom: 0,
           right: 4,
           child: GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Change Profile Picture')),
-              );
-            },
+            onTap: () => _showImagePickerOptions(context),
             child: CircleAvatar(
               radius: size * 0.17, // حجم زر الكاميرا نسبة للـ avatar
               backgroundColor: Colors.blue,
