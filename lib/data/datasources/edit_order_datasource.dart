@@ -49,11 +49,11 @@ class EditOrderDatasourceImpl implements EditOrderRemoteDataSource {
       'price': price,
     };
 
-    print("📤 Sending PUT request to /Order/$orderId with:");
+    print("📤 Sending PUT request to Order/$orderId with:");
     requestData.forEach((key, value) => print('$key: $value'));
 
     try {
-      final response = await dio.put('/Order/$orderId', data: requestData);
+      final response = await dio.put('Order/$orderId', data: requestData);
 
       print("📥 Status Code: ${response.statusCode}");
       print("✅ Response: ${response.data ?? 'No response body'}");

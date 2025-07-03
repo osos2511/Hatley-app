@@ -125,6 +125,7 @@ class _HomeState extends State<Home> {
 
               return AppBar(
                 title: Text(
+
                   appBarTitle,
                   style: GoogleFonts.inter(
                     color: Colors.white,
