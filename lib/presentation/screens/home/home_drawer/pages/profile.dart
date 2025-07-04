@@ -19,6 +19,8 @@ class Profile extends StatelessWidget {
       create: (_) => sl<ProfileCubit>()..getProfileInfo(),
       child: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
+          final profileCubit = context.read<ProfileCubit>();
+
           // عرض سبينر لو جاري تحميل بيانات البروفايل
           if (state.isLoadingProfile) {
             return const Scaffold(
@@ -69,12 +71,24 @@ class Profile extends StatelessWidget {
                       ProfileInfoTile(label: 'Username', value: profile.name),
                       ProfileInfoTile(label: 'Email', value: profile.email),
                       ProfileInfoTile(label: 'Phone', value: profile.phone),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 100),
                       CustomButton(
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (context) => EditProfileDialog(),
+                            builder:
+                                (dialogContext) => EditProfileDialog(
+                                  currentName: profile.name,
+                                  currentEmail: profile.email,
+                                  currentPhone: profile.phone,
+                                  onSave: (name, email, phone) {
+                                    profileCubit.updateProfile(
+                                      name,
+                                      email,
+                                      phone,
+                                    );
+                                  },
+                                ),
                           );
                         },
                         text: 'Update Profile',

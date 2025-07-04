@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
       _hasCheckedToken = true;
 
       final int? initialPage =
-      ModalRoute.of(context)?.settings.arguments as int?;
+          ModalRoute.of(context)?.settings.arguments as int?;
       if (initialPage != null) {
         context.read<NavigationCubit>().changePage(initialPage);
       }
@@ -80,11 +80,13 @@ class _HomeState extends State<Home> {
             if (state is TrackingError) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted && ScaffoldMessenger.maybeOf(context) != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
                 } else {
-                  print("ScaffoldMessenger not available or widget not mounted for tracking errors SnackBar.");
+                  print(
+                    "ScaffoldMessenger not available or widget not mounted for tracking errors SnackBar.",
+                  );
                 }
               });
             }
@@ -125,7 +127,6 @@ class _HomeState extends State<Home> {
 
               return AppBar(
                 title: Text(
-
                   appBarTitle,
                   style: GoogleFonts.inter(
                     color: Colors.white,

@@ -5,6 +5,8 @@ import 'package:hatley/data/model/profile_response.dart';
 abstract class ProfileDatasource {
   Future<ProfileResponse> getProfileInfo();
   Future<String> uploadProfileImage(File imagePath);
+  Future<void> changePassword(String oldPassword, String newPassword);
+  Future<void> updateProfileInfo(String name, String email, String phone);
 }
 
 class ProfileDataSourceImpl implements ProfileDatasource {
@@ -38,6 +40,40 @@ class ProfileDataSourceImpl implements ProfileDatasource {
         return response.data.toString();
       } else {
         throw Exception('Upload profile image failed: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Network error: ${e.message}');
+    }
+  }
+
+  @override
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+    try {
+      final response = await dio.post(
+        'User/changepassword',
+        data: {'old_password': oldPassword, 'new_password': newPassword},
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Change password failed: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Network error: ${e.message}');
+    }
+  }
+
+  @override
+  Future<void> updateProfileInfo(
+    String name,
+    String email,
+    String phone,
+  ) async {
+    try {
+      final response = await dio.put(
+        'User',
+        data: {'name': name, 'email': email, 'phone': phone},
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Update profile info failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
       throw Exception('Network error: ${e.message}');

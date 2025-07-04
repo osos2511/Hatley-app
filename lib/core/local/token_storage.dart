@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive/hive.dart';
+
 abstract class TokenStorage {
   Future<void> saveToken(String token, String expiration);
   Future<String?> getToken();
@@ -9,7 +10,6 @@ abstract class TokenStorage {
   Future<void> saveEmail(String email);
   Future<String?> getEmail();
   Future<void> clearDeliveryOffersBox();
-
 }
 
 class TokenStorageImpl implements TokenStorage {
@@ -20,7 +20,6 @@ class TokenStorageImpl implements TokenStorage {
   static const _tokenKey = 'auth_token';
   static const _expirationKey = 'token_expiration';
   static const _emailKey = 'user_email';
-
 
   @override
   Future<void> saveToken(String token, String expiration) async {
@@ -68,23 +67,24 @@ class TokenStorageImpl implements TokenStorage {
     print("📆 Token expires at: $expiration");
 
     final isExpired = now.isAfter(expiration);
-    print(isExpired
-        ? "⛔ Token is expired."
-        : "✅ Token is still valid.");
+    print(isExpired ? "⛔ Token is expired." : "✅ Token is still valid.");
 
     return isExpired;
   }
+
   Future<String?> getExpiration() async {
     final expiration = prefs.getString(_expirationKey);
     print("📦 Retrieved expiration from storage: $expiration");
     return expiration;
   }
-@override
+
+  @override
   Future<void> saveEmail(String email) async {
     print("📧 Saving email: $email");
     await prefs.setString(_emailKey, email);
   }
-@override
+
+  @override
   Future<String?> getEmail() async {
     final email = prefs.getString(_emailKey);
     print("📨 Retrieved email: $email");
@@ -102,5 +102,4 @@ class TokenStorageImpl implements TokenStorage {
       print("❌ DEBUG: Error clearing 'delivery_offers' box: $e");
     }
   }
-
 }

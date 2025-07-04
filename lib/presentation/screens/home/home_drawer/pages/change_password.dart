@@ -1,50 +1,133 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hatley/injection_container.dart';
+import 'package:hatley/presentation/cubit/change_pass_cubit/change_pass_cubit.dart';
+import 'package:hatley/presentation/cubit/change_pass_cubit/change_pass_state.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
+import 'package:hatley/presentation/screens/home/home_drawer/widgets/change_pass_field.dart';
 
-class ChangePasswordPage extends StatelessWidget {
+class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final oldPasswordController = TextEditingController();
-    final newPasswordController = TextEditingController();
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Change Password'),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: oldPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Old Password',
-                border: OutlineInputBorder(),
+class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  late TextEditingController oldPasswordController;
+  late TextEditingController newPasswordController;
+
+  @override
+  void initState() {
+    super.initState();
+    oldPasswordController = TextEditingController();
+    newPasswordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    oldPasswordController.dispose();
+    newPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<ChangePassCubit>(),
+      child: BlocConsumer<ChangePassCubit, ChangePassState>(
+        listener: (context, state) {
+          if (state is ChangePassSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Password changed successfully!')),
+            );
+            Navigator.of(context).pop();
+          } else if (state is ChangePassFailure) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+          }
+        },
+        builder: (context, state) {
+          final isLoading = state is ChangePassLoading;
+
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: newPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'New Password',
-                border: OutlineInputBorder(),
+              title: Text(
+                'Change Password',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              obscureText: true,
+              centerTitle: true,
+              backgroundColor: Colors.blue,
+              iconTheme: const IconThemeData(color: Colors.white),
             ),
-            const SizedBox(height: 24),
-            CustomButton(
-              onPressed: () {},
-              text: 'Change Password',
-              foColor: Colors.white,
-              bgColor: Colors.blue,
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  PasswordTextField(
+                    controller: oldPasswordController,
+                    hint: 'Old Password',
+                    validator: (value) {
+                      if (value == null || value.length < 6) {
+                        return "Password must be at least 6 characters";
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  PasswordTextField(
+                    controller: newPasswordController,
+                    hint: 'New Password',
+                    validator: (value) {
+                      if (value == null || value.length < 6) {
+                        return "Password must be at least 6 characters";
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 40),
+                  CustomButton(
+                    onPressed:
+                        isLoading
+                            ? () {}
+                            : () {
+                              final oldPass = oldPasswordController.text.trim();
+                              final newPass = newPasswordController.text.trim();
+                              if (oldPass.isEmpty || newPass.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Please fill all fields'),
+                                  ),
+                                );
+                                return;
+                              }
+                              FocusScope.of(context).unfocus();
+                              context.read<ChangePassCubit>().changePassword(
+                                oldPass,
+                                newPass,
+                              );
+                            },
+                    text: isLoading ? 'Loading...' : 'Confirm Password',
+                    foColor: Colors.white,
+                    bgColor: Colors.blue,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

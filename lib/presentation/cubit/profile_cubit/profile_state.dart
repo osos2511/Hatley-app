@@ -6,6 +6,7 @@ class ProfileState {
   final ProfileEntity? profile; // بيانات البروفايل نفسها
   final String? uploadedImageUrl; // رابط الصورة المرفوعة (لو فيه)
   final String? errorMessage; // رسالة الخطأ (لو فيه خطأ)
+  final bool isUpdatingProfile;
 
   ProfileState({
     this.isLoadingProfile = false,
@@ -13,6 +14,7 @@ class ProfileState {
     this.profile,
     this.uploadedImageUrl,
     this.errorMessage,
+    this.isUpdatingProfile = false,
   });
 
   ProfileState copyWith({
@@ -21,6 +23,7 @@ class ProfileState {
     ProfileEntity? profile,
     String? uploadedImageUrl,
     String? errorMessage,
+    bool? isUpdatingProfile,
   }) {
     return ProfileState(
       isLoadingProfile: isLoadingProfile ?? this.isLoadingProfile,
@@ -28,6 +31,7 @@ class ProfileState {
       profile: profile ?? this.profile,
       uploadedImageUrl: uploadedImageUrl ?? this.uploadedImageUrl,
       errorMessage: errorMessage,
+      isUpdatingProfile: isUpdatingProfile ?? this.isUpdatingProfile,
     );
   }
 }

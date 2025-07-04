@@ -31,4 +31,31 @@ class ProfileRepoImpl implements ProfileRepo {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> changePassword(
+    String oldPassword,
+    String newPassword,
+  ) async {
+    try {
+      await profileDatasource.changePassword(oldPassword, newPassword);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateProfileInfo(
+    String name,
+    String email,
+    String phone,
+  ) async {
+    try {
+      await profileDatasource.updateProfileInfo(name, email, phone);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

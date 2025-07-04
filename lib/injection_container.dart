@@ -3,8 +3,11 @@ import 'package:get_it/get_it.dart';
 import 'package:hatley/data/datasources/profile_datasource.dart';
 import 'package:hatley/data/repo_impl/profile_repo_impl.dart';
 import 'package:hatley/domain/repo/profile_repo.dart';
+import 'package:hatley/domain/usecases/change_passwoed_usecase.dart';
 import 'package:hatley/domain/usecases/get_profile_info_usecase.dart';
+import 'package:hatley/domain/usecases/updateProfile_usecase.dart';
 import 'package:hatley/domain/usecases/upload_profile_img_usecase.dart';
+import 'package:hatley/presentation/cubit/change_pass_cubit/change_pass_cubit.dart';
 import 'package:hatley/presentation/cubit/profile_cubit/profile_cubit.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_cubit.dart';
 import 'package:hatley/core/network.dart';
@@ -125,6 +128,8 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton(() => DeclineofferUsecase(sl()));
   sl.registerLazySingleton(() => GetProfileInfoUsecase(sl()));
   sl.registerLazySingleton(() => UploadProfileImgUsecase(sl()));
+  sl.registerLazySingleton(() => ChangePasswordUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateprofileUsecase(sl()));
 
   // ✅ Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
@@ -145,8 +150,11 @@ Future<void> setupGetIt() async {
     () => ProfileCubit(
       getProfileInfoUseCase: sl(),
       uploadProfileImgUsecase: sl(),
+      updateProfileUsecase: sl(),
     ),
   );
+  //sl.registerFactory(() => UpdateProfileCubit(sl()));
+  sl.registerFactory(() => ChangePassCubit(sl()));
 
   await sl.allReady();
 }
