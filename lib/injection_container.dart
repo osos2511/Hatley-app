@@ -2,19 +2,29 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hatley/data/datasources/deliveries_datasource.dart';
 import 'package:hatley/data/datasources/profile_datasource.dart';
+import 'package:hatley/data/datasources/rating_datasource.dart';
+import 'package:hatley/data/datasources/review_datasource.dart';
 import 'package:hatley/data/repo_impl/deliveries_repo_impl.dart';
 import 'package:hatley/data/repo_impl/profile_repo_impl.dart';
+import 'package:hatley/data/repo_impl/rating_repo_impl.dart';
+import 'package:hatley/data/repo_impl/review_repo_impl.dart';
 import 'package:hatley/domain/repo/deliveries_repo.dart';
 import 'package:hatley/domain/repo/profile_repo.dart';
+import 'package:hatley/domain/repo/rating_repo.dart';
+import 'package:hatley/domain/repo/review_repo.dart';
 import 'package:hatley/domain/usecases/change_passwoed_usecase.dart';
 import 'package:hatley/domain/usecases/getAll_statistics_usecase.dart';
 import 'package:hatley/domain/usecases/get_deliveries_usecase.dart';
 import 'package:hatley/domain/usecases/get_profile_info_usecase.dart';
+import 'package:hatley/domain/usecases/rating_usecase.dart';
+import 'package:hatley/domain/usecases/review_usecase.dart';
 import 'package:hatley/domain/usecases/updateProfile_usecase.dart';
 import 'package:hatley/domain/usecases/upload_profile_img_usecase.dart';
 import 'package:hatley/presentation/cubit/change_pass_cubit/change_pass_cubit.dart';
 import 'package:hatley/presentation/cubit/deliveries_cubit/deliveries_cubit.dart';
 import 'package:hatley/presentation/cubit/profile_cubit/profile_cubit.dart';
+import 'package:hatley/presentation/cubit/rating_cubit/rating_cubit.dart';
+import 'package:hatley/presentation/cubit/review_cubit/review_cubit.dart';
 import 'package:hatley/presentation/cubit/statistics_cubit/statistics_cubit.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_cubit.dart';
 import 'package:hatley/core/network.dart';
@@ -114,6 +124,8 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton<DeliveriesDataSource>(
     () => DeliveriesDataSourceImpl(sl()),
   );
+  sl.registerLazySingleton<RatingDataSource>(() => RatingDataSourceImpl(sl()));
+  sl.registerLazySingleton<ReviewDatasource>(() => ReviewDataSourceImpl(sl()));
 
   // ✅ Repositories
   sl.registerLazySingleton<UserRepo>(() => UserRepoImpl(sl(), sl(), sl()));
@@ -124,6 +136,8 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton<OfferRepo>(() => OfferRepoImpl(sl()));
   sl.registerLazySingleton<ProfileRepo>(() => ProfileRepoImpl(sl()));
   sl.registerLazySingleton<DeliveriesRepo>(() => DeliveriesRepoImpl(sl()));
+  sl.registerLazySingleton<RatingRepo>(() => RatingRepoImpl(sl()));
+  sl.registerLazySingleton<ReviewRepo>(() => ReviewRepoImpl(sl()));
 
   // ✅ UseCases
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
@@ -143,6 +157,8 @@ Future<void> setupGetIt() async {
   sl.registerLazySingleton(() => UpdateprofileUsecase(sl()));
   sl.registerLazySingleton(() => GetDeliveriesUsecase(sl()));
   sl.registerLazySingleton(() => GetallStatisticsUsecase(sl()));
+  sl.registerLazySingleton(() => RatingUsecase(sl()));
+  sl.registerLazySingleton(() => ReviewUsecase(sl()));
 
   // ✅ Cubits
   sl.registerFactory(() => RegisterCubit(sl()));
@@ -169,6 +185,8 @@ Future<void> setupGetIt() async {
   sl.registerFactory(() => ChangePassCubit(sl()));
   sl.registerFactory(() => DeliveriesCubit(sl()));
   sl.registerFactory(() => StatisticsCubit(sl()));
+  sl.registerFactory(() => RatingCubit(sl()));
+  sl.registerFactory(() => ReviewCubit(sl()));
 
   await sl.allReady();
 }

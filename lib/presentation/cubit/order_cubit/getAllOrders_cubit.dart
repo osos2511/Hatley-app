@@ -14,6 +14,7 @@ class GetAllOrdersCubit extends Cubit<OrderState> {
     emit(OrderLoading());
     final result = await getAllOrdersUseCase.call();
     result.fold((failure) => emit(OrderFailure(failure.message)), (success) {
+      success.sort((a, b) => b.orderId.compareTo(a.orderId));
       orders = success;
       emit(GetAllOrdersSuccess(orders));
     });

@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:signalr_netcore/signalr_client.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
 import 'package:hatley/data/model/traking_response.dart';
 import 'package:hatley/core/local/token_storage.dart';
 import 'package:hatley/injection_container.dart';
+import 'package:signalr_netcore/signalr_client.dart';
 import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
 import '../widgets/track_order_widget.dart';
+import '../widgets/show_rating_dialog.dart';
 
 class AllTrackingOrdersScreen extends StatefulWidget {
   const AllTrackingOrdersScreen({super.key});
 
   @override
-  State<AllTrackingOrdersScreen> createState() => _AllTrackingOrdersScreenState();
+  State<AllTrackingOrdersScreen> createState() =>
+      _AllTrackingOrdersScreenState();
 }
 
 class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
-  HubConnection? hubConnection; // ✅ تعريف HubConnection هنا
-  bool _isSignalRInitialized = false; // ✅ تعريف flag
+  HubConnection? hubConnection;
+  bool _isSignalRInitialized = false;
 
   @override
   void initState() {
     super.initState();
     context.read<TrackingCubit>().getTrackingData();
-    _initializeSignalR(); // ✅ استدعاء تهيئة SignalR هنا
+    _initializeSignalR();
   }
 
   @override
   void dispose() {
-    hubConnection?.stop(); // ✅ إيقاف اتصال SignalR عند التخلص من الشاشة
+    hubConnection?.stop();
     super.dispose();
   }
 
@@ -38,42 +40,58 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
     final hubUrl = "https://hatley.runasp.net/NotifyChangeStatusForUser";
     final TokenStorage tokenStorage = sl<TokenStorage>();
     final userToken = await tokenStorage.getToken();
-    final userEmail = await tokenStorage.getEmail(); // يجب التأكد من وجود userEmail
+    final userEmail = await tokenStorage.getEmail();
 
     if (userToken == null) {
       print("Error: User token is null. Cannot initialize SignalR.");
       return;
     }
 
-    hubConnection = HubConnectionBuilder().withUrl(
-      hubUrl,
-      options: HttpConnectionOptions(accessTokenFactory: () => Future.value(userToken)),
-    ).build();
+    hubConnection =
+        HubConnectionBuilder()
+            .withUrl(
+              hubUrl,
+              options: HttpConnectionOptions(
+                accessTokenFactory: () => Future.value(userToken),
+              ),
+            )
+            .build();
 
     hubConnection?.on('NotifyChangeStatusForUser', (arguments) {
       if (arguments != null && arguments.length >= 3) {
         try {
           final int status = arguments[0] as int;
           final int receivedOrderId = arguments[1] as int;
-          final Map<String, dynamic> checkData = arguments[2] as Map<String, dynamic>;
+          final Map<String, dynamic> checkData =
+              arguments[2] as Map<String, dynamic>;
           final String receivedUserEmail = checkData['email'] as String;
           final String userType = checkData['type'] as String;
 
-          print('SignalR Update Received (AllOrdersScreen): OrderID=$receivedOrderId, Status=$status, UserType=$userType, Email=$receivedUserEmail');
+          print(
+            'SignalR Update Received (AllOrdersScreen): OrderID=$receivedOrderId, Status=$status, UserType=$userType, Email=$receivedUserEmail',
+          );
 
-          // ✅ هنا تحديث الـ Cubit المشترك
           if (userType == "User" && receivedUserEmail == userEmail) {
             context.read<TrackingCubit>().updateOrderStatus(
-              orderId: receivedOrderId, newStatus: status, userEmail: receivedUserEmail, userType: userType,
+              orderId: receivedOrderId,
+              newStatus: status,
+              userEmail: receivedUserEmail,
+              userType: userType,
             );
           } else {
-            print('SignalR (AllOrdersScreen): Update ignored. UserType/Email mismatch.');
+            print(
+              'SignalR (AllOrdersScreen): Update ignored. UserType/Email mismatch.',
+            );
           }
         } catch (e) {
-          print("Error parsing SignalR arguments (AllOrdersScreen): $e, arguments: $arguments");
+          print(
+            "Error parsing SignalR arguments (AllOrdersScreen): $e, arguments: $arguments",
+          );
         }
       } else {
-        print("SignalR received insufficient arguments (AllOrdersScreen): $arguments");
+        print(
+          "SignalR received insufficient arguments (AllOrdersScreen): $arguments",
+        );
       }
     });
 
@@ -82,7 +100,9 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
       print("SignalR Connected to $hubUrl (from AllOrdersScreen)");
       _isSignalRInitialized = true;
     } catch (e) {
-      print("Error connecting to SignalR Hub at $hubUrl (from AllOrdersScreen): $e");
+      print(
+        "Error connecting to SignalR Hub at $hubUrl (from AllOrdersScreen): $e",
+      );
     }
   }
 
@@ -92,9 +112,9 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
       body: BlocConsumer<TrackingCubit, TrackingState>(
         listener: (context, state) {
           if (state is TrackingError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -111,12 +131,26 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
                 final TrakingResponse order = state.trackingData[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
-                  child: TrackOrderWidget(orderId: order.orderId),
+                  child: TrackOrderWidget(
+                    orderId: order.orderId,
+                    onRatePressed: () {
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) =>
+                                RatingReviewDialog(orderId: order.orderId),
+                      );
+                    },
+                  ),
                 );
               },
             );
           } else if (state is TrackingError) {
-            return Center(child: Text("Failed to load orders: ${state.message}. Please try again."));
+            return Center(
+              child: Text(
+                "Failed to load orders: ${state.message}. Please try again.",
+              ),
+            );
           }
           return const Center(child: Text("Welcome! Loading your orders..."));
         },
