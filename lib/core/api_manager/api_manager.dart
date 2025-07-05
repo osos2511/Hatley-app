@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dartz/dartz.dart'; // ✅ استيراد Dartz
 import 'package:hatley/data/model/traking_response.dart';
-
 import '../error/failure.dart'; // ✅ استيراد فئات الفشل
 
 class TrakingApiManager {

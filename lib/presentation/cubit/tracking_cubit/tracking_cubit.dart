@@ -26,16 +26,12 @@ class TrackingCubit extends Cubit<TrackingState> {
         emit(TrackingError(message: errorMessage));
       },
       (allTrackingData) {
-        if (allTrackingData.isNotEmpty) {
+          allTrackingData.sort((a, b) => b.orderId.compareTo(a.orderId));
           emit(TrackingLoaded(trackingData: allTrackingData));
-        } else {
-          emit(TrackingError(message: 'No tracking orders found.'));
-        }
       },
     );
   }
 
-  // دالة updateOrderStatus تبقى كما هي بدون تغيير
   void updateOrderStatus({
     required int orderId,
     required int newStatus,
