@@ -54,9 +54,7 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
   }
 
   bool get _isInputValid =>
-      _ratingValue >= 1 &&
-      _reviewController.text.trim().isNotEmpty &&
-      !_isSubmitting;
+      _ratingValue >= 1 && _reviewController.text.trim().isNotEmpty;
 
   Future<void> _submit() async {
     final ratingCubit = context.read<RatingCubit>();
@@ -179,9 +177,7 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
           actions: [
             TextButton(
               onPressed: () {
-                if (!_isSubmitting) {
-                  Navigator.of(context).pop();
-                }
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
             ),

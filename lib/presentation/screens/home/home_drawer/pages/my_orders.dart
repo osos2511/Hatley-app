@@ -109,9 +109,9 @@ class _MyOrdersState extends State<MyOrders> {
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).pushReplacementNamed(
-                              RoutesManager.makeOrdersRoute,
-                            );
+                            Navigator.of(
+                              context,
+                            ).pushNamed(RoutesManager.makeOrdersRoute);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
@@ -237,8 +237,6 @@ class _MyOrdersState extends State<MyOrders> {
                                       context,
                                       'Are you sure you want to cancel the order?',
                                       onOkPressed: () {
-                                        Navigator.of(context).pop();
-                                        // تأكدي إن context هنا هو context من الـ Widget الأصلي
                                         WidgetsBinding.instance
                                             .addPostFrameCallback((_) {
                                               context

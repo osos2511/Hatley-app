@@ -31,7 +31,6 @@ void showEditOrderDialog(
         child: BlocConsumer<EditOrderCubit, OrderState>(
           listener: (context, state) {
             if (state is OrderSuccess) {
-              Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('تم تعديل الطلب بنجاح')),
               );
@@ -85,6 +84,7 @@ void showEditOrderDialog(
                           backgroundColor: Colors.red,
                         ),
                       );
+
                       return;
                     }
 
@@ -120,6 +120,7 @@ void showEditOrderDialog(
                           DateTime.now(),
                       price: price,
                     );
+                    Navigator.of(context).pop();
                   },
                 ),
               ),
