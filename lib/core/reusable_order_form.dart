@@ -39,7 +39,6 @@ class ReusableOrderForm extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Order Details
             CustomOrderTextField(
               controller: makeOrderCubit.detailsController,
               label: 'Order Details',
@@ -48,8 +47,6 @@ class ReusableOrderForm extends StatelessWidget {
               keyboardType: TextInputType.text,
             ),
             const SizedBox(height: 12),
-
-            // Order Price
             CustomOrderTextField(
               controller: makeOrderCubit.priceController,
               label: 'Order Price',
@@ -57,8 +54,6 @@ class ReusableOrderForm extends StatelessWidget {
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 12),
-
-            // Date & Time
             DateTimePickerRow(
               dateText:
                   state.selectedDate != null
@@ -75,8 +70,6 @@ class ReusableOrderForm extends StatelessWidget {
             const SizedBox(height: 20),
             const CustomContainer(title: "From: Where you want to order From"),
             const SizedBox(height: 12),
-
-            // Governorate From
             _buildGovernorateDropdown(
               context,
               selected: makeOrderCubit.state.selectedGovernorateFrom,
@@ -86,29 +79,20 @@ class ReusableOrderForm extends StatelessWidget {
                 context.read<ZoneCubit>().fetchZones(govName: value);
               },
             ),
-
             const SizedBox(height: 12),
-
-            // City From
             _buildZoneDropdown(
               context,
               selectedCity: makeOrderCubit.state.selectedCityFrom,
               onChanged: makeOrderCubit.selectCityFrom,
             ),
-
             const SizedBox(height: 12),
-
-            // State From
             CustomDropdown(
               value: makeOrderCubit.state.selectedStateFrom,
               hint: 'Select a State',
               items: _streetNames,
               onChanged: makeOrderCubit.selectStateFrom,
             ),
-
             const SizedBox(height: 12),
-
-            // Address From
             CustomOrderTextField(
               controller: makeOrderCubit.fromAddressController,
               label: 'Details Address',
@@ -116,14 +100,11 @@ class ReusableOrderForm extends StatelessWidget {
               maxLines: 2,
               keyboardType: TextInputType.text,
             ),
-
             const SizedBox(height: 20),
             const Icon(Icons.arrow_downward, size: 40),
             const SizedBox(height: 12),
             const CustomContainer(title: "To: Where you want to order To"),
             const SizedBox(height: 12),
-
-            // Governorate To
             _buildGovernorateDropdown(
               context,
               selected: makeOrderCubit.state.selectedGovernorateTo,
@@ -133,29 +114,20 @@ class ReusableOrderForm extends StatelessWidget {
                 context.read<ZoneCubit>().fetchZones(govName: value);
               },
             ),
-
             const SizedBox(height: 12),
-
-            // City To
             _buildZoneDropdown(
               context,
               selectedCity: makeOrderCubit.state.selectedCityTo,
               onChanged: makeOrderCubit.selectCityTo,
             ),
-
             const SizedBox(height: 12),
-
-            // State To
             CustomDropdown(
               value: makeOrderCubit.state.selectedStateTo,
               hint: 'Select a State',
               items: _streetNames,
               onChanged: makeOrderCubit.selectStateTo,
             ),
-
             const SizedBox(height: 12),
-
-            // Address To
             CustomOrderTextField(
               controller: makeOrderCubit.toAddressController,
               label: 'Details Address',
@@ -163,10 +135,7 @@ class ReusableOrderForm extends StatelessWidget {
               maxLines: 2,
               keyboardType: TextInputType.text,
             ),
-
             const SizedBox(height: 20),
-
-            // Submit Buttons
             isEdit
                 ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -228,7 +197,6 @@ class ReusableOrderForm extends StatelessWidget {
                           return;
                         }
 
-                        // تنفيذ التعديل بعد التحقق
                         editCubit.editOrder(
                           orderId: orderId!,
                           description: description,

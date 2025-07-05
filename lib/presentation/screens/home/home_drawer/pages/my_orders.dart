@@ -44,7 +44,6 @@ class _MyOrdersState extends State<MyOrders> {
             BlocListener<DeleteOrderCubit, OrderState>(
               listener: (context, state) {
                 if (state is OrderSuccess) {
-                  // بعد حذف الطلب، قم بإعادة جلب جميع الطلبات لتحديث الـ UI
                   context.read<GetAllOrdersCubit>().getAllOrders();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -239,9 +238,13 @@ class _MyOrdersState extends State<MyOrders> {
                                       'Are you sure you want to cancel the order?',
                                       onOkPressed: () {
                                         Navigator.of(context).pop();
-                                        context
-                                            .read<DeleteOrderCubit>()
-                                            .deleteOrder(order.orderId);
+                                        // تأكدي إن context هنا هو context من الـ Widget الأصلي
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                              context
+                                                  .read<DeleteOrderCubit>()
+                                                  .deleteOrder(order.orderId);
+                                            });
                                       },
                                     );
                                   },

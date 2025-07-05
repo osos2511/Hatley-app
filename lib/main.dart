@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => NavigationCubit()),
           BlocProvider(create: (context) => sl<MakeOrderCubit>()),
           BlocProvider(create: (context) => sl<AuthCubit>()),
-          BlocProvider(create: (context) => sl<TrackingCubit>(),)
+          BlocProvider(create: (context) => sl<TrackingCubit>()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

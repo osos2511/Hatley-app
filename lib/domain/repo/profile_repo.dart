@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/domain/entities/profile_entity.dart';
+import 'package:hatley/domain/entities/statistics_entity.dart';
 
 abstract class ProfileRepo {
   Future<Either<Failure, ProfileEntity>> getProfileInfo();
@@ -16,4 +17,5 @@ abstract class ProfileRepo {
     String email,
     String phone,
   );
+  Future<Either<Failure, StatisticsEntity>> getAllStatistics();
 }

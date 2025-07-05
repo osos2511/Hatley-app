@@ -155,7 +155,7 @@ class _HomeState extends State<Home> {
               case 5:
                 return const MyOrders();
               case 6:
-                return const Deliveries();
+                return Deliveries();
               case 7:
                 return const Profile();
               default:

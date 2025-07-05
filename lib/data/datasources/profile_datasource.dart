@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:hatley/data/model/profile_response.dart';
+import 'package:hatley/data/model/statistics_response.dart';
 
 abstract class ProfileDatasource {
   Future<ProfileResponse> getProfileInfo();
   Future<String> uploadProfileImage(File imagePath);
   Future<void> changePassword(String oldPassword, String newPassword);
   Future<void> updateProfileInfo(String name, String email, String phone);
+  Future<StatisticsResponse> getAllStatistics();
 }
 
 class ProfileDataSourceImpl implements ProfileDatasource {
@@ -77,6 +79,20 @@ class ProfileDataSourceImpl implements ProfileDatasource {
       }
     } on DioException catch (e) {
       throw Exception('Network error: ${e.message}');
+    }
+  }
+
+  @override
+  Future<StatisticsResponse> getAllStatistics() async {
+    try {
+      final response = await dio.get('Order/Statistics');
+      if (response.statusCode == 200) {
+        return StatisticsResponse.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load statistics');
+      }
+    } catch (e) {
+      throw Exception('Failed to load statistics: $e');
     }
   }
 }

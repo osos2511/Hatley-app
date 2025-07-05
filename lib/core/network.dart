@@ -10,8 +10,8 @@ class DioFactory {
 
     final BaseOptions options = BaseOptions(
       baseUrl: "https://hatley.runasp.net/api/",
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 20),
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",

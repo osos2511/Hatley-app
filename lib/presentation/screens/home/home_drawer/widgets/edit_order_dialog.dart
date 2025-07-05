@@ -54,6 +54,7 @@ void showEditOrderDialog(
                   orderId: order.orderId,
                   submitButtonText: 'Save Changes',
                   onSubmit: () {
+                    FocusScope.of(context).unfocus();
                     final editCubit = context.read<EditOrderCubit>();
                     final makeOrderCubit = context.read<MakeOrderCubit>();
 

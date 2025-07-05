@@ -1,10 +1,11 @@
 import 'dart:io';
-
 import 'package:dartz/dartz.dart';
 import 'package:hatley/core/error/failure.dart';
 import 'package:hatley/data/datasources/profile_datasource.dart';
 import 'package:hatley/data/mappers/profile_mapper.dart';
+import 'package:hatley/data/mappers/statistics_mapper.dart';
 import 'package:hatley/domain/entities/profile_entity.dart';
+import 'package:hatley/domain/entities/statistics_entity.dart';
 import 'package:hatley/domain/repo/profile_repo.dart';
 
 class ProfileRepoImpl implements ProfileRepo {
@@ -54,6 +55,17 @@ class ProfileRepoImpl implements ProfileRepo {
     try {
       await profileDatasource.updateProfileInfo(name, email, phone);
       return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, StatisticsEntity>> getAllStatistics() async {
+    try {
+      final statisticsResponse = await profileDatasource.getAllStatistics();
+      final statisticsEntity = statisticsResponse.toEntity();
+      return Right(statisticsEntity);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
