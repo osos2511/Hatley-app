@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 abstract class EditOrderRemoteDataSource {
   Future<void> editOrder({
@@ -45,7 +46,7 @@ class EditOrderDatasourceImpl implements EditOrderRemoteDataSource {
       'order_zone_to': orderZoneTo,
       'order_city_to': orderCityTo,
       'detailes_address_to': detailesAddressTo,
-      'order_time': orderTime.toIso8601String(),
+      'order_time': DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(orderTime),
       'price': price,
     };
 
