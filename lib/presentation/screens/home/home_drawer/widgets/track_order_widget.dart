@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
 import 'package:hatley/data/model/traking_response.dart';
-import 'package:hatley/presentation/screens/home/home_drawer/widgets/show_rating_dialog.dart';
 import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
 import '../../helper/tracking_order_helper.dart';
 
@@ -185,20 +184,17 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                   const SizedBox(height: 24),
                   Center(
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(50, 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadiusGeometry.circular(8),
+                        ),
+                      ),
                       onPressed:
                           (relevantOrder.status == 3)
-                              ? () {
-                                if (widget.onRatePressed != null) {
-                                  widget.onRatePressed!();
-                                }
-                                showDialog(
-                                  context: context,
-                                  builder:
-                                      (_) => RatingReviewDialog(
-                                        orderId: relevantOrder.orderId,
-                                      ),
-                                );
-                              }
+                              ? widget.onRatePressed
                               : null,
                       child: const Text("Rate"),
                     ),

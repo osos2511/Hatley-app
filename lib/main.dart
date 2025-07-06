@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hatley/presentation/cubit/rating_cubit/rating_cubit.dart';
-import 'package:hatley/presentation/cubit/review_cubit/review_cubit.dart';
+import 'package:hatley/presentation/cubit/feedback_cubit/feedback_cubit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
@@ -60,8 +59,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => sl<MakeOrderCubit>()),
           BlocProvider(create: (context) => sl<AuthCubit>()),
           BlocProvider(create: (context) => sl<TrackingCubit>()),
-          BlocProvider(create: (context) => sl<RatingCubit>()),
-          BlocProvider(create: (context) => sl<ReviewCubit>()),
+          BlocProvider(create: (context) => sl<FeedbackCubit>()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

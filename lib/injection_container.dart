@@ -22,9 +22,8 @@ import 'package:hatley/domain/usecases/updateProfile_usecase.dart';
 import 'package:hatley/domain/usecases/upload_profile_img_usecase.dart';
 import 'package:hatley/presentation/cubit/change_pass_cubit/change_pass_cubit.dart';
 import 'package:hatley/presentation/cubit/deliveries_cubit/deliveries_cubit.dart';
+import 'package:hatley/presentation/cubit/feedback_cubit/feedback_cubit.dart';
 import 'package:hatley/presentation/cubit/profile_cubit/profile_cubit.dart';
-import 'package:hatley/presentation/cubit/rating_cubit/rating_cubit.dart';
-import 'package:hatley/presentation/cubit/review_cubit/review_cubit.dart';
 import 'package:hatley/presentation/cubit/statistics_cubit/statistics_cubit.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_cubit.dart';
 import 'package:hatley/core/network.dart';
@@ -185,8 +184,7 @@ Future<void> setupGetIt() async {
   sl.registerFactory(() => ChangePassCubit(sl()));
   sl.registerFactory(() => DeliveriesCubit(sl()));
   sl.registerFactory(() => StatisticsCubit(sl()));
-  sl.registerFactory(() => RatingCubit(sl()));
-  sl.registerFactory(() => ReviewCubit(sl()));
+ sl.registerFactory(()=>FeedbackCubit(ratingUsecase: sl(), reviewUsecase: sl()));
 
   await sl.allReady();
 }

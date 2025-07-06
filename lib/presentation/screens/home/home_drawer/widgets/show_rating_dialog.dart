@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:hatley/presentation/cubit/rating_cubit/rating_cubit.dart';
-import 'package:hatley/presentation/cubit/rating_cubit/rating_state.dart';
-import 'package:hatley/presentation/cubit/review_cubit/review_cubit.dart';
-import 'package:hatley/presentation/cubit/review_cubit/review_state.dart';
+
+import '../../../../cubit/feedback_cubit/feedback_cubit.dart';
+import '../../../../cubit/feedback_cubit/feedback_state.dart';
 
 class RatingReviewDialog extends StatefulWidget {
   final int orderId;
@@ -24,27 +23,7 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
   void initState() {
     super.initState();
     _reviewController = TextEditingController();
-
-    final ratingCubit = context.read<RatingCubit>();
-    final reviewCubit = context.read<ReviewCubit>();
-
-    ratingCubit.getRatingById(widget.orderId).then((_) {
-      final ratingState = ratingCubit.state;
-      if (ratingState is RatingLoadSuccess) {
-        setState(() {
-          _ratingValue = ratingState.rating.rating.toDouble();
-        });
-      }
-    });
-
-    reviewCubit.getReviewById(widget.orderId).then((_) {
-      final reviewState = reviewCubit.state;
-      if (reviewState is ReviewLoadSuccess) {
-        setState(() {
-          _reviewController.text = reviewState.review.review;
-        });
-      }
-    });
+    context.read<FeedbackCubit>().loadFeedback(widget.orderId);
   }
 
   @override
@@ -57,88 +36,64 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
       _ratingValue >= 1 && _reviewController.text.trim().isNotEmpty;
 
   Future<void> _submit() async {
-    final ratingCubit = context.read<RatingCubit>();
-    final reviewCubit = context.read<ReviewCubit>();
+    setState(() => _isSubmitting = true);
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    final cubit = context.read<FeedbackCubit>();
+    final currentState = cubit.state;
 
-    try {
-      final currentRatingState = ratingCubit.state;
-      final currentReviewState = reviewCubit.state;
-
-      final isSameRating =
-          currentRatingState is RatingLoadSuccess &&
-          currentRatingState.rating.rating.toDouble() == _ratingValue;
-      final isSameReview =
-          currentReviewState is ReviewLoadSuccess &&
-          currentReviewState.review.review.trim() ==
-              _reviewController.text.trim();
-
-      if (isSameRating && isSameReview) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No changes to update')));
+    if (currentState is FeedbackLoadSuccess) {
+      final oldRating = currentState.rating?.rating?.toDouble() ?? 0;
+      final oldReview = currentState.review?.review ?? '';
+      if (_ratingValue == oldRating &&
+          _reviewController.text.trim() == oldReview.trim()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No changes to update')),
+        );
         setState(() => _isSubmitting = false);
         return;
       }
-
-      if (currentRatingState is RatingLoadSuccess) {
-        await ratingCubit.updateRating(widget.orderId, _ratingValue.toInt());
-      } else {
-        await ratingCubit.addRating(widget.orderId, _ratingValue.toInt());
-      }
-
-      if (currentReviewState is ReviewLoadSuccess) {
-        await reviewCubit.updateReview(
-          widget.orderId,
-          _reviewController.text.trim(),
-        );
-      } else {
-        await reviewCubit.addReview(
-          widget.orderId,
-          _reviewController.text.trim(),
-        );
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Review & Rating submitted')),
-      );
-
-      if (mounted) Navigator.of(context).pop();
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to submit: $e')));
-      setState(() => _isSubmitting = false);
+      await cubit.addOrUpdateRating(widget.orderId, _ratingValue.toInt());
+      await cubit.addOrUpdateReview(widget.orderId, _reviewController.text.trim());
     }
+
+    setState(() => _isSubmitting = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<RatingCubit, RatingState>(
+    return BlocConsumer<FeedbackCubit, FeedbackState>(
       listener: (context, state) {
-        if (state is RatingFailure) {
+        if (state is FeedbackFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to load rating: ${state.message}')),
+            SnackBar(content: Text('Error: ${state.message}')),
           );
+        } else if (state is FeedbackAddSuccess || state is FeedbackUpdateSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Review & Rating submitted successfully')),
+          );
+          Navigator.of(context).pop();
+        } else if (state is FeedbackLoadSuccess) {
+          if (!_isSubmitting) {
+            _ratingValue = state.rating?.rating?.toDouble() ?? 0;
+            _reviewController.text = state.review?.review ?? '';
+          }
         }
       },
-      child: BlocListener<ReviewCubit, ReviewState>(
-        listener: (context, state) {
-          if (state is ReviewFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Failed to load review: ${state.message}'),
-              ),
-            );
-          }
-        },
-        child: AlertDialog(
-          title: const Text(
-            'Rate & Review',
-            style: TextStyle(color: Colors.blue),
+      builder: (context, state) {
+        if (state is FeedbackLoading) {
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.blue),
+          );
+        }
+
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          title:  Center(
+            child: Text(
+              'Rate & Review',
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            ),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -150,9 +105,8 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
                   maxRating: 5,
                   allowHalfRating: false,
                   itemCount: 5,
-                  itemBuilder:
-                      (context, _) =>
-                          const Icon(Icons.star, color: Colors.blue),
+                  itemBuilder: (context, _) =>
+                  const Icon(Icons.star, color: Colors.yellow),
                   onRatingUpdate: (rating) {
                     setState(() => _ratingValue = rating);
                   },
@@ -164,9 +118,14 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
                   decoration: InputDecoration(
                     hintText: 'Write your review here...',
                     filled: true,
-                    fillColor: Colors.grey[200],
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.blue.shade300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.blue, width: 2),
                     ),
                   ),
                   onChanged: (_) => setState(() {}),
@@ -175,29 +134,49 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-            ),
             ElevatedButton(
-              onPressed: _isInputValid ? _submit : null,
-              child:
-                  _isSubmitting
-                      ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                      : const Text('Add Review'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white),
+
+              ),
+            ),
+
+            ElevatedButton(
+              onPressed: _isInputValid && !_isSubmitting ? _submit : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: _isSubmitting
+                  ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+                  : Text(
+                (_ratingValue > 0 && _reviewController.text.trim().isNotEmpty)
+                    ? 'Save'
+                    : 'Add Review',
+              ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
