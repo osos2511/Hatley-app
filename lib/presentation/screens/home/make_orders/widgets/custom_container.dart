@@ -10,10 +10,6 @@ class CustomContainer extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: ColorsManager.blue,
-        borderRadius: BorderRadius.circular(4),
-      ),
       child: Text(
         title,
         style: const TextStyle(

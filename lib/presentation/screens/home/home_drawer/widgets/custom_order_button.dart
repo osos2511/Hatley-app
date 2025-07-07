@@ -19,7 +19,6 @@ class CustomOrderButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor,
-        foregroundColor: ColorsManager.blue,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: Text(text, style: TextStyle(color: Colors.white)),

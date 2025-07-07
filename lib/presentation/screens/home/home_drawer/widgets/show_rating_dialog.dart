@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
+import 'package:hatley/core/colors_manager.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import '../../../../cubit/feedback_cubit/feedback_cubit.dart';
 import '../../../../cubit/feedback_cubit/feedback_state.dart';
 
@@ -46,9 +47,7 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
       final oldReview = currentState.review?.review ?? '';
       if (_ratingValue == oldRating &&
           _reviewController.text.trim() == oldReview.trim()) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No changes to update')),
-        );
+        CustomToast.show(message:'No changes to update');
         setState(() => _isSubmitting = false);
         return;
       }
@@ -68,9 +67,7 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
             SnackBar(content: Text('Error: ${state.message}')),
           );
         } else if (state is FeedbackAddSuccess || state is FeedbackUpdateSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Review & Rating submitted successfully')),
-          );
+          CustomToast.show(message: 'Review & Rating submitted successfully');
           Navigator.of(context).pop();
         } else if (state is FeedbackLoadSuccess) {
           if (!_isSubmitting) {
@@ -81,8 +78,8 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
       },
       builder: (context, state) {
         if (state is FeedbackLoading) {
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.blue),
+          return  Center(
+            child: CircularProgressIndicator(color: ColorsManager.white),
           );
         }
 
@@ -92,7 +89,7 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
           title:  Center(
             child: Text(
               'Rate & Review',
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+              style: TextStyle(color: ColorsManager.primaryColorApp, fontWeight: FontWeight.bold),
             ),
           ),
           content: SingleChildScrollView(
@@ -121,11 +118,11 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.blue.shade300),
+                      borderSide: BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blue, width: 2),
+                      borderSide:  BorderSide(color: Colors.grey, width: 2),
                     ),
                   ),
                   onChanged: (_) => setState(() {}),
@@ -152,7 +149,7 @@ class _RatingReviewDialogState extends State<RatingReviewDialog> {
             ElevatedButton(
               onPressed: _isInputValid && !_isSubmitting ? _submit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: ColorsManager.buttonColorApp,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(

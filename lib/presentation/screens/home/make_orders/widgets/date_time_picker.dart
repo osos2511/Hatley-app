@@ -26,7 +26,11 @@ class DateTimePickerRow extends StatelessWidget {
             onPressed: onDateTap,
             icon: Icon(Icons.calendar_today, color: ColorsManager.white),
             label: Text(dateText, style: GoogleFonts.inter(color: ColorsManager.white)),
-            style: ElevatedButton.styleFrom(backgroundColor: ColorsManager.blue),
+            style: ElevatedButton.styleFrom(backgroundColor: ColorsManager.buttonColorApp,
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(12))
+
+            ),
           ),
         ),
         SizedBox(width: 10),
@@ -35,7 +39,11 @@ class DateTimePickerRow extends StatelessWidget {
             onPressed: onTimeTap,
             icon: Icon(Icons.access_time, color: ColorsManager.white),
             label: Text(timeText, style: GoogleFonts.inter(color: ColorsManager.white)),
-            style: ElevatedButton.styleFrom(backgroundColor: ColorsManager.blue),
+            style: ElevatedButton.styleFrom(backgroundColor: ColorsManager.buttonColorApp,
+            padding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(12))
+
+            ),
           ),
         ),
       ],

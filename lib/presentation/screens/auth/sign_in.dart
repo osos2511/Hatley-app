@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/core/routes_manager.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
-import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import '../../../core/colors_manager.dart';
@@ -11,7 +10,6 @@ import '../../cubit/auth_cubit/auth_cubit.dart';
 import '../../cubit/auth_cubit/auth_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hatley/core/local/token_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 
 class SignInScreen extends StatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/offer_cubit/offer_cubit.dart';
 import 'package:hatley/presentation/cubit/offer_cubit/offer_state.dart';
 import 'package:signalr_netcore/signalr_client.dart';
@@ -233,14 +234,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
             _offersBox.delete(key);
           }
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Offer accepted successfully! Redirecting to tracking...',
-              ),
-              backgroundColor: Colors.green,
-            ),
-          );
           context.read<NavigationCubit>().changePage(1);
           Navigator.pushNamedAndRemoveUntil(
             context,
@@ -300,7 +293,7 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue),
+                    border: Border.all(color: ColorsManager.primaryColorApp),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.25),
@@ -374,7 +367,7 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                             child: CustomOrderButton(
                               onPressed:
                                   () => _handleOfferResponse(index, true),
-                              backgroundColor: Colors.blue,
+                              backgroundColor: ColorsManager.primaryColorApp,
                               text: "Accept",
                             ),
                           ),
@@ -383,7 +376,7 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                             child: CustomOrderButton(
                               onPressed:
                                   () => _handleOfferResponse(index, false),
-                              backgroundColor: Colors.red,
+                              backgroundColor: ColorsManager.buttonColorApp,
                               text: "Decline",
                             ),
                           ),

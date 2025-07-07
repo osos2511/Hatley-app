@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/injection_container.dart';
 import 'package:hatley/presentation/cubit/change_pass_cubit/change_pass_cubit.dart';
 import 'package:hatley/presentation/cubit/change_pass_cubit/change_pass_state.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/change_pass_field.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -39,9 +41,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       child: BlocConsumer<ChangePassCubit, ChangePassState>(
         listener: (context, state) {
           if (state is ChangePassSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Password changed successfully!')),
-            );
+            CustomToast.show(message: 'Password changed successfully!');
             Navigator.of(context).pop();
           } else if (state is ChangePassFailure) {
             ScaffoldMessenger.of(
@@ -66,7 +66,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
               ),
               centerTitle: true,
-              backgroundColor: Colors.blue,
+              backgroundColor: ColorsManager.primaryColorApp,
               iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: Padding(
@@ -106,11 +106,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               final oldPass = oldPasswordController.text.trim();
                               final newPass = newPasswordController.text.trim();
                               if (oldPass.isEmpty || newPass.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please fill all fields'),
-                                  ),
-                                );
+                                CustomToast.show(message: 'Please fill all fields');
+
                                 return;
                               }
                               FocusScope.of(context).unfocus();

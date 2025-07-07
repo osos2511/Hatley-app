@@ -11,23 +11,28 @@ class TrackingCubit extends Cubit<TrackingState> {
 
   Future<void> getTrackingData([int? orderId]) async {
     emit(TrackingLoading());
+
     final result = await trakingApiManager.getAllTrackingData();
 
     result.fold(
-      (failure) {
-        String errorMessage;
-        if (failure is ServerFailure) {
-          errorMessage = 'Server Error: ${failure.message}';
-        } else if (failure is NetworkFailure) {
-          errorMessage = 'Network Error: ${failure.message}';
-        } else {
-          errorMessage = 'An unknown error occurred: ${failure.message}';
-        }
-        emit(TrackingError(message: errorMessage));
+          (failure) {
+        // لو في فشل نعرض رسالة الخطأ مباشرة
+        emit(TrackingError(message: failure.message));
       },
-      (allTrackingData) {
-          allTrackingData.sort((a, b) => b.orderId.compareTo(a.orderId));
-          emit(TrackingLoaded(trackingData: allTrackingData));
+          (allTrackingData) {
+        if (allTrackingData is List<TrakingResponse>) {
+          if (allTrackingData.isEmpty) {
+            // لو القائمة فاضية نرسل حالة فارغة
+            emit(TrackingEmpty());
+          } else {
+            // لو في بيانات، نرتبها نزولياً حسب orderId وبعدين نرسل الحالة
+            allTrackingData.sort((a, b) => b.orderId.compareTo(a.orderId));
+            emit(TrackingLoaded(trackingData: allTrackingData));
+          }
+        } else {
+          // لو البيانات مش List<TrakingResponse> أي نوع آخر
+          emit(TrackingError(message: 'Unexpected data format'));
+        }
       },
     );
   }

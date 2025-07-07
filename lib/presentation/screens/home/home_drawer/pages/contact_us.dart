@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/core/colors_manager.dart';
 
 class ContactUs extends StatelessWidget {
   const ContactUs({super.key});
@@ -11,12 +12,12 @@ class ContactUs extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Icon(Icons.mark_email_read, size: 100, color: Colors.blue),
+             Icon(Icons.mark_email_read, size: 100, color: ColorsManager.white),
             const SizedBox(height: 16),
             const Text(
               'If you have questions or just want to get in touch, use the form below.\nWe look forward to hearing from you!',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, height: 1.5),
+              style: TextStyle(fontSize: 16, height: 1.5,color: ColorsManager.white70),
             ),
             const SizedBox(height: 24),
 
@@ -36,7 +37,7 @@ class ContactUs extends StatelessWidget {
                 // Action
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: ColorsManager.buttonColorApp,
                 minimumSize: Size(screenSize.width * 0.7, 55),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

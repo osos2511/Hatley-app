@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/core/colors_manager.dart';
 
 class ProfileInfoTile extends StatelessWidget {
   final String label;
@@ -9,7 +10,7 @@ class ProfileInfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(_getIconForLabel(label), color: Colors.blue),
+      leading: Icon(_getIconForLabel(label), color: ColorsManager.white),
       title: Text(label),
       subtitle: Text(value),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/core/colors_manager.dart';
 
 void showMissingFieldsDialog(
   BuildContext context,
@@ -7,7 +8,6 @@ void showMissingFieldsDialog(
 }) {
   showDialog(
     context: context,
-    barrierDismissible: false,
     builder:
         (_) => AlertDialog(
           shape: RoundedRectangleBorder(
@@ -17,12 +17,8 @@ void showMissingFieldsDialog(
           titlePadding: EdgeInsets.zero,
           title: Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFDC3545), Color(0xFFB02A37)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+            decoration:  BoxDecoration(
+              color: ColorsManager.buttonColorApp,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Container(
@@ -31,9 +27,9 @@ void showMissingFieldsDialog(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child:  Icon(
                 Icons.close,
-                color: Color(0xFFDC3545),
+                color: ColorsManager.buttonColorApp,
                 size: 24,
               ),
             ),
@@ -50,7 +46,7 @@ void showMissingFieldsDialog(
               padding: const EdgeInsets.only(right: 8, bottom: 8),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFDC3545),
+                  backgroundColor: ColorsManager.buttonColorApp,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

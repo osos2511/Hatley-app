@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/core/colors_manager.dart';
 
 enum OrderStatus {
   pending, // -1
@@ -69,6 +70,6 @@ Color getStatusColor(OrderStatus status) {
     case OrderStatus.pending:
       return Colors.orange;
     default:
-      return Colors.blue; // باقي الحالات
+      return ColorsManager.primaryColorApp; // باقي الحالات
   }
 }

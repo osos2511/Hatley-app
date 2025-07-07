@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/edit_order_cubit/edit_order_cubit.dart';
 import 'package:hatley/presentation/cubit/governorate_cubit/governorate_cubit.dart';
 import 'package:hatley/presentation/cubit/governorate_cubit/governorate_state.dart';
@@ -7,6 +8,7 @@ import 'package:hatley/presentation/cubit/make_orders_cubit/make_order_state.dar
 import 'package:hatley/presentation/cubit/make_orders_cubit/make_orders_cubit.dart';
 import 'package:hatley/presentation/cubit/zone_cubit/zone_cubit.dart';
 import 'package:hatley/presentation/cubit/zone_cubit/zone_state.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_order_button.dart';
 import 'package:hatley/presentation/screens/home/make_orders/widgets/custom_container.dart';
 import 'package:hatley/presentation/screens/home/make_orders/widgets/custom_drop_down.dart';
@@ -101,7 +103,7 @@ class ReusableOrderForm extends StatelessWidget {
               keyboardType: TextInputType.text,
             ),
             const SizedBox(height: 20),
-            const Icon(Icons.arrow_downward, size: 40),
+             Icon(Icons.arrow_downward, size: 40,color: Colors.white,),
             const SizedBox(height: 12),
             const CustomContainer(title: "To: Where you want to order To"),
             const SizedBox(height: 12),
@@ -142,11 +144,11 @@ class ReusableOrderForm extends StatelessWidget {
                   children: [
                     CustomOrderButton(
                       text: 'Cancel',
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.grey,
                       onPressed: () => Navigator.pop(context),
                     ),
                     CustomOrderButton(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: ColorsManager.buttonColorApp,
                       text: submitButtonText,
                       onPressed: () {
                         final editCubit = context.read<EditOrderCubit>();
@@ -177,12 +179,8 @@ class ReusableOrderForm extends StatelessWidget {
                             makeOrderCubit.state.selectedCityTo == null ||
                             makeOrderCubit.state.selectedDate == null ||
                             makeOrderCubit.state.selectedTime == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('يرجى ملء جميع الحقول المطلوبة'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
+
+                          CustomToast.show(message: 'Please Fill all required fields');
                           return;
                         }
 
@@ -225,7 +223,7 @@ class ReusableOrderForm extends StatelessWidget {
                 )
                 : Center(
                   child: CustomOrderButton(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: ColorsManager.buttonColorApp,
                     text: submitButtonText,
                     onPressed: onSubmit,
                   ),

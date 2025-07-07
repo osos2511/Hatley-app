@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_order_button.dart';
 import '../../../../../core/routes_manager.dart';
 import '../../../../../core/success_dialog.dart';
@@ -24,7 +25,7 @@ void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue[900],
+                    color: ColorsManager.primaryColorApp
                   ),
                 ),
               ),
@@ -114,12 +115,12 @@ void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomOrderButton(
-                    backgroundColor: Colors.red,
+                    backgroundColor: ColorsManager.buttonColorApp,
                     text: 'Cancel',
                     onPressed: () => Navigator.pop(context),
                   ),
                   CustomOrderButton(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: ColorsManager.primaryColorApp,
                     text: 'Confirm',
                     onPressed: () {
                       Navigator.pop(context);

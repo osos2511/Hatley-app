@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/core/routes_manager.dart';
 import 'package:hatley/injection_container.dart';
 import 'package:hatley/presentation/cubit/make_orders_cubit/make_orders_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/delete_order_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/getAllOrders_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/order_state.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_address_block.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/edit_order_dialog.dart';
 import '../../../../../core/missing_fields_dialog.dart';
@@ -32,24 +34,17 @@ class _MyOrdersState extends State<MyOrders> {
       providers: [
         BlocProvider(create: (_) => sl<GetAllOrdersCubit>()..getAllOrders()),
         BlocProvider(create: (_) => sl<DeleteOrderCubit>()),
-        // تأكد أن MakeOrderCubit متاح بالفعل في الـ Widget Tree الأعلى
-        // وإلا، استخدم BlocProvider(create: (_) => sl<MakeOrderCubit>())
         BlocProvider.value(value: context.read<MakeOrderCubit>()),
         BlocProvider(create: (_) => sl<OfferCubit>()),
       ],
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: MultiBlocListener(
           listeners: [
             BlocListener<DeleteOrderCubit, OrderState>(
               listener: (context, state) {
                 if (state is OrderSuccess) {
                   context.read<GetAllOrdersCubit>().getAllOrders();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Order cancelled successfully!"),
-                    ),
-                  );
+                  CustomToast.show(message: "Order cancelled successfully!");
                 } else if (state is OrderFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("فشل الحذف: ${state.error}")),
@@ -60,17 +55,9 @@ class _MyOrdersState extends State<MyOrders> {
             BlocListener<OfferCubit, OfferState>(
               listener: (context, state) {
                 if (state is OfferAcceptedSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        "Offer accepted successfully! Redirecting to tracking...",
-                      ),
-                    ),
-                  );
+                  CustomToast.show(message: "Offer accepted successfully! Redirecting to tracking...");
                 } else if (state is OfferDeclinedSuccess) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                  CustomToast.show(message: "Offer Decline successfully!");
                   context.read<GetAllOrdersCubit>().getAllOrders();
                 } else if (state is OfferFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -88,7 +75,7 @@ class _MyOrdersState extends State<MyOrders> {
           child: BlocBuilder<GetAllOrdersCubit, OrderState>(
             builder: (context, state) {
               if (state is OrderLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator(color: Colors.white,));
               } else if (state is OrderFailure) {
                 return Center(child: Text("خطأ: ${state.error}"));
               } else if (state is GetAllOrdersSuccess) {
@@ -114,7 +101,7 @@ class _MyOrdersState extends State<MyOrders> {
                             ).pushNamed(RoutesManager.makeOrdersRoute);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: ColorsManager.buttonColorApp,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 24,
@@ -141,7 +128,7 @@ class _MyOrdersState extends State<MyOrders> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(color: Colors.blue),
+                          border: Border.all(color: ColorsManager.primaryColorApp),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
@@ -216,7 +203,7 @@ class _MyOrdersState extends State<MyOrders> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 CustomOrderButton(
-                                  backgroundColor: Colors.blue,
+                                  backgroundColor: ColorsManager.primaryColorApp,
                                   text: "Edit",
                                   onPressed: () {
                                     final makeOrderCubit =
@@ -229,7 +216,7 @@ class _MyOrdersState extends State<MyOrders> {
                                   },
                                 ),
                                 CustomOrderButton(
-                                  backgroundColor: Colors.red,
+                                  backgroundColor: ColorsManager.buttonColorApp,
                                   text: "Cancel",
                                   onPressed: () {
                                     lastDeletedOrderId = order.orderId;

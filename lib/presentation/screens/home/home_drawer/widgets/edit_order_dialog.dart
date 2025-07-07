@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/core/reusable_order_form.dart';
 import 'package:hatley/domain/entities/order_entity.dart';
 import 'package:hatley/injection_container.dart';
@@ -7,6 +8,7 @@ import 'package:hatley/presentation/cubit/edit_order_cubit/edit_order_cubit.dart
 import 'package:hatley/presentation/cubit/governorate_cubit/governorate_cubit.dart';
 import 'package:hatley/presentation/cubit/order_cubit/order_state.dart';
 import 'package:hatley/presentation/cubit/zone_cubit/zone_cubit.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import '../../../../cubit/make_orders_cubit/make_orders_cubit.dart';
 
 void showEditOrderDialog(
@@ -32,9 +34,7 @@ void showEditOrderDialog(
           listener: (context, state) {
             if (state is OrderSuccess) {
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تم تعديل الطلب بنجاح')),
-              );
+              CustomToast.show(message: 'Edit Order has Done');
             } else if (state is OrderFailure) {
               print("خطأ أثناء التعديل: ${state.error}");
               ScaffoldMessenger.of(
@@ -44,6 +44,7 @@ void showEditOrderDialog(
           },
           builder: (context, state) {
             return AlertDialog(
+              backgroundColor: ColorsManager.primaryColorApp,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -79,12 +80,8 @@ void showEditOrderDialog(
                         makeOrderCubit.state.selectedCityTo == null ||
                         makeOrderCubit.state.selectedDate == null ||
                         makeOrderCubit.state.selectedTime == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('يرجى ملء جميع الحقول المطلوبة'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
+
+                      CustomToast.show(message: 'Please Fill all Required Fields');
 
                       return;
                     }

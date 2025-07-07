@@ -96,7 +96,6 @@ class Profile extends StatelessWidget {
               }
 
               return Scaffold(
-                backgroundColor: Colors.white,
                 body: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SingleChildScrollView(
@@ -132,9 +131,9 @@ class Profile extends StatelessWidget {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                rating.toStringAsFixed(2), // عرض التقييم هنا
+                                rating.toStringAsFixed(2),
                                 style: TextStyle(
-                                  color: ColorsManager.black,
+                                  color: ColorsManager.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 24,
                                 ),
@@ -213,7 +212,7 @@ class Profile extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(color: ColorsManager.blue, fontSize: 14),
+            style: TextStyle(color: ColorsManager.white, fontSize: 14),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/core/colors_manager.dart';
 
 class EditProfileDialog extends StatefulWidget {
   final String currentName;
@@ -23,7 +24,7 @@ class _EditProfileDialogState extends State<EditProfileDialog> {
   late TextEditingController emailController;
   late TextEditingController phoneController;
 
-  final Color primaryBlue = const Color(0xFF007BFF); // أزرق مريح
+  final Color primaryBlue =  ColorsManager.buttonColorApp; // أزرق مريح
 
   @override
   void initState() {
@@ -70,7 +71,7 @@ class _EditProfileDialogState extends State<EditProfileDialog> {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: primaryBlue,
+            backgroundColor: ColorsManager.primaryColorApp,
             foregroundColor: Colors.white,
           ),
           onPressed: () {

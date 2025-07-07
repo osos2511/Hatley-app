@@ -4,6 +4,7 @@ import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
 import 'package:hatley/data/model/traking_response.dart';
 import 'package:hatley/core/local/token_storage.dart';
 import 'package:hatley/injection_container.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
 import '../widgets/track_order_widget.dart';
@@ -47,15 +48,14 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
       return;
     }
 
-    hubConnection =
-        HubConnectionBuilder()
-            .withUrl(
-              hubUrl,
-              options: HttpConnectionOptions(
-                accessTokenFactory: () => Future.value(userToken),
-              ),
-            )
-            .build();
+    hubConnection = HubConnectionBuilder()
+        .withUrl(
+      hubUrl,
+      options: HttpConnectionOptions(
+        accessTokenFactory: () => Future.value(userToken),
+      ),
+    )
+        .build();
 
     hubConnection?.on('NotifyChangeStatusForUser', (arguments) {
       if (arguments != null && arguments.length >= 3) {
@@ -63,7 +63,7 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
           final int status = arguments[0] as int;
           final int receivedOrderId = arguments[1] as int;
           final Map<String, dynamic> checkData =
-              arguments[2] as Map<String, dynamic>;
+          arguments[2] as Map<String, dynamic>;
           final String receivedUserEmail = checkData['email'] as String;
           final String userType = checkData['type'] as String;
 
@@ -112,23 +112,22 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
       body: BlocConsumer<TrackingCubit, TrackingState>(
         listener: (context, state) {
           if (state is TrackingError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            CustomToast.show(
+              message: "Something went wrong. Please try again later.",
+            );
           }
         },
         builder: (context, state) {
           if (state is TrackingLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return  Center(child: CircularProgressIndicator(
+              color: Colors.white,
+            ));
           } else if (state is TrackingLoaded) {
-            if (state.trackingData.isEmpty) {
-              return const Center(child: Text("You have no orders to track."));
-            }
             return ListView.builder(
               padding: const EdgeInsets.all(16.0),
               itemCount: state.trackingData.length,
               itemBuilder: (context, index) {
-                final TrakingResponse order = state.trackingData[index];
+                final order = state.trackingData[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: TrackOrderWidget(
@@ -136,25 +135,31 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
                     onRatePressed: () {
                       showDialog(
                         context: context,
-                        builder:
-                            (context) =>
-                                RatingReviewDialog(orderId: order.orderId),
+                        builder: (context) =>
+                            RatingReviewDialog(orderId: order.orderId),
                       );
                     },
                   ),
                 );
               },
             );
-          } else if (state is TrackingError) {
-            return Center(
+          } else if (state is TrackingEmpty) {
+            return const Center(
               child: Text(
-                "Failed to load orders: ${state.message}. Please try again.",
+                "You have no orders to track.",
+                style: TextStyle(fontSize: 16),
               ),
             );
           }
-          return const Center(child: Text("Welcome! Loading your orders..."));
+          return const Center(
+            child: Text(
+              "Welcome! Loading your orders...",
+              style: TextStyle(fontSize: 16),
+            ),
+          );
         },
-      ),
+      )
+
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
 import 'package:hatley/data/model/traking_response.dart';
 import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
@@ -130,7 +131,7 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                                         height: 3,
                                         color:
                                             (stepIdx <= currentStepIndex)
-                                                ? Colors.blue
+                                                ? ColorsManager.primaryColorApp
                                                 : Colors.grey,
                                       ),
                                     ),
@@ -139,7 +140,7 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                                     height: 30,
                                     decoration: BoxDecoration(
                                       color:
-                                          isActive ? Colors.blue : Colors.grey,
+                                          isActive ? ColorsManager.primaryColorApp : Colors.grey,
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -156,7 +157,7 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                                         height: 3,
                                         color:
                                             (stepIdx < currentStepIndex)
-                                                ? Colors.blue
+                                                ? ColorsManager.primaryColorApp
                                                 : Colors.grey,
                                       ),
                                     ),
@@ -185,7 +186,7 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                   Center(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: ColorsManager.buttonColorApp,
                         foregroundColor: Colors.white,
                         minimumSize: Size(50, 40),
                         shape: RoundedRectangleBorder(

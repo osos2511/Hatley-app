@@ -6,6 +6,7 @@ import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/core/routes_manager.dart';
 import 'package:hatley/presentation/cubit/navigation_cubit.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/about_us.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/contact_us.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/deliveries.dart';
@@ -51,7 +52,7 @@ class _HomeState extends State<Home> {
   void _showSessionExpiredDialog() {
     showMissingFieldsDialog(
       context,
-      'Your session has expired. Please log in again.', // النص الإنجليزي الأصلي
+      'Your session has expired. Please log in again.',
       onOkPressed: () {
         Navigator.of(
           context,
@@ -62,7 +63,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ MultiBlocListener لدمج Listener للـ AuthCubit و TrackingCubit
     return MultiBlocListener(
       listeners: [
         BlocListener<AuthCubit, AuthState>(
@@ -73,25 +73,17 @@ class _HomeState extends State<Home> {
             }
           },
         ),
-        // ✅ BlocListener الجديد لأخطاء TrackingCubit
         BlocListener<TrackingCubit, TrackingState>(
           listenWhen: (previous, current) => current is TrackingError,
           listener: (context, state) {
             if (state is TrackingError) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted && ScaffoldMessenger.maybeOf(context) != null) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(state.message)));
-                } else {
-                  print(
-                    "ScaffoldMessenger not available or widget not mounted for tracking errors SnackBar.",
-                  );
-                }
+                CustomToast.show(message: "An error occurred while tracking. Please try again.");
               });
             }
           },
         ),
+
       ],
       child: Scaffold(
         appBar: PreferredSize(
@@ -135,7 +127,7 @@ class _HomeState extends State<Home> {
                 ),
                 centerTitle: true,
                 iconTheme: const IconThemeData(color: Colors.white),
-                backgroundColor: ColorsManager.blue,
+                backgroundColor: ColorsManager.primaryColorApp,
               );
             },
           ),
@@ -172,24 +164,18 @@ class _HomeState extends State<Home> {
                         style: GoogleFonts.inter(
                           fontWeight: FontWeight.w700,
                           fontSize: 22.sp,
+                          color: ColorsManager.white70,
+
                         ),
                       ),
                       SizedBox(height: 16.h),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12.r),
                         child: Image.asset(
+                          height: 300,
                           'assets/delivery.jpg',
                           width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                      Text(
-                        'Post your order now and let our delivery staff provide you with the best offers!',
-                        style: GoogleFonts.inter(
-                          fontSize: 15.sp,
-                          color: Colors.grey[700],
-                          height: 1.5,
+                          fit: BoxFit.fill,
                         ),
                       ),
                       SizedBox(height: 24.h),

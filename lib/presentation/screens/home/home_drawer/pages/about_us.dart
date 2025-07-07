@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/core/colors_manager.dart';
 
 class AboutUs extends StatelessWidget {
   const AboutUs({super.key});
@@ -16,8 +17,8 @@ class AboutUs extends StatelessWidget {
                   'You can place your order, choose from a variety of delivery offers, and enjoy a hassle-free delivery experience.\n\n'
                   'Your satisfaction is our priority, and we\'re here to make your life easier, one delivery at a time.',
               style: TextStyle(
-                fontSize: 16,
-                height: 1.5,
+                fontSize: 18,
+                color: ColorsManager.white70
               ),
             ),
 

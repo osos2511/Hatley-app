@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/profile_cubit/profile_cubit.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -94,7 +95,7 @@ class ProfileImgAvatar extends StatelessWidget {
             onTap: () => _showImagePickerOptions(context),
             child: CircleAvatar(
               radius: size * 0.17, // حجم زر الكاميرا نسبة للـ avatar
-              backgroundColor: Colors.blue,
+              backgroundColor: ColorsManager.buttonColorApp,
               child: const Icon(
                 Icons.camera_alt,
                 color: Colors.white,

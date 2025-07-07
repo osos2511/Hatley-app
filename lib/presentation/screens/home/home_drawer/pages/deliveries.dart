@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/domain/entities/deliveries_entity.dart';
 import 'package:hatley/injection_container.dart';
 import 'package:hatley/presentation/cubit/deliveries_cubit/deliveries_cubit.dart';
 import 'package:hatley/presentation/cubit/deliveries_cubit/deliveries_state.dart';
 
-const kPrimaryColor = Color(0xFF007BFF);
+const kPrimaryColor = ColorsManager.primaryColorApp;
 
 class Deliveries extends StatelessWidget {
   Deliveries({super.key});
@@ -15,7 +16,6 @@ class Deliveries extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<DeliveriesCubit>()..getAllDeliveries(),
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: BlocBuilder<DeliveriesCubit, DeliveriesState>(
           builder: (context, state) {
             if (state is DeliveriesLoading) {

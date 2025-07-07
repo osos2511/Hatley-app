@@ -47,7 +47,7 @@ class MakeOrders extends StatelessWidget {
                 ),
                 centerTitle: true,
                 iconTheme: const IconThemeData(color: Colors.white),
-                backgroundColor: ColorsManager.blue,
+                backgroundColor: ColorsManager.primaryColorApp,
               ),
               body: SingleChildScrollView(
                 child: Padding(
@@ -57,7 +57,7 @@ class MakeOrders extends StatelessWidget {
                       width: screenSize.width * 0.85,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: ColorsManager.blue),
+                        border: Border.all(width: 2, color: ColorsManager.white70),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: ReusableOrderForm(
