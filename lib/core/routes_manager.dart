@@ -7,7 +7,7 @@ import 'package:hatley/presentation/screens/home/home_drawer/pages/all_tracking_
 import 'package:hatley/presentation/screens/home/make_orders/make_orders.dart';
 import 'package:hatley/presentation/screens/splash/splash.dart';
 import '../presentation/screens/auth/forgot_password.dart';
-import '../presentation/screens/auth/otp.dart';
+import '../presentation/screens/auth/verify_otp.dart';
 import '../presentation/screens/auth/reset_password.dart';
 import '../presentation/screens/auth/sign_in.dart';
 import '../presentation/screens/auth/sign_up.dart';
@@ -45,11 +45,11 @@ class RoutesManager {
         }
       case forgotPassRoute:
         {
-          return MaterialPageRoute(builder: (context) => EnterEmailOrPass());
+          return MaterialPageRoute(builder: (context) => ForgotPassword());
         }
       case otpRoute:
         {
-          return MaterialPageRoute(builder: (context) => Otp());
+          return MaterialPageRoute(builder: (context) => VerifyOtp());
         }
       case resetPassRoute:
         {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hatley/core/colors_manager.dart';
 
 void showSuccessDialog(
   BuildContext context,
@@ -20,12 +21,8 @@ void showSuccessDialog(
           titlePadding: EdgeInsets.zero,
           title: Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF007BFF), Color(0xFF00B4D8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+            decoration:  BoxDecoration(
+             color: ColorsManager.primaryColorApp,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Container(
@@ -36,7 +33,7 @@ void showSuccessDialog(
               ),
               child: const Icon(
                 Icons.check,
-                color: Color(0xFF007BFF),
+                color: ColorsManager.primaryColorApp,
                 size: 24,
               ),
             ),
@@ -81,7 +78,7 @@ void showSuccessDialog(
               padding: const EdgeInsets.only(right: 8, bottom: 8),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF007BFF),
+                  backgroundColor:  ColorsManager.primaryColorApp,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

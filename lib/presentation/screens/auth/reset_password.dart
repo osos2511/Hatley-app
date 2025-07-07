@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart';
 import '../../../core/colors_manager.dart';
-import '../../../core/success_dialog.dart';
 import '../../../core/routes_manager.dart';
 
 class ResetPass extends StatefulWidget {
@@ -16,14 +15,29 @@ class ResetPass extends StatefulWidget {
 class _ResetPassState extends State<ResetPass> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  bool isLoading = false;
 
   @override
   void dispose() {
     passwordController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleResetPassword() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      await Future.delayed(const Duration(seconds: 1));
+
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.pushReplacementNamed(context, RoutesManager.signInRoute);
+    }
   }
 
   @override
@@ -33,19 +47,9 @@ class _ResetPassState extends State<ResetPass> {
     final double screenHeight = screenSize.height;
 
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: screenSize.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              ColorsManager.primaryGradientStart,
-              ColorsManager.primaryGradientEnd,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(
@@ -66,7 +70,6 @@ class _ResetPassState extends State<ResetPass> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30),
-
                   CustomTextField(
                     keyboardType: TextInputType.text,
                     controller: passwordController,
@@ -81,7 +84,6 @@ class _ResetPassState extends State<ResetPass> {
                     },
                   ),
                   const SizedBox(height: 20),
-
                   CustomTextField(
                     keyboardType: TextInputType.text,
                     controller: confirmPasswordController,
@@ -95,21 +97,11 @@ class _ResetPassState extends State<ResetPass> {
                       return null;
                     },
                   ),
-
                   SizedBox(height: screenHeight * 0.06),
-                  CustomButton(
-                    bgColor: ColorsManager.white,
-                    foColor: ColorsManager.blue,
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        showSuccessDialog(
-                          context,
-                          "Your password has been reset successfully!",
-                          nextRoute: RoutesManager.signInRoute,
-                        );
-                      }
-                    },
+                  CustomAuthButton(
+                    onPressed: isLoading ? null : _handleResetPassword,
                     text: 'Reset Password',
+                    isLoading: isLoading,
                   ),
                 ],
               ),

@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/core/colors_manager.dart';
-import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
-import 'package:hatley/core/success_dialog.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../../core/routes_manager.dart';
 
-class Otp extends StatefulWidget {
-  const Otp({super.key});
+class VerifyOtp extends StatefulWidget {
+  const VerifyOtp({super.key});
 
   @override
-  State<Otp> createState() => _OtpState();
+  State<VerifyOtp> createState() => _VerifyOtpState();
 }
 
-class _OtpState extends State<Otp> {
+class _VerifyOtpState extends State<VerifyOtp> {
   String otp = "";
   int secondsRemaining = 30;
   Timer? _timer;
   bool enableResend = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -54,25 +54,29 @@ class _OtpState extends State<Otp> {
     super.dispose();
   }
 
+  Future<void> _handleContinue() async {
+    if (otp.length == 4) {
+      setState(() {
+        isLoading = true;
+      });
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.pushNamed(context, RoutesManager.resetPassRoute);
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: screenSize.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              ColorsManager.primaryGradientStart,
-              ColorsManager.primaryGradientEnd,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -83,18 +87,18 @@ class _OtpState extends State<Otp> {
                 Text(
                   'Email Verification',
                   style: GoogleFonts.exo2(
-                    color: ColorsManager.white,
+                    color: ColorsManager.buttonColorApp,
                     fontWeight: FontWeight.bold,
                     fontSize: 22.sp,
                   ),
                 ),
                 SizedBox(height: 15.h),
                 Text(
-                  'Enter the 4-digit code sent to\nexample@email.com',
+                  'Enter the 4-digit code',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.exo2(
                     color: ColorsManager.white70,
-                    fontSize: 14.sp,
+                    fontSize: 15.sp,
                   ),
                 ),
                 SizedBox(height: 40.h),
@@ -109,9 +113,14 @@ class _OtpState extends State<Otp> {
                     borderRadius: BorderRadius.circular(10.r),
                     fieldHeight: 55.h,
                     fieldWidth: 50.w,
-                    inactiveColor: ColorsManager.white.withOpacity(0.5),
-                    activeColor: ColorsManager.blue,
-                    selectedColor: ColorsManager.blue,
+                    inactiveColor: Colors.white54,
+                    activeColor: Colors.white54,
+                    selectedColor: Colors.white54,
+                  ),
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
                   ),
                   onChanged: (value) {
                     setState(() => otp = value);
@@ -126,40 +135,16 @@ class _OtpState extends State<Otp> {
                       ? "Didn't receive the code? Resend"
                       : "Resend code in $secondsRemaining s",
                   style: TextStyle(
-                    color:
-                        enableResend
-                            ? ColorsManager.blue
-                            : ColorsManager.white70,
+                    color: ColorsManager.white70,
                     fontSize: 14.sp,
                   ),
                 ),
 
                 SizedBox(height: 40.h),
-                CustomButton(
-                  bgColor: ColorsManager.white,
-                  foColor: ColorsManager.blue,
-                  onPressed: () async {
-                    if (otp.length == 4) {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder:
-                            (context) => const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            ),
-                      );
-                      await Future.delayed(const Duration(seconds: 1));
-                      Navigator.pop(context);
-                      showSuccessDialog(
-                        context,
-                        "Your account is ready",
-                        nextRoute: RoutesManager.resetPassRoute,
-                      );
-                    }
-                  },
+                CustomAuthButton(
+                  onPressed: isLoading ? null : _handleContinue,
                   text: "Continue",
+                  isLoading: isLoading,
                 ),
               ],
             ),

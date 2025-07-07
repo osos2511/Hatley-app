@@ -1,26 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart';
 import '../../../core/colors_manager.dart';
 import '../../../core/routes_manager.dart';
-import '../../../core/success_dialog.dart';
 
-class EnterEmailOrPass extends StatefulWidget {
-  const EnterEmailOrPass({super.key});
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
 
   @override
-  State<EnterEmailOrPass> createState() => _EnterEmailOrPassState();
+  State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _EnterEmailOrPassState extends State<EnterEmailOrPass> {
+class _ForgotPasswordState extends State<ForgotPassword> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
+  bool isLoading = false;
 
   @override
   void dispose() {
     emailController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleSendCode() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      await Future.delayed(const Duration(seconds: 1));
+
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.pushReplacementNamed(
+        context,
+        RoutesManager.otpRoute,
+      );
+    }
   }
 
   @override
@@ -30,19 +47,9 @@ class _EnterEmailOrPassState extends State<EnterEmailOrPass> {
     final double screenHeight = screenSize.height;
 
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: screenSize.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              ColorsManager.primaryGradientStart,
-              ColorsManager.primaryGradientEnd,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(
@@ -57,13 +64,12 @@ class _EnterEmailOrPassState extends State<EnterEmailOrPass> {
                   Text(
                     "Enter your email address to receive a reset code",
                     style: GoogleFonts.exo2(
-                      fontSize: 16,
+                      fontSize: 20,
                       color: ColorsManager.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30),
-
                   CustomTextField(
                     icon: Icons.email,
                     hint: 'Email',
@@ -80,38 +86,16 @@ class _EnterEmailOrPassState extends State<EnterEmailOrPass> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 40),
-                  CustomButton(
-                    bgColor: ColorsManager.white,
-                    foColor: ColorsManager.blue,
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder:
-                              (context) => Center(
-                                child: CircularProgressIndicator(
-                                  color: ColorsManager.white,
-                                ),
-                              ),
-                        );
-
-                        await Future.delayed(const Duration(seconds: 1));
-                        Navigator.pop(context); // remove loading
-                        showSuccessDialog(
-                          context,
-                          "Reset code sent to your email",
-                          nextRoute: RoutesManager.otpRoute,
-                        );
-                      }
-                    },
+                  CustomAuthButton(
+                    onPressed: isLoading ? null : _handleSendCode,
                     text: 'Send Code',
+                    isLoading: isLoading,
                   ),
+
                   const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
+                  GestureDetector(
+                    onTap: () {
                       Navigator.pop(context);
                     },
                     child: Text(

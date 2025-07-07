@@ -195,8 +195,6 @@ class _HomeState extends State<Home> {
                       SizedBox(height: 24.h),
                       Center(
                         child: CustomButton(
-                          bgColor: ColorsManager.white,
-                          foColor: ColorsManager.blue,
                           onPressed: () {
                             Navigator.of(
                               context,

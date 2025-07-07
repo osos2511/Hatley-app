@@ -34,11 +34,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+
       controller: widget.controller,
       obscureText: _obscureText,
       validator: widget.validator,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
+
         prefixIcon: Icon(widget.icon, color: Colors.white70),
         suffixIcon: widget.isPassword
             ? IconButton(
@@ -55,11 +57,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
             : null,
         hintText: widget.hint,
         hintStyle: const TextStyle(color: Colors.white54),
-        filled: true,
-        fillColor: Colors.white10,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Colors.white54, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white38, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white70, width: 1.5),
         ),
       ),
     );

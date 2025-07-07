@@ -120,8 +120,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               );
                             },
                     text: isLoading ? 'Loading...' : 'Confirm Password',
-                    foColor: Colors.white,
-                    bgColor: Colors.blue,
+
                   ),
                 ],
               ),

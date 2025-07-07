@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/core/routes_manager.dart';
-import 'package:hatley/core/success_dialog.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart';
+import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import '../../../core/colors_manager.dart';
 import '../../cubit/auth_cubit/auth_cubit.dart';
 import '../../cubit/auth_cubit/auth_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hatley/core/local/token_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -63,19 +66,9 @@ class _SignInScreenState extends State<SignInScreen> {
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: screenSize.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              ColorsManager.primaryGradientStart,
-              ColorsManager.primaryGradientEnd,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
           child: Column(
@@ -84,7 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
               Text(
                 'Welcome to Hatley',
                 style: GoogleFonts.exo2(
-                  color: ColorsManager.white,
+                  color: ColorsManager.buttonColorApp,
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
                   shadows: const [
@@ -135,11 +128,11 @@ class _SignInScreenState extends State<SignInScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 15),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
+                      child: GestureDetector(
+                        onTap: () {
                           Navigator.pushNamed(
                             context,
                             RoutesManager.forgotPassRoute,
@@ -154,74 +147,63 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(height: 40),
                     BlocConsumer<AuthCubit, AuthState>(
                       listener: (context, state) async {
-                        if (state is SignInLoading) {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            ),
-                          );
-                        } else {
-                          if (mounted && Navigator.canPop(context)) {
-                            Navigator.of(context, rootNavigator: true).pop();
-                          }
-                        }
-
                         if (state is SignInSuccess) {
-                          showSuccessDialog(
-                            context,
-                            "Logged In Successfully",
-                            nextRoute: RoutesManager.homeRoute,
-                          );
+                          Navigator.pushReplacementNamed(context, RoutesManager.homeRoute);
                         } else if (state is SignInFailure) {
-                          final prefs = await SharedPreferences.getInstance();
-                          final TokenStorage tokenStorage = TokenStorageImpl(prefs);
-                          await tokenStorage.saveEmail("");
-                          print("⚠️ Sign-in failed, email cleared from storage.");
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.errorMessage)),
+                          CustomToast.show(
+                            message: "Login failed. Please try again",
                           );
                         }
                       },
                       builder: (context, state) {
-                        return CustomButton(
-                          bgColor: ColorsManager.white,
-                          foColor: ColorsManager.blue,
-                          onPressed: () async { // جعل الدالة onPressed async
+                        final isLoading = state is SignInLoading;
+
+                        return CustomAuthButton(
+                          text: 'Sign In',
+                          isLoading: isLoading,
+                          onPressed: isLoading
+                              ? null
+                              : () async {
                             if (_formKey.currentState!.validate()) {
-                              // **** إضافة الكود لحفظ البريد الإلكتروني هنا ****
-                              // حفظ البريد الإلكتروني الذي تم إدخاله في SharedPreferences
-                              // قبل محاولة تسجيل الدخول
                               final prefs = await SharedPreferences.getInstance();
                               final TokenStorage tokenStorage = TokenStorageImpl(prefs);
                               await tokenStorage.saveEmail(emailController.text.trim());
-                              print("📧 Email saved to storage BEFORE sign-in attempt: ${emailController.text.trim()}");
-                              // ************************************************
-
                               context.read<AuthCubit>().signIn(
                                 email: emailController.text.trim(),
                                 password: passwordController.text.trim(),
                               );
                             }
                           },
-                          text: 'Sign In',
                         );
                       },
                     ),
                     const SizedBox(height: 20),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, RoutesManager.signUpRoute);
-                      },
-                      child: const Text(
-                        "Don't have an account? Sign Up",
-                        style: TextStyle(color: ColorsManager.white),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Don't have an account? ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, RoutesManager.signUpRoute);
+                          },
+                          child:  Text(
+                            "Sign Up",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+
                   ],
                 ),
               ),

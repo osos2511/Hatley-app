@@ -171,8 +171,7 @@ class Profile extends StatelessWidget {
                               );
                             },
                             text: 'Update Profile',
-                            bgColor: ColorsManager.blue,
-                            foColor: ColorsManager.white,
+
                           ),
                           const SizedBox(height: 10),
                           CustomButton(
@@ -182,8 +181,7 @@ class Profile extends StatelessWidget {
                               ).pushNamed(RoutesManager.changePasswordRoute);
                             },
                             text: 'Change Password',
-                            bgColor: ColorsManager.blue,
-                            foColor: ColorsManager.white,
+
                           ),
                         ],
                       ),
