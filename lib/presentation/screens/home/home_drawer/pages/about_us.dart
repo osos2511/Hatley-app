@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 
 class AboutUs extends StatelessWidget {
@@ -17,13 +18,13 @@ class AboutUs extends StatelessWidget {
                   'You can place your order, choose from a variety of delivery offers, and enjoy a hassle-free delivery experience.\n\n'
                   'Your satisfaction is our priority, and we\'re here to make your life easier, one delivery at a time.',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 color: ColorsManager.white70
               ),
             ),
 
             SizedBox(
-              height: 20,
+              height: 20.h,
             ),
             Image.asset('assets/about-us.png'),
           ],

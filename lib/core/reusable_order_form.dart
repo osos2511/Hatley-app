@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/edit_order_cubit/edit_order_cubit.dart';
 import 'package:hatley/presentation/cubit/governorate_cubit/governorate_cubit.dart';
@@ -48,14 +49,14 @@ class ReusableOrderForm extends StatelessWidget {
               maxLines: 3,
               keyboardType: TextInputType.text,
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             CustomOrderTextField(
               controller: makeOrderCubit.priceController,
               label: 'Order Price',
               hint: 'Enter Your Order Price',
               keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             DateTimePickerRow(
               dateText:
                   state.selectedDate != null
@@ -69,9 +70,9 @@ class ReusableOrderForm extends StatelessWidget {
               onTimeTap: () => makeOrderCubit.pickTime(context),
             ),
 
-            const SizedBox(height: 20),
+             SizedBox(height: 20.h),
             const CustomContainer(title: "From: Where you want to order From"),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             _buildGovernorateDropdown(
               context,
               selected: makeOrderCubit.state.selectedGovernorateFrom,
@@ -81,20 +82,20 @@ class ReusableOrderForm extends StatelessWidget {
                 context.read<ZoneCubit>().fetchZones(govName: value);
               },
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             _buildZoneDropdown(
               context,
               selectedCity: makeOrderCubit.state.selectedCityFrom,
               onChanged: makeOrderCubit.selectCityFrom,
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             CustomDropdown(
               value: makeOrderCubit.state.selectedStateFrom,
               hint: 'Select a State',
               items: _streetNames,
               onChanged: makeOrderCubit.selectStateFrom,
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             CustomOrderTextField(
               controller: makeOrderCubit.fromAddressController,
               label: 'Details Address',
@@ -102,11 +103,11 @@ class ReusableOrderForm extends StatelessWidget {
               maxLines: 2,
               keyboardType: TextInputType.text,
             ),
-            const SizedBox(height: 20),
+             SizedBox(height: 20.h),
              Icon(Icons.arrow_downward, size: 40,color: Colors.white,),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             const CustomContainer(title: "To: Where you want to order To"),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             _buildGovernorateDropdown(
               context,
               selected: makeOrderCubit.state.selectedGovernorateTo,
@@ -116,20 +117,20 @@ class ReusableOrderForm extends StatelessWidget {
                 context.read<ZoneCubit>().fetchZones(govName: value);
               },
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             _buildZoneDropdown(
               context,
               selectedCity: makeOrderCubit.state.selectedCityTo,
               onChanged: makeOrderCubit.selectCityTo,
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             CustomDropdown(
               value: makeOrderCubit.state.selectedStateTo,
               hint: 'Select a State',
               items: _streetNames,
               onChanged: makeOrderCubit.selectStateTo,
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             CustomOrderTextField(
               controller: makeOrderCubit.toAddressController,
               label: 'Details Address',
@@ -137,7 +138,7 @@ class ReusableOrderForm extends StatelessWidget {
               maxLines: 2,
               keyboardType: TextInputType.text,
             ),
-            const SizedBox(height: 20),
+             SizedBox(height: 20.h),
             isEdit
                 ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

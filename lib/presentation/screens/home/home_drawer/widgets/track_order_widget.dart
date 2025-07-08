@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
 import 'package:hatley/data/model/traking_response.dart';
@@ -136,8 +137,8 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                                       ),
                                     ),
                                   Container(
-                                    width: 30,
-                                    height: 30,
+                                    width: 30.w,
+                                    height: 30.h,
                                     decoration: BoxDecoration(
                                       color:
                                           isActive ? ColorsManager.primaryColorApp : Colors.grey,
@@ -154,7 +155,7 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                                   if (!isLastStep)
                                     Expanded(
                                       child: Container(
-                                        height: 3,
+                                        height: 3.h,
                                         color:
                                             (stepIdx < currentStepIndex)
                                                 ? ColorsManager.primaryColorApp

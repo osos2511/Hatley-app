@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomInfoRow extends StatelessWidget {
   final String title;
@@ -25,7 +26,7 @@ class CustomInfoRow extends StatelessWidget {
           ),
           Text(
             value,
-            style: TextStyle(color: valueColor, fontSize: 16),
+            style: TextStyle(color: valueColor, fontSize: 16.sp),
           ),
         ],
       ),

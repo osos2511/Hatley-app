@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/core/routes_manager.dart';
@@ -87,13 +88,13 @@ class _MyOrdersState extends State<MyOrders> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'لا توجد طلبات حالياً',
+                          'Not Found orders now',
                           style: GoogleFonts.inter(
-                            fontSize: 20,
+                            fontSize: 20.sp,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 20),
+                         SizedBox(height: 20.h),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.of(
@@ -111,7 +112,7 @@ class _MyOrdersState extends State<MyOrders> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text('أضف طلب جديد'),
+                          child: const Text('Add New order'),
                         ),
                       ],
                     ),
@@ -124,8 +125,8 @@ class _MyOrdersState extends State<MyOrders> {
                     final order = orders[index];
                     return Center(
                       child: Container(
-                        margin: const EdgeInsets.all(16),
-                        padding: const EdgeInsets.all(16),
+                        margin: REdgeInsets.all(16),
+                        padding: REdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(color: ColorsManager.primaryColorApp),
@@ -161,15 +162,15 @@ class _MyOrdersState extends State<MyOrders> {
                                       .split('.')
                                       .first,
                             ),
-                            const SizedBox(height: 16),
+                             SizedBox(height: 16.h),
                             const Text(
                               "Order Details:",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(height: 8),
+                             SizedBox(height: 8.h),
                             Container(
-                              padding: const EdgeInsets.all(8),
-                              height: 80,
+                              padding:  REdgeInsets.all(8),
+                              height: 80.h,
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
@@ -177,7 +178,7 @@ class _MyOrdersState extends State<MyOrders> {
                               ),
                               child: Text(order.description),
                             ),
-                            const SizedBox(height: 20),
+                             SizedBox(height: 20.h),
                             _sectionTitle("From:"),
                             CustomAddressBlock(
                               values: [
@@ -187,7 +188,7 @@ class _MyOrdersState extends State<MyOrders> {
                                 order.detailesAddressFrom,
                               ],
                             ),
-                            const SizedBox(height: 20),
+                             SizedBox(height: 20.h),
                             _sectionTitle("To:"),
                             CustomAddressBlock(
                               values: [
@@ -198,7 +199,7 @@ class _MyOrdersState extends State<MyOrders> {
                               ],
                               isArabic: false,
                             ),
-                            const SizedBox(height: 24),
+                             SizedBox(height: 24.h),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -257,7 +258,7 @@ class _MyOrdersState extends State<MyOrders> {
   Widget _sectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      style:  TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
     );
   }
 }

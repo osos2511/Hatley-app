@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../core/colors_manager.dart';
 
@@ -17,7 +18,7 @@ class CustomToast {
       textColor: textColor,
       gravity: gravity,
       toastLength: toastLength,
-      fontSize: 16.0,
+      fontSize: 16.sp,
 
     );
   }

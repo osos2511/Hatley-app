@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/core/routes_manager.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
@@ -76,7 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 'Welcome to Hatley',
                 style: GoogleFonts.exo2(
                   color: ColorsManager.buttonColorApp,
-                  fontSize: 26,
+                  fontSize: 26.sp,
                   fontWeight: FontWeight.bold,
                   shadows: const [
                     Shadow(
@@ -87,15 +88,15 @@ class _SignInScreenState extends State<SignInScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 10),
+               SizedBox(height: 10.h),
               Text(
                 'Sign in to continue',
                 style: GoogleFonts.exo2(
                   color: ColorsManager.white70,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                 ),
               ),
-              const SizedBox(height: 30),
+               SizedBox(height: 30.h),
               Form(
                 key: _formKey,
                 child: Column(
@@ -112,7 +113,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                     SizedBox(height: 20.h),
                     CustomTextField(
                       keyboardType: TextInputType.text,
                       controller: passwordController,
@@ -126,7 +127,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 15),
+                     SizedBox(height: 15.h),
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
@@ -142,7 +143,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                     SizedBox(height: 40.h),
                     BlocConsumer<AuthCubit, AuthState>(
                       listener: (context, state) async {
                         if (state is SignInSuccess) {
@@ -175,15 +176,15 @@ class _SignInScreenState extends State<SignInScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
+                     SizedBox(height: 20.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
+                         Text(
                           "Don't have an account? ",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14,
+                            fontSize: 14.sp,
                           ),
                         ),
                         GestureDetector(
@@ -194,7 +195,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             "Sign Up",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

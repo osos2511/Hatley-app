@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/custom_order_button.dart';
 import '../../../../../core/routes_manager.dart';
@@ -40,19 +41,19 @@ void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
                           'Order Details:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 4),
+                         SizedBox(height: 4.h),
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding:  REdgeInsets.all(8),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
                           child: Text(state.details),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 12),
+                   SizedBox(width: 12.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -60,11 +61,11 @@ void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
                         'Price:',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 4),
+                       SizedBox(height: 4.h),
                       Text(
                         '${state.price} EGP',
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style:  TextStyle(
+                          fontSize: 18.sp,
                           color: Colors.green,
                           fontWeight: FontWeight.bold,
                         ),
@@ -73,31 +74,31 @@ void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+               SizedBox(height: 12.h),
               Row(
                 children: [
                   const Text(
                     'Date:',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 8),
+                   SizedBox(width: 8.w),
                   Text(state.selectedDate?.toString().split(' ').first ?? ''),
                 ],
               ),
-              const SizedBox(height: 6),
+               SizedBox(height: 6.h),
               Row(
                 children: [
                   const Text(
                     'Time:',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 8),
+                   SizedBox(width: 8.w),
                   Text(state.selectedTime?.format(context) ?? ''),
                 ],
               ),
-              const SizedBox(height: 16),
+               SizedBox(height: 16.h),
               const Divider(),
-              const SizedBox(height: 8),
+               SizedBox(height: 8.h),
               const Text(
                 'From:',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -105,12 +106,12 @@ void showConfirmOrderDialog(BuildContext context, MakeOrderState state) {
               Text(
                 '${state.selectedGovernorateFrom ?? ''}, ${state.selectedCityFrom ?? ''}, ${state.selectedStateFrom ?? ''}',
               ),
-              const SizedBox(height: 8),
+               SizedBox(height: 8.h),
               const Text('To:', style: TextStyle(fontWeight: FontWeight.bold)),
               Text(
                 '${state.selectedGovernorateTo ?? ''}, ${state.selectedCityTo ?? ''}, ${state.selectedStateTo ?? ''}',
               ),
-              const SizedBox(height: 20),
+               SizedBox(height: 20.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

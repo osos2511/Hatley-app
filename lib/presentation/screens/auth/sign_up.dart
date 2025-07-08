@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/presentation/cubit/register_cubit/register_cubit.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
@@ -52,7 +53,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   'Create Your Account',
                   style: GoogleFonts.exo2(
                     color: ColorsManager.buttonColorApp,
-                    fontSize: 26,
+                    fontSize: 26.sp,
                     fontWeight: FontWeight.bold,
                     shadows: [
                       Shadow(
@@ -63,15 +64,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
+                 SizedBox(height: 10.h),
                 Text(
                   'Sign up to get started',
                   style: GoogleFonts.exo2(
                     color: ColorsManager.white70,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                   ),
                 ),
-                const SizedBox(height: 30),
+                 SizedBox(height: 30.h),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -86,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ? "Name is required"
                             : null,
                       ),
-                      const SizedBox(height: 20),
+                       SizedBox(height: 20.h),
                       CustomTextField(
                         keyboardType: TextInputType.emailAddress,
                         controller: emailController,
@@ -103,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
+                       SizedBox(height: 20.h),
                       CustomTextField(
                         keyboardType: TextInputType.phone,
                         controller: phoneController,
@@ -120,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
+                       SizedBox(height: 20.h),
                       CustomTextField(
                         keyboardType: TextInputType.text,
                         controller: passwordController,
@@ -134,7 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 30),
+                       SizedBox(height: 30.h),
                       BlocConsumer<RegisterCubit, RegisterState>(
                         listener: (context, state) {
                           if (state is RegisterSuccess) {
@@ -166,15 +167,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           );
                         },
                       ),
-                      const SizedBox(height: 20),
+                       SizedBox(height: 20.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
+                           Text(
                             "Already have an account? ",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 14.sp,
                             ),
                           ),
                           GestureDetector(
@@ -184,11 +185,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 RoutesManager.signInRoute,
                               );
                             },
-                            child: const Text(
+                            child:  Text(
                               "Sign In",
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

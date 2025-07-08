@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/core/routes_manager.dart';
 import 'package:hatley/injection_container.dart';
@@ -120,38 +121,38 @@ class Profile extends StatelessWidget {
                                 ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                           SizedBox(height: 12.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
+                               Icon(
                                 Icons.star,
                                 color: Colors.amber,
-                                size: 35,
+                                size: 35.sp,
                               ),
-                              const SizedBox(width: 5),
+                               SizedBox(width: 5.w),
                               Text(
                                 rating.toStringAsFixed(2),
                                 style: TextStyle(
                                   color: ColorsManager.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 20),
+                           SizedBox(height: 20.h),
                           ProfileInfoTile(
                             label: 'Username',
                             value: profile.name,
                           ),
                           ProfileInfoTile(label: 'Email', value: profile.email),
                           ProfileInfoTile(label: 'Phone', value: profile.phone),
-                          const SizedBox(height: 20),
+                           SizedBox(height: 20.h),
 
                           statsWidget, // عرض الإحصائيات هنا
 
-                          const SizedBox(height: 40),
+                           SizedBox(height: 40.h),
                           CustomButton(
                             onPressed: () {
                               showDialog(
@@ -172,7 +173,7 @@ class Profile extends StatelessWidget {
                             text: 'Update Profile',
 
                           ),
-                          const SizedBox(height: 10),
+                           SizedBox(height: 10.h),
                           CustomButton(
                             onPressed: () {
                               Navigator.of(
@@ -205,14 +206,14 @@ class Profile extends StatelessWidget {
             style: TextStyle(
               color: ColorsManager.black,
               fontWeight: FontWeight.bold,
-              fontSize: 22,
+              fontSize: 22.sp,
             ),
           ),
-          const SizedBox(height: 4),
+           SizedBox(height: 4.h),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(color: ColorsManager.white, fontSize: 14),
+            style: TextStyle(color: ColorsManager.white, fontSize: 14.sp),
           ),
         ],
       ),

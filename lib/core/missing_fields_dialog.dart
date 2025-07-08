@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 
 void showMissingFieldsDialog(
@@ -38,7 +39,7 @@ void showMissingFieldsDialog(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
             child: Text(
               message,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              style:  TextStyle(fontSize: 16.sp, color: Colors.black87),
             ),
           ),
           actions: [
@@ -62,12 +63,12 @@ void showMissingFieldsDialog(
                     onOkPressed();
                   }
                 },
-                child: const Text(
+                child:  Text(
                   "OK",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                   ),
                 ),
               ),

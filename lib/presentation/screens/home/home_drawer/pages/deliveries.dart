@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/domain/entities/deliveries_entity.dart';
 import 'package:hatley/injection_container.dart';
@@ -75,7 +76,7 @@ class DeliveriesListItem extends StatelessWidget {
                 Text(
                   'Driver: ${order.deliveryName}',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                     color: kPrimaryColor,
                   ),
@@ -108,7 +109,7 @@ class DeliveriesListItem extends StatelessWidget {
                 Text(
                   'Order ID: ${order.orderId}',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                     color: kPrimaryColor,
                   ),
@@ -122,7 +123,7 @@ class DeliveriesListItem extends StatelessWidget {
                   child: Text(
                     'Completed',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: kPrimaryColor,
                     ),
@@ -137,7 +138,7 @@ class DeliveriesListItem extends StatelessWidget {
             Text(
               order.created.toLocal().toString().split(' ')[0],
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: kPrimaryColor.withOpacity(0.8),
               ),
             ),
@@ -152,7 +153,7 @@ class DeliveriesListItem extends StatelessWidget {
             Text(
               'From: ${order.orderCityFrom}',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: kPrimaryColor.withOpacity(0.8),
               ),
             ),
@@ -162,7 +163,7 @@ class DeliveriesListItem extends StatelessWidget {
             Text(
               'To: ${order.orderCityTo}',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: kPrimaryColor.withOpacity(0.8),
               ),
             ),
@@ -175,7 +176,7 @@ class DeliveriesListItem extends StatelessWidget {
               child: Text(
                 '${order.price.toInt()} EGP',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: kPrimaryColor,
                 ),
@@ -188,7 +189,7 @@ class DeliveriesListItem extends StatelessWidget {
             Text(
               order.description,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),

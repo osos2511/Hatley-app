@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/offer_cubit/offer_cubit.dart';
 import 'package:hatley/presentation/cubit/offer_cubit/offer_state.dart';
@@ -273,26 +274,26 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+           Text(
             'Delivery Offers:',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
           ),
-          const SizedBox(height: 12),
+           SizedBox(height: 12.h),
           SizedBox(
-            height: 190,
+            height: 190.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _offers.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              separatorBuilder: (_, __) =>  SizedBox(width: 12.w),
               itemBuilder: (context, index) {
                 final offer = _offers[index];
                 final imageUrl = offer["image"] as String;
                 return Container(
-                  width: 250,
-                  padding: const EdgeInsets.all(16),
+                  width: 250.w,
+                  padding:  REdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(color: ColorsManager.primaryColorApp),
                     boxShadow: [
                       BoxShadow(
@@ -325,23 +326,23 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                               children: [
                                 Text(
                                   offer["name"],
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                    fontSize: 18.sp,
                                   ),
                                 ),
-                                const SizedBox(height: 6),
+                                 SizedBox(height: 6.h),
                                 Row(
                                   children: [
                                     Icon(
                                       Icons.star,
                                       color: Colors.amber[700],
-                                      size: 18,
+                                      size: 18.sp,
                                     ),
-                                    const SizedBox(width: 4),
+                                     SizedBox(width: 4.w),
                                     Text(
                                       offer["rating"].toString(),
-                                      style: const TextStyle(fontSize: 14),
+                                      style:  TextStyle(fontSize: 14.sp),
                                     ),
                                   ],
                                 ),
@@ -350,12 +351,12 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                       SizedBox(height: 16.h),
                       Text(
                         "Offer Price: ${offer["price"]} EGP",
-                        style: const TextStyle(
+                        style:  TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           color: Colors.green,
                         ),
                       ),
@@ -371,7 +372,7 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                               text: "Accept",
                             ),
                           ),
-                          const SizedBox(width: 12),
+                           SizedBox(width: 12.w),
                           Expanded(
                             child: CustomOrderButton(
                               onPressed:

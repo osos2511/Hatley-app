@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,7 +41,9 @@ void main() async {
     initialRoute = RoutesManager.splashRoute;
   }
 
-  runApp(MyApp(initialRoute: initialRoute));
+  runApp(DevicePreview(
+      enabled: true,
+      builder:(context) =>  MyApp(initialRoute: initialRoute)));
 }
 
 class MyApp extends StatelessWidget {

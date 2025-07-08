@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/core/reusable_order_form.dart';
 import 'package:hatley/core/utils.dart';
@@ -51,14 +52,14 @@ class MakeOrders extends StatelessWidget {
               ),
               body: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding:  REdgeInsets.all(12),
                   child: Center(
                     child: Container(
                       width: screenSize.width * 0.85,
-                      padding: const EdgeInsets.all(16),
+                      padding:  REdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: ColorsManager.white70),
-                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(width: 2.w, color: ColorsManager.white70),
+                        borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: ReusableOrderForm(
                         onSubmit: () {

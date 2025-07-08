@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
 import 'package:hatley/data/model/traking_response.dart';
 import 'package:hatley/core/local/token_storage.dart';
@@ -144,17 +145,17 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
               },
             );
           } else if (state is TrackingEmpty) {
-            return const Center(
+            return  Center(
               child: Text(
                 "You have no orders to track.",
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16.sp),
               ),
             );
           }
-          return const Center(
+          return  Center(
             child: Text(
               "Welcome! Loading your orders...",
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16.sp),
             ),
           );
         },

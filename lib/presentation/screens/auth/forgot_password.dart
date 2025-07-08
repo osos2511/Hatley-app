@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart';
@@ -64,12 +65,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   Text(
                     "Enter your email address to receive a reset code",
                     style: GoogleFonts.exo2(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       color: ColorsManager.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 30),
+                   SizedBox(height: 30.h),
                   CustomTextField(
                     icon: Icons.email,
                     hint: 'Email',
@@ -86,14 +87,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 40),
+                   SizedBox(height: 40.h),
                   CustomAuthButton(
                     onPressed: isLoading ? null : _handleSendCode,
                     text: 'Send Code',
                     isLoading: isLoading,
                   ),
 
-                  const SizedBox(height: 20),
+                   SizedBox(height: 20.h),
                   GestureDetector(
                     onTap: () {
                       Navigator.pop(context);

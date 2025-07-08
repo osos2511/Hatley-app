@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 
 class ContactUs extends StatelessWidget {
@@ -9,27 +10,27 @@ class ContactUs extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding:  REdgeInsets.all(20),
         child: Column(
           children: [
-             Icon(Icons.mark_email_read, size: 100, color: ColorsManager.white),
-            const SizedBox(height: 16),
-            const Text(
+             Icon(Icons.mark_email_read, size: 100.sp, color: ColorsManager.white),
+             SizedBox(height: 16.h),
+             Text(
               'If you have questions or just want to get in touch, use the form below.\nWe look forward to hearing from you!',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, height: 1.5,color: ColorsManager.white70),
+              style: TextStyle(fontSize: 16.sp, height: 1.5.h,color: ColorsManager.white70),
             ),
-            const SizedBox(height: 24),
+             SizedBox(height: 24.h),
 
             // Input Fields
             _buildTextField(label: 'Name', icon: Icons.person),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             _buildTextField(label: 'Email', icon: Icons.email),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             _buildTextField(label: 'Phone', icon: Icons.phone),
-            const SizedBox(height: 12),
+             SizedBox(height: 12.h),
             _buildTextField(label: 'Enter your message', icon: Icons.message, maxLines: 4),
-            const SizedBox(height: 16),
+             SizedBox(height: 16.h),
 
             // Send Button
             ElevatedButton(
@@ -40,10 +41,10 @@ class ContactUs extends StatelessWidget {
                 backgroundColor: ColorsManager.buttonColorApp,
                 minimumSize: Size(screenSize.width * 0.7, 55),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
               ),
-              child: const Text("Send", style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.white)),
+              child:  Text("Send", style: TextStyle(fontSize: 16.sp,fontWeight: FontWeight.bold,color: Colors.white)),
             ),
           ],
         ),
@@ -59,7 +60,7 @@ class ContactUs extends StatelessWidget {
         prefixIcon: Icon(icon),
         filled: true,
         fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
       ),
     );
   }

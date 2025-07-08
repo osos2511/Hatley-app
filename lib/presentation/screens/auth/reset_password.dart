@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart';
@@ -64,12 +65,12 @@ class _ResetPassState extends State<ResetPass> {
                   Text(
                     "Please enter a new password to reset your account",
                     style: GoogleFonts.exo2(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       color: ColorsManager.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 30),
+                   SizedBox(height: 30.h),
                   CustomTextField(
                     keyboardType: TextInputType.text,
                     controller: passwordController,
@@ -83,7 +84,7 @@ class _ResetPassState extends State<ResetPass> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
+                   SizedBox(height: 20.h),
                   CustomTextField(
                     keyboardType: TextInputType.text,
                     controller: confirmPasswordController,
