@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hatley/data/model/traking_response.dart';
 import 'tracking_state.dart';
 import '../../../core/api_manager/api_manager.dart';
-import '../../../core/error/failure.dart';
 
 class TrackingCubit extends Cubit<TrackingState> {
   final TrakingApiManager trakingApiManager;
