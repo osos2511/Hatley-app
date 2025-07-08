@@ -51,29 +51,32 @@ class _SplashState extends State<Splash> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Spacer(),
+          Text(
+            'HATLEY',
+            style: GoogleFonts.rubikVinyl(
+              color: ColorsManager.primaryColorApp,
+              fontSize: responsiveFontSize(context, 60),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 20),
           AnimatedTextKit(
             totalRepeatCount: 1,
             isRepeatingAnimation: false,
             animatedTexts: [
-              ScaleAnimatedText(
-                'HATLEY',
-                textStyle: GoogleFonts.rubikVinyl(
-                  color: ColorsManager.primaryColorApp,
-                  fontSize: responsiveFontSize(context, 60),
-                  fontWeight: FontWeight.w600,
-                ),
-                duration: const Duration(seconds: 3),
-              ),
-              ScaleAnimatedText(
+              TyperAnimatedText(
                 'Get Anything',
                 textStyle: GoogleFonts.exo2(
                   color: ColorsManager.primaryColorApp,
                   fontSize: responsiveFontSize(context, 30),
                   fontWeight: FontWeight.w600,
                 ),
-                duration: const Duration(seconds: 3),
+                speed: const Duration(milliseconds: 300),
               ),
             ],
+            onTap: () {
+              print("💬 Get Anything tapped");
+            },
           ),
           const Spacer(),
           SpinKitPianoWave(

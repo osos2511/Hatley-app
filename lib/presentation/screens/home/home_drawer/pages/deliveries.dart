@@ -20,7 +20,7 @@ class Deliveries extends StatelessWidget {
         body: BlocBuilder<DeliveriesCubit, DeliveriesState>(
           builder: (context, state) {
             if (state is DeliveriesLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator(color: Colors.white,));
             }
             if (state is DeliveriesError) {
               return Center(

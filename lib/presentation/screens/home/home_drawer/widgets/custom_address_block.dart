@@ -21,6 +21,7 @@ class CustomAddressBlock extends StatelessWidget {
             textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(),
               hintText: value,
             ),
           ),
