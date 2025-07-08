@@ -7,7 +7,6 @@ import 'package:hatley/presentation/cubit/offer_cubit/offer_state.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hatley/core/local/token_storage.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../../core/routes_manager.dart';
 import '../../../../cubit/navigation_cubit.dart';
 import 'custom_order_button.dart';
@@ -27,7 +26,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
       "https://hatley.runasp.net/NotifyNewOfferForUser";
   String? _userEmail;
   late final TokenStorage _tokenStorage;
-  late Box _offersBox;
 
   Map<String, dynamic>? _pendingOfferToDelete;
   int? _pendingOfferIndexToDelete;
@@ -39,47 +37,22 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   }
 
   Future<void> _initialize() async {
-    if (!Hive.isBoxOpen('delivery_offers')) {
-      await Hive.initFlutter();
-    }
     final prefs = await SharedPreferences.getInstance();
     _tokenStorage = TokenStorageImpl(prefs);
     _userEmail = await _tokenStorage.getEmail();
-    _offersBox = await Hive.openBox('delivery_offers');
-
-    final savedOffers =
-        _offersBox
-            .toMap()
-            .entries
-            .map((entry) {
-              final offer = Map<String, dynamic>.from(entry.value);
-              offer['hive_key'] = entry.key; // Store Hive key
-              return offer;
-            })
-            .where(
-              (offer) =>
-                  widget.orderId == null || offer["order_id"] == widget.orderId,
-            )
-            .toList();
-
-    setState(() {
-      _offers.addAll(savedOffers);
-    });
-
     await _startSignalRConnection();
   }
 
   Future<void> _startSignalRConnection() async {
-    _hubConnection =
-        HubConnectionBuilder()
-            .withUrl(
-              _serverUrl,
-              options: HttpConnectionOptions(
-                transport: HttpTransportType.WebSockets,
-              ),
-            )
-            .withAutomaticReconnect()
-            .build();
+    _hubConnection = HubConnectionBuilder()
+        .withUrl(
+      _serverUrl,
+      options: HttpConnectionOptions(
+        transport: HttpTransportType.WebSockets,
+      ),
+    )
+        .withAutomaticReconnect()
+        .build();
 
     _hubConnection.onclose(({Exception? error}) {});
     _hubConnection.onreconnecting(({Exception? error}) {});
@@ -93,8 +66,7 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   }
 
   void _registerSignalRListeners() {
-    _hubConnection.on("NotifyNewOfferForUser", (arguments) async {
-      // Added async here
+    _hubConnection.on("NotifyNewOfferForUser", (arguments) {
       if (arguments != null && arguments.length == 2) {
         final offerData = arguments[0] as Map<dynamic, dynamic>;
         final checkData = arguments[1] as Map<dynamic, dynamic>;
@@ -103,30 +75,31 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
         final checkType = checkData["type"];
 
         if (checkEmail == _userEmail && checkType == "User") {
-          final orderId =
-              offerData["order_id"] is int
-                  ? offerData["order_id"]
-                  : int.tryParse(offerData["order_id"].toString());
+          final orderId = offerData["order_id"] is int
+              ? offerData["order_id"]
+              : int.tryParse(offerData["order_id"].toString());
           if (orderId == null) return;
 
           final newOffer = {
             "order_id": orderId,
             "name": offerData["delivery_name"],
             "price": offerData["offer_value"].toString(),
-            "rating":
-                double.tryParse(offerData["delivery_avg_rate"].toString()) ??
-                0.0,
+            "rating": double.tryParse(offerData["delivery_avg_rate"].toString()) ?? 0.0,
             "image": offerData["delivery_photo"] ?? "",
             "delivery_email": offerData["delivery_email"],
             "offer_value": offerData["offer_value"],
           };
-          final hiveKey = await _offersBox.add(newOffer); // Await here
-          newOffer['hive_key'] = hiveKey; // Add Hive key to the map
 
-          if (widget.orderId == null ||
-              newOffer["order_id"] == widget.orderId) {
+          if (widget.orderId == null || newOffer["order_id"] == widget.orderId) {
             setState(() {
               _offers.add(newOffer);
+            });
+            Future.delayed(const Duration(seconds: 10), () {
+              if (mounted && _offers.contains(newOffer)) {
+                setState(() {
+                  _offers.remove(newOffer);
+                });
+              }
             });
           }
         }
@@ -172,37 +145,9 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     }
   }
 
-  void _removeOfferFromHive(Map<String, dynamic> offer) {
-    final hiveKey = offer['hive_key'];
-    if (hiveKey != null) {
-      _offersBox.delete(hiveKey);
-    } else {
-      print(
-        "Warning: Attempted to remove offer from Hive without a hive_key. Fallback to manual search (less efficient).",
-      );
-      // Fallback: This part should ideally not be needed if hive_key is always stored.
-      final boxMap = _offersBox.toMap();
-      dynamic keyToDelete;
-      boxMap.forEach((key, value) {
-        if (value is Map &&
-            value["order_id"] == offer["order_id"] &&
-            value["delivery_email"] == offer["delivery_email"] &&
-            value["offer_value"].toString() ==
-                offer["offer_value"].toString()) {
-          // Basic check
-          keyToDelete = key;
-        }
-      });
-      if (keyToDelete != null) {
-        _offersBox.delete(keyToDelete);
-      }
-    }
-  }
-
   @override
   void dispose() {
     _hubConnection.stop();
-    _offersBox.close();
     super.dispose();
   }
 
@@ -215,49 +160,28 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     }
 
     return BlocListener<OfferCubit, OfferState>(
-      listener: (context, state) async {
+      listener: (context, state) {
         if (state is OfferAcceptedSuccess) {
           final int acceptedOrderId = state.orderId;
           setState(() {
-            // Ensure UI updates immediately
-            _offers.removeWhere(
-              (offer) => offer["order_id"] == acceptedOrderId,
-            );
+            _offers.removeWhere((offer) => offer["order_id"] == acceptedOrderId);
           });
-          // Remove all offers for this order from Hive
-          final List<dynamic> keysToDelete = [];
-          _offersBox.toMap().forEach((key, value) {
-            if (value is Map && value["order_id"] == acceptedOrderId) {
-              keysToDelete.add(key);
-            }
-          });
-          for (final key in keysToDelete) {
-            _offersBox.delete(key);
-          }
 
           context.read<NavigationCubit>().changePage(1);
           Navigator.pushNamedAndRemoveUntil(
             context,
             RoutesManager.homeRoute,
-            (route) => false,
+                (route) => false,
           );
+
           _pendingOfferToDelete = null;
           _pendingOfferIndexToDelete = null;
         } else if (state is OfferDeclinedSuccess) {
-          if (_pendingOfferToDelete != null &&
-              _pendingOfferIndexToDelete != null) {
+          if (_pendingOfferToDelete != null && _pendingOfferIndexToDelete != null) {
             setState(() {
-              // Ensure UI updates immediately
               _offers.removeAt(_pendingOfferIndexToDelete!);
             });
-            _removeOfferFromHive(_pendingOfferToDelete!);
           }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
           _pendingOfferToDelete = null;
           _pendingOfferIndexToDelete = null;
         } else if (state is OfferFailure) {
@@ -274,121 +198,113 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text(
+          Text(
             'Delivery Offers:',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
           ),
-           SizedBox(height: 12.h),
+          SizedBox(height: 12.h),
           SizedBox(
             height: 190.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _offers.length,
-              separatorBuilder: (_, __) =>  SizedBox(width: 12.w),
+              separatorBuilder: (_, __) => SizedBox(width: 12.w),
               itemBuilder: (context, index) {
                 final offer = _offers[index];
                 final imageUrl = offer["image"] as String;
-                return Container(
+
+                return SizedBox(
                   width: 250.w,
-                  padding:  REdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: ColorsManager.primaryColorApp),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.25),
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      side: BorderSide(color: ColorsManager.primaryColorApp),
+                    ),
+                    elevation: 4,
+                    child: Padding(
+                      padding: REdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CircleAvatar(
-                            radius: 28,
-                            backgroundImage:
-                                imageUrl.isNotEmpty
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 28,
+                                backgroundImage: imageUrl.isNotEmpty
                                     ? NetworkImage(imageUrl)
-                                    : const AssetImage(
-                                          "assets/images/default_user.png",
-                                        )
-                                        as ImageProvider,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  offer["name"],
-                                  style:  TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.sp,
-                                  ),
-                                ),
-                                 SizedBox(height: 6.h),
-                                Row(
+                                    : const AssetImage("assets/images/default_user.png")
+                                as ImageProvider,
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.amber[700],
-                                      size: 18.sp,
-                                    ),
-                                     SizedBox(width: 4.w),
                                     Text(
-                                      offer["rating"].toString(),
-                                      style:  TextStyle(fontSize: 14.sp),
+                                      offer["name"],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.sp,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: 6.h),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.amber[700],
+                                          size: 18.sp,
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          offer["rating"].toString(),
+                                          style: TextStyle(fontSize: 14.sp),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Offer Price: ${offer["price"]} EGP",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16.sp,
+                              color: Colors.green,
                             ),
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomOrderButton(
+                                  onPressed: () => _handleOfferResponse(index, true),
+                                  backgroundColor: ColorsManager.primaryColorApp,
+                                  text: "Accept",
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Expanded(
+                                child: CustomOrderButton(
+                                  onPressed: () => _handleOfferResponse(index, false),
+                                  backgroundColor: ColorsManager.buttonColorApp,
+                                  text: "Decline",
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                       SizedBox(height: 16.h),
-                      Text(
-                        "Offer Price: ${offer["price"]} EGP",
-                        style:  TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.sp,
-                          color: Colors.green,
-                        ),
-                      ),
-                      const Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: CustomOrderButton(
-                              onPressed:
-                                  () => _handleOfferResponse(index, true),
-                              backgroundColor: ColorsManager.primaryColorApp,
-                              text: "Accept",
-                            ),
-                          ),
-                           SizedBox(width: 12.w),
-                          Expanded(
-                            child: CustomOrderButton(
-                              onPressed:
-                                  () => _handleOfferResponse(index, false),
-                              backgroundColor: ColorsManager.buttonColorApp,
-                              text: "Decline",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
                 );
+
               },
             ),
-          ),
+          )
         ],
       ),
     );

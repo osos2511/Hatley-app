@@ -59,7 +59,6 @@ class _MyOrdersState extends State<MyOrders> {
                   CustomToast.show(message: "Offer accepted successfully! Redirecting to tracking...");
                 } else if (state is OfferDeclinedSuccess) {
                   CustomToast.show(message: "Offer Decline successfully!");
-                  context.read<GetAllOrdersCubit>().getAllOrders();
                 } else if (state is OfferFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

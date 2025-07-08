@@ -30,7 +30,6 @@ class AuthCubit extends Cubit<AuthState> {
       },
           (authEntity) async {
         print('✅ Login success: ${authEntity.token}');
-        await tokenStorage.clearDeliveryOffersBox();
         await tokenStorage.saveEmail(email);
 
         // ✅ حفظ التوكن وتاريخ الانتهاء بعد الدخول

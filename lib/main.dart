@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/feedback_cubit/feedback_cubit.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hatley/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:hatley/presentation/cubit/make_orders_cubit/make_orders_cubit.dart';
@@ -16,9 +15,6 @@ import 'injection_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final appDocumentDir = await getApplicationDocumentsDirectory();
-  await Hive.initFlutter(appDocumentDir.path);
 
   await setupGetIt();
 
