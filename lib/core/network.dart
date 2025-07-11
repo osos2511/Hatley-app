@@ -25,9 +25,14 @@ class DioFactory {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final token = await tokenStorage.getToken();
+          print("🚩 Dio Interceptor - Token: $token");
+
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+          print("🚩 Dio Request URL: ${options.uri}");
+          print("🚩 Dio Request Headers: ${options.headers}");
+          print("🚩 Dio Request Body: ${options.data}");
           return handler.next(options);
         },
       ),

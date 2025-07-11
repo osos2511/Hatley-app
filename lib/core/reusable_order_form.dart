@@ -33,6 +33,18 @@ class ReusableOrderForm extends StatelessWidget {
     required this.submitButtonText,
   });
 
+  // أضف هنا Map ثابتة تربط كل Zone بقائمة States
+  static const Map<String, List<String>> zoneStates = {
+    'Assiut City': [
+      'Al-Nemis Street',
+      'Al-Mohafza Street',
+      'Gomhoriah Street',
+      'Almaktabat Street',
+    ],
+    'Al-Fateh': ["Al-Malag'a", 'Al-Wosta', 'Al-Arab'],
+    'Al-Ghanaim': ['Al-Ghanaim-1', 'Al-Ghanaim-2', 'Al-Ghanaim-3'],
+  };
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MakeOrderCubit, MakeOrderState>(
@@ -49,14 +61,14 @@ class ReusableOrderForm extends StatelessWidget {
               maxLines: 3,
               keyboardType: TextInputType.text,
             ),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             CustomOrderTextField(
               controller: makeOrderCubit.priceController,
               label: 'Order Price',
               hint: 'Enter Your Order Price',
               keyboardType: TextInputType.number,
             ),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             DateTimePickerRow(
               dateText:
                   state.selectedDate != null
@@ -70,9 +82,9 @@ class ReusableOrderForm extends StatelessWidget {
               onTimeTap: () => makeOrderCubit.pickTime(context),
             ),
 
-             SizedBox(height: 20.h),
+            SizedBox(height: 20.h),
             const CustomContainer(title: "From: Where you want to order From"),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             _buildGovernorateDropdown(
               context,
               selected: makeOrderCubit.state.selectedGovernorateFrom,
@@ -82,20 +94,20 @@ class ReusableOrderForm extends StatelessWidget {
                 context.read<ZoneCubit>().fetchZones(govName: value);
               },
             ),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             _buildZoneDropdown(
               context,
               selectedCity: makeOrderCubit.state.selectedCityFrom,
               onChanged: makeOrderCubit.selectCityFrom,
             ),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             CustomDropdown(
               value: makeOrderCubit.state.selectedStateFrom,
               hint: 'Select a State',
-              items: _streetNames,
+              items: zoneStates[makeOrderCubit.state.selectedCityFrom] ?? [],
               onChanged: makeOrderCubit.selectStateFrom,
             ),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             CustomOrderTextField(
               controller: makeOrderCubit.fromAddressController,
               label: 'Details Address',
@@ -103,11 +115,11 @@ class ReusableOrderForm extends StatelessWidget {
               maxLines: 2,
               keyboardType: TextInputType.text,
             ),
-             SizedBox(height: 20.h),
-             Icon(Icons.arrow_downward, size: 40,color: Colors.white,),
-             SizedBox(height: 12.h),
+            SizedBox(height: 20.h),
+            Icon(Icons.arrow_downward, size: 40, color: Colors.white),
+            SizedBox(height: 12.h),
             const CustomContainer(title: "To: Where you want to order To"),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             _buildGovernorateDropdown(
               context,
               selected: makeOrderCubit.state.selectedGovernorateTo,
@@ -117,20 +129,20 @@ class ReusableOrderForm extends StatelessWidget {
                 context.read<ZoneCubit>().fetchZones(govName: value);
               },
             ),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             _buildZoneDropdown(
               context,
               selectedCity: makeOrderCubit.state.selectedCityTo,
               onChanged: makeOrderCubit.selectCityTo,
             ),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             CustomDropdown(
               value: makeOrderCubit.state.selectedStateTo,
               hint: 'Select a State',
-              items: _streetNames,
+              items: zoneStates[makeOrderCubit.state.selectedCityTo] ?? [],
               onChanged: makeOrderCubit.selectStateTo,
             ),
-             SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
             CustomOrderTextField(
               controller: makeOrderCubit.toAddressController,
               label: 'Details Address',
@@ -138,7 +150,7 @@ class ReusableOrderForm extends StatelessWidget {
               maxLines: 2,
               keyboardType: TextInputType.text,
             ),
-             SizedBox(height: 20.h),
+            SizedBox(height: 20.h),
             isEdit
                 ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -180,8 +192,9 @@ class ReusableOrderForm extends StatelessWidget {
                             makeOrderCubit.state.selectedCityTo == null ||
                             makeOrderCubit.state.selectedDate == null ||
                             makeOrderCubit.state.selectedTime == null) {
-
-                          CustomToast.show(message: 'Please Fill all required fields');
+                          CustomToast.show(
+                            message: 'Please Fill all required fields',
+                          );
                           return;
                         }
 
@@ -235,12 +248,12 @@ class ReusableOrderForm extends StatelessWidget {
     );
   }
 
-  List<String> get _streetNames => [
-    'Al-Nemis Street',
-    'Al-Mohafza Street',
-    'Al-Gomhoriah Street',
-    'Al-Maktabat Street',
-  ];
+  // List<String> get _streetNames => [
+  //   'Al-Nemis Street',
+  //   'Al-Mohafza Street',
+  //   'Al-Gomhoriah Street',
+  //   'Al-Maktabat Street',
+  // ];
 
   Widget _buildGovernorateDropdown(
     BuildContext context, {

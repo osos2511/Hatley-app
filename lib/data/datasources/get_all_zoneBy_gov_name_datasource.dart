@@ -15,10 +15,7 @@ class GetAllZoneByGovNameDatasourceImpl
     required String govName,
   }) async {
     try {
-      final response = await dio.get(
-        'Zone',
-        queryParameters: {'governorate_name': govName},
-      );
+      final response = await dio.get('Zone/ZonesForGovernorate/$govName');
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data as List;
         return data.map((e) => ZoneResponse.fromJson(e)).toList();
