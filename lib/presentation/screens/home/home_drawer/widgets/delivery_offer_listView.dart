@@ -21,9 +21,16 @@ class DeliveryOffersWidget extends StatefulWidget {
 
 class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   final List<Map<String, dynamic>> _offers = [];
-  late final HubConnection _hubConnection;
-  static const String _serverUrl =
-      "https://hatley.runasp.net/NotifyNewOfferForUser";
+
+  // ************* التغيير الأول: اتصالات SignalR منفصلة *************
+  late final HubConnection _hubConnectionForNewOffers; // لاستقبال العروض الجديدة
+  late final HubConnection _hubConnectionForOfferResponses; // لإرسال القبول/الرفض
+
+  static const String _newOffersServerUrl =
+      "https://hatley.runasp.net/NotifyNewOfferForUser"; // رابط استقبال العروض الجديدة
+  static const String _offerResponseServerUrl =
+      "https://hatley.runasp.net/NotifyOfAcceptOrDeclineForDeliveryOffer"; // رابط إرسال استجابات العروض
+
   String? _userEmail;
   late final TokenStorage _tokenStorage;
 
@@ -40,13 +47,15 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     final prefs = await SharedPreferences.getInstance();
     _tokenStorage = TokenStorageImpl(prefs);
     _userEmail = await _tokenStorage.getEmail();
-    await _startSignalRConnection();
+    // ************* التغيير الثاني: بدء الاتصالين *************
+    await _startSignalRConnectionForNewOffers();
+    await _startSignalRConnectionForOfferResponses();
   }
 
-  Future<void> _startSignalRConnection() async {
-    _hubConnection = HubConnectionBuilder()
+  Future<void> _startSignalRConnectionForNewOffers() async {
+    _hubConnectionForNewOffers = HubConnectionBuilder()
         .withUrl(
-      _serverUrl,
+      _newOffersServerUrl,
       options: HttpConnectionOptions(
         transport: HttpTransportType.WebSockets,
       ),
@@ -54,19 +63,42 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
         .withAutomaticReconnect()
         .build();
 
-    _hubConnection.onclose(({Exception? error}) {});
-    _hubConnection.onreconnecting(({Exception? error}) {});
+    _hubConnectionForNewOffers.onclose(({Exception? error}) {});
+    _hubConnectionForNewOffers.onreconnecting(({Exception? error}) {});
 
     try {
-      await _hubConnection.start();
-      _registerSignalRListeners();
+      await _hubConnectionForNewOffers.start();
+      _registerSignalRListenerForNewOffers(); // استدعاء دالة الاستماع للعروض الجديدة
     } catch (e) {
-      print("Error connecting to SignalR for offers: $e");
+      print("Error connecting to SignalR for NEW offers: $e");
     }
   }
 
-  void _registerSignalRListeners() {
-    _hubConnection.on("NotifyNewOfferForUser", (arguments) {
+  Future<void> _startSignalRConnectionForOfferResponses() async {
+    _hubConnectionForOfferResponses = HubConnectionBuilder()
+        .withUrl(
+      _offerResponseServerUrl,
+      options: HttpConnectionOptions(
+        transport: HttpTransportType.WebSockets,
+      ),
+    )
+        .withAutomaticReconnect()
+        .build();
+
+    _hubConnectionForOfferResponses.onclose(({Exception? error}) {});
+    _hubConnectionForOfferResponses.onreconnecting(({Exception? error}) {});
+
+    try {
+      await _hubConnectionForOfferResponses.start();
+      // لا توجد دالة استماع هنا لأن هذا الاتصال مخصص للإرسال فقط من جانب اليوزر.
+    } catch (e) {
+      print("Error connecting to SignalR for OFFER RESPONSES: $e");
+    }
+  }
+
+  // ************* التغيير الثالث: فصل دالة الاستماع للعروض الجديدة *************
+  void _registerSignalRListenerForNewOffers() {
+    _hubConnectionForNewOffers.on("NotifyNewOfferForUser", (arguments) {
       if (arguments != null && arguments.length == 2) {
         final offerData = arguments[0] as Map<dynamic, dynamic>;
         final checkData = arguments[1] as Map<dynamic, dynamic>;
@@ -84,7 +116,9 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
             "order_id": orderId,
             "name": offerData["delivery_name"],
             "price": offerData["offer_value"].toString(),
-            "rating": double.tryParse(offerData["delivery_avg_rate"].toString()) ?? 0.0,
+            "rating":
+            double.tryParse(offerData["delivery_avg_rate"].toString()) ??
+                0.0,
             "image": offerData["delivery_photo"] ?? "",
             "delivery_email": offerData["delivery_email"],
             "offer_value": offerData["offer_value"],
@@ -105,6 +139,31 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
         }
       }
     });
+  }
+
+  // ************* التغيير الرابع: تعديل دالة إرسال الاستجابة *************
+  Future<void> _notifyDeliveryAboutOfferResponse({
+    required int orderId,
+    required String deliveryEmail,
+    required bool accepted,
+  }) async {
+//  _notifyDeliveryAboutOfferResponse
+    final dataToSend = {
+      "state": accepted ? "Accepted" : "Declined",
+      "price_of_offer": _offers[_pendingOfferIndexToDelete!]["offer_value"], // تأكد أن هذه القيمة صحيحة
+      "orderid": orderId,
+    };
+
+    try {
+      print("Sending to delivery: $dataToSend");
+      await _hubConnectionForOfferResponses.invoke(
+        "NotifyOfAcceptOrDeclineForDeliveryOffer",
+        args: [dataToSend],
+      );
+      print("Message sent to delivery");
+    } catch (e) {
+      print("Failed to notify delivery: $e");
+    }
   }
 
   void _handleOfferResponse(int index, bool accepted) {
@@ -143,11 +202,18 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
         deliveryEmail,
       );
     }
+    _notifyDeliveryAboutOfferResponse(
+      orderId: orderId!,
+      deliveryEmail: deliveryEmail!,
+      accepted: accepted,
+    );
   }
 
   @override
   void dispose() {
-    _hubConnection.stop();
+    // ************* التغيير الخامس: إيقاف الاتصالين عند التخلص من الـ Widget *************
+    _hubConnectionForNewOffers.stop();
+    _hubConnectionForOfferResponses.stop();
     super.dispose();
   }
 
@@ -159,12 +225,15 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
       );
     }
 
+    // ... (باقي كود الـ build كما هو)
     return BlocListener<OfferCubit, OfferState>(
       listener: (context, state) {
         if (state is OfferAcceptedSuccess) {
           final int acceptedOrderId = state.orderId;
           setState(() {
-            _offers.removeWhere((offer) => offer["order_id"] == acceptedOrderId);
+            _offers.removeWhere(
+                  (offer) => offer["order_id"] == acceptedOrderId,
+            );
           });
 
           context.read<NavigationCubit>().changePage(1);
@@ -177,7 +246,8 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
           _pendingOfferToDelete = null;
           _pendingOfferIndexToDelete = null;
         } else if (state is OfferDeclinedSuccess) {
-          if (_pendingOfferToDelete != null && _pendingOfferIndexToDelete != null) {
+          if (_pendingOfferToDelete != null &&
+              _pendingOfferIndexToDelete != null) {
             setState(() {
               _offers.removeAt(_pendingOfferIndexToDelete!);
             });
@@ -231,9 +301,12 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                             children: [
                               CircleAvatar(
                                 radius: 28,
-                                backgroundImage: imageUrl.isNotEmpty
+                                backgroundImage:
+                                imageUrl.isNotEmpty
                                     ? NetworkImage(imageUrl)
-                                    : const AssetImage("assets/images/default_user.png")
+                                    : const AssetImage(
+                                  "assets/images/default_user.png",
+                                )
                                 as ImageProvider,
                               ),
                               SizedBox(width: 12.w),
@@ -281,15 +354,18 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                             children: [
                               Expanded(
                                 child: CustomOrderButton(
-                                  onPressed: () => _handleOfferResponse(index, true),
-                                  backgroundColor: ColorsManager.primaryColorApp,
+                                  onPressed:
+                                      () => _handleOfferResponse(index, true),
+                                  backgroundColor:
+                                  ColorsManager.primaryColorApp,
                                   text: "Accept",
                                 ),
                               ),
                               SizedBox(width: 8.w),
                               Expanded(
                                 child: CustomOrderButton(
-                                  onPressed: () => _handleOfferResponse(index, false),
+                                  onPressed:
+                                      () => _handleOfferResponse(index, false),
                                   backgroundColor: ColorsManager.buttonColorApp,
                                   text: "Decline",
                                 ),
@@ -301,10 +377,9 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
                     ),
                   ),
                 );
-
               },
             ),
-          )
+          ),
         ],
       ),
     );
