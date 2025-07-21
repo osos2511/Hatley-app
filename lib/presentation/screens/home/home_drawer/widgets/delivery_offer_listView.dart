@@ -28,9 +28,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
 
   static const String _newOffersServerUrl =
       "https://hatley.runasp.net/NotifyNewOfferForUser"; // رابط استقبال العروض الجديدة
-  static const String _offerResponseServerUrl =
-      "https://hatley.runasp.net/NotifyOfAcceptOrDeclineForDeliveryOffer"; // رابط إرسال استجابات العروض
-
   String? _userEmail;
   late final TokenStorage _tokenStorage;
 
@@ -49,7 +46,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     _userEmail = await _tokenStorage.getEmail();
     // ************* التغيير الثاني: بدء الاتصالين *************
     await _startSignalRConnectionForNewOffers();
-    await _startSignalRConnectionForOfferResponses();
   }
 
   Future<void> _startSignalRConnectionForNewOffers() async {
@@ -74,27 +70,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     }
   }
 
-  Future<void> _startSignalRConnectionForOfferResponses() async {
-    _hubConnectionForOfferResponses = HubConnectionBuilder()
-        .withUrl(
-      _offerResponseServerUrl,
-      options: HttpConnectionOptions(
-        transport: HttpTransportType.WebSockets,
-      ),
-    )
-        .withAutomaticReconnect()
-        .build();
-
-    _hubConnectionForOfferResponses.onclose(({Exception? error}) {});
-    _hubConnectionForOfferResponses.onreconnecting(({Exception? error}) {});
-
-    try {
-      await _hubConnectionForOfferResponses.start();
-      // لا توجد دالة استماع هنا لأن هذا الاتصال مخصص للإرسال فقط من جانب اليوزر.
-    } catch (e) {
-      print("Error connecting to SignalR for OFFER RESPONSES: $e");
-    }
-  }
 
   // ************* التغيير الثالث: فصل دالة الاستماع للعروض الجديدة *************
   void _registerSignalRListenerForNewOffers() {
@@ -141,31 +116,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     });
   }
 
-  // ************* التغيير الرابع: تعديل دالة إرسال الاستجابة *************
-  Future<void> _notifyDeliveryAboutOfferResponse({
-    required int orderId,
-    required String deliveryEmail,
-    required bool accepted,
-  }) async {
-//  _notifyDeliveryAboutOfferResponse
-    final dataToSend = {
-      "state": accepted ? "Accepted" : "Declined",
-      "price_of_offer": _offers[_pendingOfferIndexToDelete!]["offer_value"], // تأكد أن هذه القيمة صحيحة
-      "orderid": orderId,
-    };
-
-    try {
-      print("Sending to delivery: $dataToSend");
-      await _hubConnectionForOfferResponses.invoke(
-        "NotifyOfAcceptOrDeclineForDeliveryOffer",
-        args: [dataToSend],
-      );
-      print("Message sent to delivery");
-    } catch (e) {
-      print("Failed to notify delivery: $e");
-    }
-  }
-
   void _handleOfferResponse(int index, bool accepted) {
     final offer = _offers[index];
     final orderId = offer["order_id"] as int?;
@@ -202,11 +152,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
         deliveryEmail,
       );
     }
-    _notifyDeliveryAboutOfferResponse(
-      orderId: orderId!,
-      deliveryEmail: deliveryEmail!,
-      accepted: accepted,
-    );
   }
 
   @override
