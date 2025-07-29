@@ -111,6 +111,14 @@ class CustomDrawer extends StatelessWidget {
                   icon: Icons.person,
                   text: 'Profile',
                 ),
+                CustomListTile(
+                  onPress: () {
+                    context.read<NavigationCubit>().changePage(8);
+                    Navigator.pop(context);
+                  },
+                  icon: Icons.settings,
+                  text: 'Settings',
+                ),
 
                 CustomListTile(
                   onPress: () {

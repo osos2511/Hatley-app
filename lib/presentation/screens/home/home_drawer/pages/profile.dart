@@ -27,7 +27,7 @@ class Profile extends StatelessWidget {
         builder: (context, profileState) {
           if (profileState.isLoadingProfile) {
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              body: Center(child: CircularProgressIndicator(color: Colors.white,)),
             );
           }
 
@@ -56,7 +56,7 @@ class Profile extends StatelessWidget {
               double rating = 0.0;
 
               if (statsState is StatisticsLoading) {
-                statsWidget = const Center(child: CircularProgressIndicator());
+                statsWidget = const Center(child: CircularProgressIndicator(color: Colors.white,));
               } else if (statsState is StatisticsLoaded) {
                 final stats = statsState.statistics;
                 rating = stats.rate;

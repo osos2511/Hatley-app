@@ -20,6 +20,7 @@ import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/all_tracking_orders.dart';
 import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
 import '../../../../../core/missing_fields_dialog.dart';
+import 'package:hatley/presentation/screens/home/home_drawer/pages/settings.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -78,12 +79,14 @@ class _HomeState extends State<Home> {
           listener: (context, state) {
             if (state is TrackingError) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                CustomToast.show(message: "An error occurred while tracking. Please try again.");
+                CustomToast.show(
+                  message:
+                      "An error occurred while tracking. Please try again.",
+                );
               });
             }
           },
         ),
-
       ],
       child: Scaffold(
         appBar: PreferredSize(
@@ -93,28 +96,31 @@ class _HomeState extends State<Home> {
               String appBarTitle;
               switch (state) {
                 case 1:
-                  appBarTitle = 'Track Orders'; // الكلمة الإنجليزية
+                  appBarTitle = 'Track Orders';
                   break;
                 case 2:
-                  appBarTitle = 'Contact Us'; // الكلمة الإنجليزية
+                  appBarTitle = 'Contact Us';
                   break;
                 case 3:
-                  appBarTitle = 'About Us'; // الكلمة الإنجليزية
+                  appBarTitle = 'About Us';
                   break;
                 case 4:
-                  appBarTitle = 'Our Team'; // الكلمة الإنجليزية
+                  appBarTitle = 'Our Team';
                   break;
                 case 5:
-                  appBarTitle = 'My Orders'; // الكلمة الإنجليزية
+                  appBarTitle = 'My Orders';
                   break;
                 case 6:
-                  appBarTitle = 'Deliveries'; // الكلمة الإنجليزية
+                  appBarTitle = 'Deliveries';
                   break;
                 case 7:
-                  appBarTitle = 'Profile'; // الكلمة الإنجليزية
+                  appBarTitle = 'Profile';
+                  break;
+                case 8:
+                  appBarTitle = 'Settings';
                   break;
                 default:
-                  appBarTitle = 'Home'; // الكلمة الإنجليزية
+                  appBarTitle = 'Home';
               }
 
               return AppBar(
@@ -150,6 +156,8 @@ class _HomeState extends State<Home> {
                 return Deliveries();
               case 7:
                 return const Profile();
+              case 8:
+                return const SettingsPage();
               default:
                 return SingleChildScrollView(
                   padding: EdgeInsets.symmetric(
@@ -165,7 +173,6 @@ class _HomeState extends State<Home> {
                           fontWeight: FontWeight.w700,
                           fontSize: 22.sp,
                           color: ColorsManager.white70,
-
                         ),
                       ),
                       SizedBox(height: 16.h),
