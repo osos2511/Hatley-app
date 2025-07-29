@@ -6,6 +6,7 @@ import 'package:hatley/domain/entities/deliveries_entity.dart';
 import 'package:hatley/injection_container.dart';
 import 'package:hatley/presentation/cubit/deliveries_cubit/deliveries_cubit.dart';
 import 'package:hatley/presentation/cubit/deliveries_cubit/deliveries_state.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 const kPrimaryColor = ColorsManager.primaryColorApp;
 
@@ -20,12 +21,14 @@ class Deliveries extends StatelessWidget {
         body: BlocBuilder<DeliveriesCubit, DeliveriesState>(
           builder: (context, state) {
             if (state is DeliveriesLoading) {
-              return const Center(child: CircularProgressIndicator(color: Colors.white,));
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              );
             }
             if (state is DeliveriesError) {
               return Center(
                 child: Text(
-                  'Error: ${state.message}',
+                  AppLocalizations.of(context)!.error_message(state.message),
                   style: TextStyle(color: Colors.red, fontSize: 16),
                 ),
               );
@@ -74,7 +77,9 @@ class DeliveriesListItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Driver: ${order.deliveryName}',
+                  AppLocalizations.of(
+                    context,
+                  )!.driver_label(order.deliveryName),
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,

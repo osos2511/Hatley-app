@@ -12,6 +12,7 @@ import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/profile_img_avatar.dart';
 import '../widgets/profile_info_tile.dart';
 import '../widgets/edit_profile_dialog.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
@@ -27,7 +28,9 @@ class Profile extends StatelessWidget {
         builder: (context, profileState) {
           if (profileState.isLoadingProfile) {
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator(color: Colors.white,)),
+              body: Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
             );
           }
 
@@ -56,7 +59,9 @@ class Profile extends StatelessWidget {
               double rating = 0.0;
 
               if (statsState is StatisticsLoading) {
-                statsWidget = const Center(child: CircularProgressIndicator(color: Colors.white,));
+                statsWidget = const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                );
               } else if (statsState is StatisticsLoaded) {
                 final stats = statsState.statistics;
                 rating = stats.rate;
@@ -67,20 +72,23 @@ class Profile extends StatelessWidget {
                   alignment: WrapAlignment.center,
                   children: [
                     _buildStatItem(
-                      'Total Orders',
+                      AppLocalizations.of(context)!.total_orders,
                       stats.totalOrders.toString(),
                     ),
                     _buildStatItem(
-                      'Complete Orders',
+                      AppLocalizations.of(context)!.complete_orders,
                       stats.completeOrders.toString(),
                     ),
                     _buildStatItem(
-                      'Incomplete Orders',
+                      AppLocalizations.of(context)!.incomplete_orders,
                       stats.incompleteOrders.toString(),
                     ),
-                    _buildStatItem('Pending', stats.pending.toString()),
                     _buildStatItem(
-                      'Orders Last 30 Days',
+                      AppLocalizations.of(context)!.pending,
+                      stats.pending.toString(),
+                    ),
+                    _buildStatItem(
+                      AppLocalizations.of(context)!.orders_last_30_days,
                       stats.ordersLast30Days.toString(),
                     ),
                   ],
@@ -121,16 +129,16 @@ class Profile extends StatelessWidget {
                                 ),
                             ],
                           ),
-                           SizedBox(height: 12.h),
+                          SizedBox(height: 12.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                               Icon(
+                              Icon(
                                 Icons.star,
                                 color: Colors.amber,
                                 size: 35.sp,
                               ),
-                               SizedBox(width: 5.w),
+                              SizedBox(width: 5.w),
                               Text(
                                 rating.toStringAsFixed(2),
                                 style: TextStyle(
@@ -141,18 +149,24 @@ class Profile extends StatelessWidget {
                               ),
                             ],
                           ),
-                           SizedBox(height: 20.h),
+                          SizedBox(height: 20.h),
                           ProfileInfoTile(
-                            label: 'Username',
+                            label: AppLocalizations.of(context)!.username,
                             value: profile.name,
                           ),
-                          ProfileInfoTile(label: 'Email', value: profile.email),
-                          ProfileInfoTile(label: 'Phone', value: profile.phone),
-                           SizedBox(height: 20.h),
+                          ProfileInfoTile(
+                            label: AppLocalizations.of(context)!.email,
+                            value: profile.email,
+                          ),
+                          ProfileInfoTile(
+                            label: AppLocalizations.of(context)!.phone,
+                            value: profile.phone,
+                          ),
+                          SizedBox(height: 20.h),
 
                           statsWidget, // عرض الإحصائيات هنا
 
-                           SizedBox(height: 40.h),
+                          SizedBox(height: 40.h),
                           CustomButton(
                             onPressed: () {
                               showDialog(
@@ -170,18 +184,16 @@ class Profile extends StatelessWidget {
                                     ),
                               );
                             },
-                            text: 'Update Profile',
-
+                            text: AppLocalizations.of(context)!.update_profile,
                           ),
-                           SizedBox(height: 10.h),
+                          SizedBox(height: 10.h),
                           CustomButton(
                             onPressed: () {
                               Navigator.of(
                                 context,
                               ).pushNamed(RoutesManager.changePasswordRoute);
                             },
-                            text: 'Change Password',
-
+                            text: AppLocalizations.of(context)!.change_password,
                           ),
                         ],
                       ),
@@ -209,7 +221,7 @@ class Profile extends StatelessWidget {
               fontSize: 22.sp,
             ),
           ),
-           SizedBox(height: 4.h),
+          SizedBox(height: 4.h),
           Text(
             title,
             textAlign: TextAlign.center,

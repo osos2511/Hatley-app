@@ -7,6 +7,7 @@ import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
 import 'package:hatley/data/model/traking_response.dart';
 import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
 import '../../helper/tracking_order_helper.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class TrackOrderWidget extends StatefulWidget {
   final int? orderId;
@@ -141,7 +142,9 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                                     height: 30.h,
                                     decoration: BoxDecoration(
                                       color:
-                                          isActive ? ColorsManager.primaryColorApp : Colors.grey,
+                                          isActive
+                                              ? ColorsManager.primaryColorApp
+                                              : Colors.grey,
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -198,7 +201,7 @@ class _TrackOrderWidgetState extends State<TrackOrderWidget> {
                           (relevantOrder.status == 3)
                               ? widget.onRatePressed
                               : null,
-                      child: const Text("Rate"),
+                      child: Text(AppLocalizations.of(context)!.rate),
                     ),
                   ),
                 ],

@@ -6,6 +6,7 @@ import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../../core/routes_manager.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class VerifyOtp extends StatefulWidget {
   const VerifyOtp({super.key});
@@ -66,7 +67,6 @@ class _VerifyOtpState extends State<VerifyOtp> {
         isLoading = false;
       });
       Navigator.pushNamed(context, RoutesManager.resetPassRoute);
-
     }
   }
 
@@ -85,7 +85,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
               children: [
                 SizedBox(height: 60.h),
                 Text(
-                  'Email Verification',
+                  AppLocalizations.of(context)!.verify_otp_title,
                   style: GoogleFonts.exo2(
                     color: ColorsManager.buttonColorApp,
                     fontWeight: FontWeight.bold,
@@ -94,7 +94,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
                 ),
                 SizedBox(height: 15.h),
                 Text(
-                  'Enter the 4-digit code',
+                  AppLocalizations.of(context)!.verify_otp_subtitle,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.exo2(
                     color: ColorsManager.white70,
@@ -132,8 +132,10 @@ class _VerifyOtpState extends State<VerifyOtp> {
 
                 Text(
                   enableResend
-                      ? "Didn't receive the code? Resend"
-                      : "Resend code in $secondsRemaining s",
+                      ? AppLocalizations.of(context)!.resend_code_text
+                      : AppLocalizations.of(
+                        context,
+                      )!.resend_code_in_seconds(secondsRemaining),
                   style: TextStyle(
                     color: ColorsManager.white70,
                     fontSize: 14.sp,
@@ -143,7 +145,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
                 SizedBox(height: 40.h),
                 CustomAuthButton(
                   onPressed: isLoading ? null : _handleContinue,
-                  text: "Continue",
+                  text: AppLocalizations.of(context)!.continue_text,
                   isLoading: isLoading,
                 ),
               ],

@@ -18,6 +18,7 @@ import '../../../../cubit/offer_cubit/offer_state.dart';
 import '../widgets/custom_info_row.dart';
 import '../widgets/custom_order_button.dart';
 import '../widgets/delivery_offer_listView.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class MyOrders extends StatefulWidget {
   const MyOrders({super.key});
@@ -45,10 +46,19 @@ class _MyOrdersState extends State<MyOrders> {
               listener: (context, state) {
                 if (state is OrderSuccess) {
                   context.read<GetAllOrdersCubit>().getAllOrders();
-                  CustomToast.show(message: "Order cancelled successfully!");
+                  CustomToast.show(
+                    message:
+                        AppLocalizations.of(context)!.order_cancelled_success,
+                  );
                 } else if (state is OrderFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("فشل الحذف: ${state.error}")),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.delete_failed(state.error),
+                      ),
+                    ),
                   );
                 }
               },
@@ -82,7 +92,11 @@ class _MyOrdersState extends State<MyOrders> {
                   child: CircularProgressIndicator(color: Colors.white),
                 );
               } else if (state is OrderFailure) {
-                return Center(child: Text("خطأ: ${state.error}"));
+                return Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.error_message(state.error),
+                  ),
+                );
               } else if (state is GetAllOrdersSuccess) {
                 final orders = state.orders;
 
@@ -92,7 +106,7 @@ class _MyOrdersState extends State<MyOrders> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Not Found orders now',
+                          AppLocalizations.of(context)!.my_orders_title,
                           style: GoogleFonts.inter(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w700,
@@ -116,7 +130,9 @@ class _MyOrdersState extends State<MyOrders> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text('Add New order'),
+                          child: Text(
+                            AppLocalizations.of(context)!.add_new_order,
+                          ),
                         ),
                       ],
                     ),
@@ -153,17 +169,17 @@ class _MyOrdersState extends State<MyOrders> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomInfoRow(
-                                title: "Price:",
+                                title: AppLocalizations.of(context)!.price,
                                 value: order.price.toString(),
                                 valueColor: Colors.green,
                               ),
                               CustomInfoRow(
-                                title: "Date:",
+                                title: AppLocalizations.of(context)!.date,
                                 value:
                                     order.orderTime.toString().split(' ').first,
                               ),
                               CustomInfoRow(
-                                title: "Time:",
+                                title: AppLocalizations.of(context)!.time,
                                 value:
                                     order.orderTime
                                         .toString()
@@ -173,8 +189,8 @@ class _MyOrdersState extends State<MyOrders> {
                                         .first,
                               ),
                               SizedBox(height: 16.h),
-                              const Text(
-                                "Order Details:",
+                              Text(
+                                AppLocalizations.of(context)!.order_details,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 8.h),
@@ -189,7 +205,7 @@ class _MyOrdersState extends State<MyOrders> {
                                 child: Text(order.description),
                               ),
                               SizedBox(height: 20.h),
-                              _sectionTitle("From:"),
+                              _sectionTitle(AppLocalizations.of(context)!.from),
                               CustomAddressBlock(
                                 values: [
                                   order.orderGovernorateFrom,
@@ -199,7 +215,7 @@ class _MyOrdersState extends State<MyOrders> {
                                 ],
                               ),
                               SizedBox(height: 20.h),
-                              _sectionTitle("To:"),
+                              _sectionTitle(AppLocalizations.of(context)!.to),
                               CustomAddressBlock(
                                 values: [
                                   order.orderGovernorateTo,

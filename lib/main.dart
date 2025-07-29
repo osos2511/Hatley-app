@@ -1,6 +1,7 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
 import 'package:hatley/presentation/cubit/feedback_cubit/feedback_cubit.dart';
@@ -11,6 +12,10 @@ import 'presentation/cubit/tracking_cubit/tracking_cubit.dart';
 import 'core/local/token_storage.dart';
 import 'core/routes_manager.dart';
 import 'injection_container.dart';
+import 'package:hatley/l10n/app_localizations.dart';
+import 'package:hatley/core/app_state.dart';
+import 'package:hatley/presentation/cubit/theme_cubit.dart';
+import 'core/local/language_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,15 +41,52 @@ void main() async {
     initialRoute = RoutesManager.splashRoute;
   }
 
-  runApp(DevicePreview(
+  // قراءة اللغة المحفوظة
+  final savedLanguage = await LanguageStorage.getLanguage();
+  final initialLocale = savedLanguage != null ? Locale(savedLanguage) : null;
+
+  runApp(
+    DevicePreview(
       enabled: true,
-      builder:(context) =>  MyApp(initialRoute: initialRoute)));
+      builder:
+          (context) =>
+              MyApp(initialRoute: initialRoute, initialLocale: initialLocale),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final String initialRoute;
+  final Locale? initialLocale;
 
-  const MyApp({super.key, required this.initialRoute});
+  const MyApp({super.key, required this.initialRoute, this.initialLocale});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends AppState<MyApp> {
+  Locale? _locale;
+
+  @override
+  void initState() {
+    super.initState();
+    // تطبيق اللغة المحفوظة عند بدء التطبيق
+    if (widget.initialLocale != null) {
+      _locale = widget.initialLocale;
+    }
+  }
+
+  void _setLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+    // حفظ اللغة المختارة
+    LanguageStorage.saveLanguage(locale.languageCode);
+  }
+
+  @override
+  void Function(Locale) get setLocale => _setLocale;
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +101,27 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => sl<AuthCubit>()),
           BlocProvider(create: (context) => sl<TrackingCubit>()),
           BlocProvider(create: (context) => sl<FeedbackCubit>()),
+          BlocProvider(create: (context) => ThemeCubit()),
         ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          onGenerateRoute: RoutesManager.router,
-          initialRoute: initialRoute,
-          theme: ThemeData(scaffoldBackgroundColor: ColorsManager.primaryColorApp),
+        child: BlocBuilder<ThemeCubit, bool>(
+          builder: (context, isDark) {
+            return MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: _locale,
+              debugShowCheckedModeBanner: false,
+              onGenerateRoute: RoutesManager.router,
+              initialRoute: widget.initialRoute,
+              theme:
+                  isDark
+                      ? ThemeData.dark().copyWith(
+                        scaffoldBackgroundColor: ColorsManager.primaryColorApp,
+                      )
+                      : ThemeData.light().copyWith(
+                        scaffoldBackgroundColor: ColorsManager.primaryColorApp,
+                      ),
+            );
+          },
         ),
       ),
     );

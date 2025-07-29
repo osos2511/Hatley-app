@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 void showMissingFieldsDialog(
   BuildContext context,
@@ -18,7 +19,7 @@ void showMissingFieldsDialog(
           titlePadding: EdgeInsets.zero,
           title: Container(
             padding: const EdgeInsets.all(16),
-            decoration:  BoxDecoration(
+            decoration: BoxDecoration(
               color: ColorsManager.buttonColorApp,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
@@ -28,7 +29,7 @@ void showMissingFieldsDialog(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child:  Icon(
+              child: Icon(
                 Icons.close,
                 color: ColorsManager.buttonColorApp,
                 size: 24,
@@ -39,7 +40,7 @@ void showMissingFieldsDialog(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
             child: Text(
               message,
-              style:  TextStyle(fontSize: 16.sp, color: Colors.black87),
+              style: TextStyle(fontSize: 16.sp, color: Colors.black87),
             ),
           ),
           actions: [
@@ -63,8 +64,8 @@ void showMissingFieldsDialog(
                     onOkPressed();
                   }
                 },
-                child:  Text(
-                  "OK",
+                child: Text(
+                  AppLocalizations.of(context)!.ok,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

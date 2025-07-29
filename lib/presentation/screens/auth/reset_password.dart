@@ -5,6 +5,7 @@ import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart
 import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart';
 import '../../../core/colors_manager.dart';
 import '../../../core/routes_manager.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class ResetPass extends StatefulWidget {
   const ResetPass({super.key});
@@ -16,7 +17,8 @@ class ResetPass extends StatefulWidget {
 class _ResetPassState extends State<ResetPass> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool isLoading = false;
 
@@ -63,37 +65,41 @@ class _ResetPassState extends State<ResetPass> {
               child: Column(
                 children: [
                   Text(
-                    "Please enter a new password to reset your account",
+                    AppLocalizations.of(context)!.reset_password_title,
                     style: GoogleFonts.exo2(
                       fontSize: 16.sp,
                       color: ColorsManager.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                   SizedBox(height: 30.h),
+                  SizedBox(height: 30.h),
                   CustomTextField(
                     keyboardType: TextInputType.text,
                     controller: passwordController,
-                    hint: "Password",
+                    hint: AppLocalizations.of(context)!.new_password,
                     icon: Icons.lock_outline,
                     isPassword: true,
                     validator: (value) {
                       if (value == null || value.length < 6) {
-                        return "Password must be at least 6 characters";
+                        return AppLocalizations.of(
+                          context,
+                        )!.password_min_length;
                       }
                       return null;
                     },
                   ),
-                   SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
                   CustomTextField(
                     keyboardType: TextInputType.text,
                     controller: confirmPasswordController,
-                    hint: "Confirm Password",
+                    hint: AppLocalizations.of(context)!.confirm_password,
                     icon: Icons.lock_open,
                     isPassword: true,
                     validator: (value) {
                       if (value != passwordController.text) {
-                        return "Passwords do not match";
+                        return AppLocalizations.of(
+                          context,
+                        )!.passwords_dont_match;
                       }
                       return null;
                     },
@@ -101,7 +107,7 @@ class _ResetPassState extends State<ResetPass> {
                   SizedBox(height: screenHeight * 0.06),
                   CustomAuthButton(
                     onPressed: isLoading ? null : _handleResetPassword,
-                    text: 'Reset Password',
+                    text: AppLocalizations.of(context)!.reset_password,
                     isLoading: isLoading,
                   ),
                 ],

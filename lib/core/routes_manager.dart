@@ -12,6 +12,7 @@ import '../presentation/screens/auth/reset_password.dart';
 import '../presentation/screens/auth/sign_in.dart';
 import '../presentation/screens/auth/sign_up.dart';
 import '../presentation/screens/home/home_drawer/pages/my_orders.dart';
+import 'package:hatley/presentation/screens/home/home_drawer/pages/settings.dart';
 
 class RoutesManager {
   static const String splashRoute = '/';
@@ -27,6 +28,7 @@ class RoutesManager {
   static const String profileRoute = '/Profile';
   static const String trakingRoute = '/traking';
   static const String changePasswordRoute = '/ChangePasswordPage';
+  static const String settingsRoute = '/settings';
 
   static Route<dynamic>? router(RouteSettings settings) {
     switch (settings.name) {
@@ -91,6 +93,15 @@ class RoutesManager {
             builder: (context) => const ChangePasswordPage(),
           );
         }
+      case settingsRoute:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final onLocaleChanged =
+            args != null
+                ? args['onLocaleChanged'] as void Function(Locale)?
+                : null;
+        return MaterialPageRoute(
+          builder: (context) => SettingsPage(onLocaleChanged: onLocaleChanged),
+        );
     }
     return null;
   }

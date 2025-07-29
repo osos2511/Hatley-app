@@ -8,6 +8,7 @@ import 'package:hatley/presentation/cubit/change_pass_cubit/change_pass_state.da
 import 'package:hatley/presentation/screens/auth/widgets/custom_button.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/widgets/change_pass_field.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -59,8 +60,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 onPressed: () => Navigator.of(context).pop(),
               ),
               title: Text(
-                'Change Password',
-                style: GoogleFonts.inter(
+                AppLocalizations.of(context)!.change_password_title,
+                style: GoogleFonts.exo2(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -75,10 +76,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 children: [
                   PasswordTextField(
                     controller: oldPasswordController,
-                    hint: 'Old Password',
+                    hint: AppLocalizations.of(context)!.current_password,
                     validator: (value) {
                       if (value == null || value.length < 6) {
-                        return "Password must be at least 6 characters";
+                        return AppLocalizations.of(
+                          context,
+                        )!.password_min_length;
                       }
                       return null;
                     },
@@ -88,10 +91,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
                   PasswordTextField(
                     controller: newPasswordController,
-                    hint: 'New Password',
+                    hint: AppLocalizations.of(context)!.new_password,
                     validator: (value) {
                       if (value == null || value.length < 6) {
-                        return "Password must be at least 6 characters";
+                        return AppLocalizations.of(
+                          context,
+                        )!.password_min_length;
                       }
                       return null;
                     },
@@ -106,7 +111,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               final oldPass = oldPasswordController.text.trim();
                               final newPass = newPasswordController.text.trim();
                               if (oldPass.isEmpty || newPass.isEmpty) {
-                                CustomToast.show(message: 'Please fill all fields');
+                                CustomToast.show(
+                                  message: 'Please fill all fields',
+                                );
 
                                 return;
                               }
@@ -116,8 +123,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                 newPass,
                               );
                             },
-                    text: isLoading ? 'Loading...' : 'Confirm Password',
-
+                    text: AppLocalizations.of(context)!.change_password,
                   ),
                 ],
               ),

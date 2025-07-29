@@ -12,6 +12,7 @@ import '../../../../injection_container.dart';
 import '../../../cubit/governorate_cubit/governorate_cubit.dart';
 import '../../../cubit/make_orders_cubit/make_order_state.dart';
 import '../../../cubit/make_orders_cubit/make_orders_cubit.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class MakeOrders extends StatelessWidget {
   const MakeOrders({super.key});
@@ -40,7 +41,7 @@ class MakeOrders extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                 ),
                 title: Text(
-                  'Make Orders',
+                  AppLocalizations.of(context)!.make_orders,
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -52,13 +53,16 @@ class MakeOrders extends StatelessWidget {
               ),
               body: SingleChildScrollView(
                 child: Padding(
-                  padding:  REdgeInsets.all(12),
+                  padding: REdgeInsets.all(12),
                   child: Center(
                     child: Container(
                       width: screenSize.width * 0.85,
-                      padding:  REdgeInsets.all(16),
+                      padding: REdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        border: Border.all(width: 2.w, color: ColorsManager.white70),
+                        border: Border.all(
+                          width: 2.w,
+                          color: ColorsManager.white70,
+                        ),
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: ReusableOrderForm(
@@ -93,7 +97,8 @@ class MakeOrders extends StatelessWidget {
                           );
                           cubit.submitOrder(context);
                         },
-                        submitButtonText: 'Send Order',
+                        submitButtonText:
+                            AppLocalizations.of(context)!.send_order,
                       ),
                     ),
                   ),

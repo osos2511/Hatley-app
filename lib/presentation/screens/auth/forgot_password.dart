@@ -5,6 +5,7 @@ import 'package:hatley/presentation/screens/auth/widgets/custom_auth_button.dart
 import 'package:hatley/presentation/screens/auth/widgets/custom_text_field.dart';
 import '../../../core/colors_manager.dart';
 import '../../../core/routes_manager.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -34,10 +35,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       setState(() {
         isLoading = false;
       });
-      Navigator.pushReplacementNamed(
-        context,
-        RoutesManager.otpRoute,
-      );
+      Navigator.pushReplacementNamed(context, RoutesManager.otpRoute);
     }
   }
 
@@ -63,44 +61,44 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               child: Column(
                 children: [
                   Text(
-                    "Enter your email address to receive a reset code",
+                    AppLocalizations.of(context)!.forgot_password_title,
                     style: GoogleFonts.exo2(
                       fontSize: 20.sp,
                       color: ColorsManager.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                   SizedBox(height: 30.h),
+                  SizedBox(height: 30.h),
                   CustomTextField(
                     icon: Icons.email,
-                    hint: 'Email',
+                    hint: AppLocalizations.of(context)!.email,
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Email is required";
+                        return AppLocalizations.of(context)!.email_is_required;
                       } else if (!RegExp(
                         r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
                       ).hasMatch(value)) {
-                        return "Enter a valid email address";
+                        return AppLocalizations.of(context)!.enter_valid_email;
                       }
                       return null;
                     },
                   ),
-                   SizedBox(height: 40.h),
+                  SizedBox(height: 40.h),
                   CustomAuthButton(
                     onPressed: isLoading ? null : _handleSendCode,
-                    text: 'Send Code',
+                    text: AppLocalizations.of(context)!.send_reset_link,
                     isLoading: isLoading,
                   ),
 
-                   SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
                   GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      "Back to Login",
+                      AppLocalizations.of(context)!.back_to_login,
                       style: TextStyle(color: ColorsManager.white),
                     ),
                   ),

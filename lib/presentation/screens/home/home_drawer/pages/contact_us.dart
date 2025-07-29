@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class ContactUs extends StatelessWidget {
   const ContactUs({super.key});
@@ -10,27 +11,48 @@ class ContactUs extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
-        padding:  REdgeInsets.all(20),
+        padding: REdgeInsets.all(20),
         child: Column(
           children: [
-             Icon(Icons.mark_email_read, size: 100.sp, color: ColorsManager.white),
-             SizedBox(height: 16.h),
-             Text(
-              'If you have questions or just want to get in touch, use the form below.\nWe look forward to hearing from you!',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16.sp, height: 1.5.h,color: ColorsManager.white70),
+            Icon(
+              Icons.mark_email_read,
+              size: 100.sp,
+              color: ColorsManager.white,
             ),
-             SizedBox(height: 24.h),
+            SizedBox(height: 16.h),
+            Text(
+              AppLocalizations.of(context)!.contact_us_message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.sp,
+                height: 1.5.h,
+                color: ColorsManager.white70,
+              ),
+            ),
+            SizedBox(height: 24.h),
 
             // Input Fields
-            _buildTextField(label: 'Name', icon: Icons.person),
-             SizedBox(height: 12.h),
-            _buildTextField(label: 'Email', icon: Icons.email),
-             SizedBox(height: 12.h),
-            _buildTextField(label: 'Phone', icon: Icons.phone),
-             SizedBox(height: 12.h),
-            _buildTextField(label: 'Enter your message', icon: Icons.message, maxLines: 4),
-             SizedBox(height: 16.h),
+            _buildTextField(
+              label: AppLocalizations.of(context)!.name,
+              icon: Icons.person,
+            ),
+            SizedBox(height: 12.h),
+            _buildTextField(
+              label: AppLocalizations.of(context)!.email,
+              icon: Icons.email,
+            ),
+            SizedBox(height: 12.h),
+            _buildTextField(
+              label: AppLocalizations.of(context)!.phone,
+              icon: Icons.phone,
+            ),
+            SizedBox(height: 12.h),
+            _buildTextField(
+              label: AppLocalizations.of(context)!.enter_your_message,
+              icon: Icons.message,
+              maxLines: 4,
+            ),
+            SizedBox(height: 16.h),
 
             // Send Button
             ElevatedButton(
@@ -44,7 +66,14 @@ class ContactUs extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
               ),
-              child:  Text("Send", style: TextStyle(fontSize: 16.sp,fontWeight: FontWeight.bold,color: Colors.white)),
+              child: Text(
+                AppLocalizations.of(context)!.send,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         ),
@@ -52,7 +81,11 @@ class ContactUs extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField({required String label, required IconData icon, int maxLines = 1}) {
+  Widget _buildTextField({
+    required String label,
+    required IconData icon,
+    int maxLines = 1,
+  }) {
     return TextField(
       maxLines: maxLines,
       decoration: InputDecoration(

@@ -21,6 +21,8 @@ import 'package:hatley/presentation/screens/home/home_drawer/pages/all_tracking_
 import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
 import '../../../../../core/missing_fields_dialog.dart';
 import 'package:hatley/presentation/screens/home/home_drawer/pages/settings.dart';
+import 'package:hatley/l10n/app_localizations.dart';
+import 'package:hatley/core/app_state.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -95,32 +97,36 @@ class _HomeState extends State<Home> {
             builder: (context, state) {
               String appBarTitle;
               switch (state) {
+                case 0:
+                  appBarTitle = AppLocalizations.of(context)!.home_title;
+                  break;
                 case 1:
-                  appBarTitle = 'Track Orders';
+                  appBarTitle =
+                      AppLocalizations.of(context)!.track_orders_title;
                   break;
                 case 2:
-                  appBarTitle = 'Contact Us';
+                  appBarTitle = AppLocalizations.of(context)!.contact_us_title;
                   break;
                 case 3:
-                  appBarTitle = 'About Us';
+                  appBarTitle = AppLocalizations.of(context)!.about_us_title;
                   break;
                 case 4:
-                  appBarTitle = 'Our Team';
+                  appBarTitle = AppLocalizations.of(context)!.our_team_title;
                   break;
                 case 5:
-                  appBarTitle = 'My Orders';
+                  appBarTitle = AppLocalizations.of(context)!.my_orders_title;
                   break;
                 case 6:
-                  appBarTitle = 'Deliveries';
+                  appBarTitle = AppLocalizations.of(context)!.deliveries_title;
                   break;
                 case 7:
-                  appBarTitle = 'Profile';
+                  appBarTitle = AppLocalizations.of(context)!.profile_title;
                   break;
                 case 8:
-                  appBarTitle = 'Settings';
+                  appBarTitle = AppLocalizations.of(context)!.settings_title;
                   break;
                 default:
-                  appBarTitle = 'Home';
+                  appBarTitle = AppLocalizations.of(context)!.home_title;
               }
 
               return AppBar(
@@ -142,23 +148,7 @@ class _HomeState extends State<Home> {
         body: BlocBuilder<NavigationCubit, int>(
           builder: (context, state) {
             switch (state) {
-              case 1:
-                return const AllTrackingOrdersScreen();
-              case 2:
-                return const ContactUs();
-              case 3:
-                return const AboutUs();
-              case 4:
-                return const OurTeam();
-              case 5:
-                return const MyOrders();
-              case 6:
-                return Deliveries();
-              case 7:
-                return const Profile();
-              case 8:
-                return const SettingsPage();
-              default:
+              case 0:
                 return SingleChildScrollView(
                   padding: EdgeInsets.symmetric(
                     horizontal: 16.w,
@@ -167,14 +157,6 @@ class _HomeState extends State<Home> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Hatley – The easiest way to get your orders delivered',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 22.sp,
-                          color: ColorsManager.white70,
-                        ),
-                      ),
                       SizedBox(height: 16.h),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12.r),
@@ -193,7 +175,62 @@ class _HomeState extends State<Home> {
                               context,
                             ).pushNamed(RoutesManager.makeOrdersRoute);
                           },
-                          text: 'Make Order Now',
+                          text: AppLocalizations.of(context)!.make_order_now,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              case 1:
+                return const AllTrackingOrdersScreen();
+              case 2:
+                return const ContactUs();
+              case 3:
+                return const AboutUs();
+              case 4:
+                return const OurTeam();
+              case 5:
+                return const MyOrders();
+              case 6:
+                return Deliveries();
+              case 7:
+                return const Profile();
+              case 8:
+                return SettingsPage(
+                  onLocaleChanged: (locale) {
+                    final myAppState =
+                        context.findAncestorStateOfType<AppState>();
+                    myAppState?.setLocale(locale);
+                  },
+                );
+              default:
+                return SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 20.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 16.h),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Image.asset(
+                          height: 300,
+                          'assets/delivery.jpg',
+                          width: double.infinity,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+                      Center(
+                        child: CustomButton(
+                          onPressed: () {
+                            Navigator.of(
+                              context,
+                            ).pushNamed(RoutesManager.makeOrdersRoute);
+                          },
+                          text: AppLocalizations.of(context)!.make_order_now,
                         ),
                       ),
                     ],

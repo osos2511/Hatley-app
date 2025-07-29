@@ -10,6 +10,7 @@ import '../../../core/colors_manager.dart';
 import '../../../core/routes_manager.dart';
 import '../../../injection_container.dart';
 import '../../cubit/register_cubit/register_state.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -50,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Create Your Account',
+                  AppLocalizations.of(context)!.create_your_account,
                   style: GoogleFonts.exo2(
                     color: ColorsManager.buttonColorApp,
                     fontSize: 26.sp,
@@ -64,15 +65,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                 ),
-                 SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
                 Text(
-                  'Sign up to get started',
+                  AppLocalizations.of(context)!.sign_up_to_get_started,
                   style: GoogleFonts.exo2(
                     color: ColorsManager.white70,
                     fontSize: 16.sp,
                   ),
                 ),
-                 SizedBox(height: 30.h),
+                SizedBox(height: 30.h),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -80,69 +81,86 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       CustomTextField(
                         keyboardType: TextInputType.name,
                         controller: userNameController,
-                        hint: "Your name",
+                        hint: AppLocalizations.of(context)!.your_name,
                         icon: Icons.person_outline,
-                        validator: (value) =>
-                        value == null || value.isEmpty
-                            ? "Name is required"
-                            : null,
+                        validator:
+                            (value) =>
+                                value == null || value.isEmpty
+                                    ? AppLocalizations.of(
+                                      context,
+                                    )!.name_is_required
+                                    : null,
                       ),
-                       SizedBox(height: 20.h),
+                      SizedBox(height: 20.h),
                       CustomTextField(
                         keyboardType: TextInputType.emailAddress,
                         controller: emailController,
-                        hint: "Email Address",
+                        hint: AppLocalizations.of(context)!.email_address,
                         icon: Icons.email,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Email is required";
+                            return AppLocalizations.of(
+                              context,
+                            )!.email_is_required;
                           } else if (!RegExp(
                             r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
                           ).hasMatch(value)) {
-                            return "Enter a valid email address";
+                            return AppLocalizations.of(
+                              context,
+                            )!.enter_valid_email;
                           }
                           return null;
                         },
                       ),
-                       SizedBox(height: 20.h),
+                      SizedBox(height: 20.h),
                       CustomTextField(
                         keyboardType: TextInputType.phone,
                         controller: phoneController,
-                        hint: "Phone Number",
+                        hint: AppLocalizations.of(context)!.phone_number,
                         icon: Icons.phone,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Phone number is required";
-                          } else if (!RegExp(
-                            r'^\d{9,15}$',
-                          ).hasMatch(value)) {
-                            return "Enter a valid phone number";
+                            return AppLocalizations.of(
+                              context,
+                            )!.phone_number_is_required;
+                          } else if (!RegExp(r'^\d{9,15}$').hasMatch(value)) {
+                            return AppLocalizations.of(
+                              context,
+                            )!.enter_valid_phone;
                           }
                           return null;
                         },
                       ),
-                       SizedBox(height: 20.h),
+                      SizedBox(height: 20.h),
                       CustomTextField(
                         keyboardType: TextInputType.text,
                         controller: passwordController,
-                        hint: "Password",
+                        hint: AppLocalizations.of(context)!.password,
                         icon: Icons.lock_outline,
                         isPassword: true,
                         validator: (value) {
                           if (value == null || value.length < 6) {
-                            return "Password must be at least 6 characters";
+                            return AppLocalizations.of(
+                              context,
+                            )!.password_min_length;
                           }
                           return null;
                         },
                       ),
-                       SizedBox(height: 30.h),
+                      SizedBox(height: 30.h),
                       BlocConsumer<RegisterCubit, RegisterState>(
                         listener: (context, state) {
                           if (state is RegisterSuccess) {
-                            Navigator.pushReplacementNamed(context, RoutesManager.signInRoute);
+                            Navigator.pushReplacementNamed(
+                              context,
+                              RoutesManager.signInRoute,
+                            );
                           } else if (state is RegisterFailure) {
                             CustomToast.show(
-                              message: "Registration failed. Please try again.",
+                              message:
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.registration_failed,
                             );
                           }
                         },
@@ -150,29 +168,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           final isLoading = state is RegisterLoading;
 
                           return CustomAuthButton(
-                            text: 'Sign Up',
+                            text: AppLocalizations.of(context)!.sign_up,
                             isLoading: isLoading,
-                            onPressed: isLoading
-                                ? null
-                                : () {
-                              if (_formKey.currentState!.validate()) {
-                                context.read<RegisterCubit>().register(
-                                  userName: userNameController.text.trim(),
-                                  email: emailController.text.trim(),
-                                  phone: phoneController.text.trim(),
-                                  password: passwordController.text.trim(),
-                                );
-                              }
-                            },
+                            onPressed:
+                                isLoading
+                                    ? null
+                                    : () {
+                                      if (_formKey.currentState!.validate()) {
+                                        context.read<RegisterCubit>().register(
+                                          userName:
+                                              userNameController.text.trim(),
+                                          email: emailController.text.trim(),
+                                          phone: phoneController.text.trim(),
+                                          password:
+                                              passwordController.text.trim(),
+                                        );
+                                      }
+                                    },
                           );
                         },
                       ),
-                       SizedBox(height: 20.h),
+                      SizedBox(height: 20.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                           Text(
-                            "Already have an account? ",
+                          Text(
+                            AppLocalizations.of(context)!.already_have_account,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.sp,
@@ -185,8 +206,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 RoutesManager.signInRoute,
                               );
                             },
-                            child:  Text(
-                              "Sign In",
+                            child: Text(
+                              AppLocalizations.of(context)!.sign_in,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14.sp,

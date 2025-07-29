@@ -9,6 +9,7 @@ import 'package:signalr_netcore/signalr_client.dart';
 import '../../../../cubit/tracking_cubit/tracking_cubit.dart';
 import '../widgets/track_order_widget.dart';
 import '../widgets/show_rating_dialog.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class AllTrackingOrdersScreen extends StatefulWidget {
   const AllTrackingOrdersScreen({super.key});
@@ -48,14 +49,15 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
       return;
     }
 
-    hubConnection = HubConnectionBuilder()
-        .withUrl(
-      hubUrl,
-      options: HttpConnectionOptions(
-        accessTokenFactory: () => Future.value(userToken),
-      ),
-    )
-        .build();
+    hubConnection =
+        HubConnectionBuilder()
+            .withUrl(
+              hubUrl,
+              options: HttpConnectionOptions(
+                accessTokenFactory: () => Future.value(userToken),
+              ),
+            )
+            .build();
 
     hubConnection?.on('NotifyChangeStatusForUser', (arguments) {
       if (arguments != null && arguments.length >= 3) {
@@ -63,7 +65,7 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
           final int status = arguments[0] as int;
           final int receivedOrderId = arguments[1] as int;
           final Map<String, dynamic> checkData =
-          arguments[2] as Map<String, dynamic>;
+              arguments[2] as Map<String, dynamic>;
           final String receivedUserEmail = checkData['email'] as String;
           final String userType = checkData['type'] as String;
 
@@ -119,9 +121,9 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
         },
         builder: (context, state) {
           if (state is TrackingLoading) {
-            return  Center(child: CircularProgressIndicator(
-              color: Colors.white,
-            ));
+            return Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
           } else if (state is TrackingLoaded) {
             return ListView.builder(
               padding: const EdgeInsets.all(16.0),
@@ -135,8 +137,9 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
                     onRatePressed: () {
                       showDialog(
                         context: context,
-                        builder: (context) =>
-                            RatingReviewDialog(orderId: order.orderId),
+                        builder:
+                            (context) =>
+                                RatingReviewDialog(orderId: order.orderId),
                       );
                     },
                   ),
@@ -144,22 +147,21 @@ class _AllTrackingOrdersScreenState extends State<AllTrackingOrdersScreen> {
               },
             );
           } else if (state is TrackingEmpty) {
-            return  Center(
+            return Center(
               child: Text(
-                "You have no orders to track.",
+                AppLocalizations.of(context)!.not_found_orders,
                 style: TextStyle(fontSize: 16.sp),
               ),
             );
           }
-          return  Center(
+          return Center(
             child: Text(
-              "Welcome! Loading your orders...",
+              AppLocalizations.of(context)!.track_orders_title,
               style: TextStyle(fontSize: 16.sp),
             ),
           );
         },
-      )
-
+      ),
     );
   }
 }

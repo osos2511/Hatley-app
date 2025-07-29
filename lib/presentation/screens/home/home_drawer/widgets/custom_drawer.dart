@@ -8,6 +8,8 @@ import '../../../../../core/colors_manager.dart';
 import '../../../../../core/missing_fields_dialog.dart';
 import '../../../../cubit/auth_cubit/auth_cubit.dart';
 import 'custom_listTile.dart';
+import 'package:hatley/core/app_state.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -31,7 +33,7 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
                 Text(
-                  'Hatley',
+                  AppLocalizations.of(context)!.app_title,
                   style: GoogleFonts.lilyScriptOne(
                     color: Colors.white,
                     fontSize: 25.sp,
@@ -52,7 +54,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.home,
-                  text: 'Home',
+                  text: AppLocalizations.of(context)!.home_title,
                 ),
                 CustomListTile(
                   onPress: () {
@@ -60,7 +62,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.local_shipping,
-                  text: 'Track Orders',
+                  text: AppLocalizations.of(context)!.track_orders_title,
                 ),
                 CustomListTile(
                   onPress: () {
@@ -68,7 +70,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.phone,
-                  text: 'Contact Us',
+                  text: AppLocalizations.of(context)!.contact_us_title,
                 ),
                 CustomListTile(
                   onPress: () {
@@ -76,7 +78,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.info_outline,
-                  text: 'About Us',
+                  text: AppLocalizations.of(context)!.about_us_title,
                 ),
                 CustomListTile(
                   onPress: () {
@@ -84,7 +86,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.group,
-                  text: 'Our Team',
+                  text: AppLocalizations.of(context)!.our_team_title,
                 ),
                 CustomListTile(
                   onPress: () {
@@ -92,7 +94,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.shopping_cart,
-                  text: 'My Orders',
+                  text: AppLocalizations.of(context)!.my_orders_title,
                 ),
 
                 CustomListTile(
@@ -101,7 +103,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.delivery_dining,
-                  text: 'Deliveries',
+                  text: AppLocalizations.of(context)!.deliveries_title,
                 ),
                 CustomListTile(
                   onPress: () {
@@ -109,7 +111,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.person,
-                  text: 'Profile',
+                  text: AppLocalizations.of(context)!.profile_title,
                 ),
                 CustomListTile(
                   onPress: () {
@@ -117,14 +119,14 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icons.settings,
-                  text: 'Settings',
+                  text: AppLocalizations.of(context)!.settings_title,
                 ),
 
                 CustomListTile(
                   onPress: () {
                     showMissingFieldsDialog(
                       context,
-                      'Are you sure you want to log out?',
+                      AppLocalizations.of(context)!.logout_confirmation,
                       onOkPressed: () {
                         context.read<AuthCubit>().logOut();
                         Navigator.of(context).pushNamedAndRemoveUntil(
@@ -135,7 +137,7 @@ class CustomDrawer extends StatelessWidget {
                     );
                   },
                   icon: Icons.logout,
-                  text: 'Logout',
+                  text: AppLocalizations.of(context)!.logout,
                 ),
               ],
             ),

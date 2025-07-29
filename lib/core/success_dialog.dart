@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/core/colors_manager.dart';
+import 'package:hatley/l10n/app_localizations.dart';
 
 void showSuccessDialog(
   BuildContext context,
@@ -21,13 +22,13 @@ void showSuccessDialog(
           backgroundColor: Colors.white,
           titlePadding: EdgeInsets.zero,
           title: Container(
-            padding:  REdgeInsets.all(16),
-            decoration:  BoxDecoration(
-             color: ColorsManager.primaryColorApp,
+            padding: REdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: ColorsManager.primaryColorApp,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Container(
-              padding:  REdgeInsets.all(6),
+              padding: REdgeInsets.all(6),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -40,23 +41,23 @@ void showSuccessDialog(
             ),
           ),
           content: Padding(
-            padding:  REdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+            padding: REdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
             child: Text(
               message,
-              style:  TextStyle(fontSize: 16.sp, color: Colors.black87),
+              style: TextStyle(fontSize: 16.sp, color: Colors.black87),
             ),
           ),
           actions: [
             if (showCancelButton)
               Padding(
-                padding:  REdgeInsets.only(left: 8, bottom: 8),
+                padding: REdgeInsets.only(left: 8, bottom: 8),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.r),
                     ),
-                    padding:  REdgeInsets.symmetric(
+                    padding: REdgeInsets.symmetric(
                       horizontal: 24,
                       vertical: 12,
                     ),
@@ -65,7 +66,7 @@ void showSuccessDialog(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child:  Text(
+                  child: Text(
                     "Cancel",
                     style: TextStyle(
                       color: Colors.black,
@@ -76,17 +77,14 @@ void showSuccessDialog(
                 ),
               ),
             Padding(
-              padding:  REdgeInsets.only(right: 8, bottom: 8),
+              padding: REdgeInsets.only(right: 8, bottom: 8),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:  ColorsManager.primaryColorApp,
+                  backgroundColor: ColorsManager.primaryColorApp,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  padding:  REdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
+                  padding: REdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   elevation: 2,
                 ),
                 onPressed: () {
@@ -101,8 +99,8 @@ void showSuccessDialog(
                     );
                   }
                 },
-                child:  Text(
-                  "OK",
+                child: Text(
+                  AppLocalizations.of(context)!.ok,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
