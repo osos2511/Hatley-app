@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hatley/core/logger.dart';
 
 abstract class TokenStorage {
   Future<void> saveToken(String token, String expiration);
@@ -21,72 +22,74 @@ class TokenStorageImpl implements TokenStorage {
 
   @override
   Future<void> saveToken(String token, String expiration) async {
-    print("🔐 Saving token...");
-    print("📥 Token: $token");
-    print("📅 Expiration: $expiration");
+    AppLogger.debug("Saving token...");
+    AppLogger.debug("Token: ***");
+    AppLogger.debug("Expiration: $expiration");
     await prefs.setString(_tokenKey, token);
     await prefs.setString(_expirationKey, expiration);
-    print("✅ Token and expiration saved.");
+    AppLogger.debug("Token and expiration saved.");
   }
 
   @override
   Future<String?> getToken() async {
     final token = prefs.getString(_tokenKey);
-    print("🔍 Retrieved token: $token");
+    AppLogger.debug("Retrieved token: ${token != null ? '***' : 'null'}");
     return token;
   }
 
   @override
   Future<void> clearToken() async {
-    print("🧹 Clearing token and expiration...");
+    AppLogger.debug("Clearing token and expiration...");
     await prefs.remove(_tokenKey);
     await prefs.remove(_expirationKey);
-    print("✅ Token and expiration cleared.");
+    AppLogger.debug("Token and expiration cleared.");
   }
 
   @override
   Future<bool> isTokenExpired() async {
     final expirationStr = prefs.getString(_expirationKey);
-    print("📦 Stored expiration string: $expirationStr");
+    AppLogger.debug("Stored expiration string: $expirationStr");
 
     if (expirationStr == null) {
-      print("⚠️ No expiration date found. Token considered expired.");
+      AppLogger.warning("No expiration date found. Token considered expired.");
       return true;
     }
 
     final expiration = DateTime.tryParse(expirationStr);
     if (expiration == null) {
-      print("⚠️ Expiration date format is invalid. Token considered expired.");
+      AppLogger.warning(
+        "Expiration date format is invalid. Token considered expired.",
+      );
       return true;
     }
 
     final now = DateTime.now().toUtc();
-    print("🕒 Current UTC time: $now");
-    print("📆 Token expires at: $expiration");
+    AppLogger.debug("Current UTC time: $now");
+    AppLogger.debug("Token expires at: $expiration");
 
     final isExpired = now.isAfter(expiration);
-    print(isExpired ? "⛔ Token is expired." : "✅ Token is still valid.");
+    AppLogger.debug(isExpired ? "Token is expired." : "Token is still valid.");
 
     return isExpired;
   }
 
+  @override
   Future<String?> getExpiration() async {
     final expiration = prefs.getString(_expirationKey);
-    print("📦 Retrieved expiration from storage: $expiration");
+    AppLogger.debug("Retrieved expiration from storage: $expiration");
     return expiration;
   }
 
   @override
   Future<void> saveEmail(String email) async {
-    print("📧 Saving email: $email");
+    AppLogger.debug("Saving email: $email");
     await prefs.setString(_emailKey, email);
   }
 
   @override
   Future<String?> getEmail() async {
     final email = prefs.getString(_emailKey);
-    print("📨 Retrieved email: $email");
+    AppLogger.debug("Retrieved email: $email");
     return email;
   }
-
 }

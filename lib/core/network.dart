@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:hatley/core/local/token_storage.dart';
+import 'package:hatley/core/logger.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,14 +26,16 @@ class DioFactory {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final token = await tokenStorage.getToken();
-          print("🚩 Dio Interceptor - Token: $token");
+          AppLogger.debug(
+            "Dio Interceptor - Token: ${token != null ? '***' : 'null'}",
+          );
 
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
-          print("🚩 Dio Request URL: ${options.uri}");
-          print("🚩 Dio Request Headers: ${options.headers}");
-          print("🚩 Dio Request Body: ${options.data}");
+          AppLogger.debug("Dio Request URL: ${options.uri}");
+          AppLogger.debug("Dio Request Headers: ${options.headers}");
+          AppLogger.debug("Dio Request Body: ${options.data}");
           return handler.next(options);
         },
       ),

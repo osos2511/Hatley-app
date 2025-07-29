@@ -56,7 +56,10 @@ class _MyOrdersState extends State<MyOrders> {
             BlocListener<OfferCubit, OfferState>(
               listener: (context, state) {
                 if (state is OfferAcceptedSuccess) {
-                  CustomToast.show(message: "Offer accepted successfully! Redirecting to tracking...");
+                  CustomToast.show(
+                    message:
+                        "Offer accepted successfully! Redirecting to tracking...",
+                  );
                 } else if (state is OfferDeclinedSuccess) {
                   CustomToast.show(message: "Offer Decline successfully!");
                 } else if (state is OfferFailure) {
@@ -75,7 +78,9 @@ class _MyOrdersState extends State<MyOrders> {
           child: BlocBuilder<GetAllOrdersCubit, OrderState>(
             builder: (context, state) {
               if (state is OrderLoading) {
-                return const Center(child: CircularProgressIndicator(color: Colors.white,));
+                return const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                );
               } else if (state is OrderFailure) {
                 return Center(child: Text("خطأ: ${state.error}"));
               } else if (state is GetAllOrdersSuccess) {
@@ -93,7 +98,7 @@ class _MyOrdersState extends State<MyOrders> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                         SizedBox(height: 20.h),
+                        SizedBox(height: 20.h),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.of(
@@ -118,131 +123,140 @@ class _MyOrdersState extends State<MyOrders> {
                   );
                 }
 
-                return ListView.builder(
-                  itemCount: orders.length,
-                  itemBuilder: (context, index) {
-                    final order = orders[index];
-                    return Center(
-                      child: Container(
-                        margin: REdgeInsets.all(16),
-                        padding: REdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: ColorsManager.primaryColorApp),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 3,
-                              blurRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomInfoRow(
-                              title: "Price:",
-                              value: order.price.toString(),
-                              valueColor: Colors.green,
-                            ),
-                            CustomInfoRow(
-                              title: "Date:",
-                              value:
-                                  order.orderTime.toString().split(' ').first,
-                            ),
-                            CustomInfoRow(
-                              title: "Time:",
-                              value:
-                                  order.orderTime
-                                      .toString()
-                                      .split(' ')
-                                      .last
-                                      .split('.')
-                                      .first,
-                            ),
-                             SizedBox(height: 16.h),
-                            const Text(
-                              "Order Details:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                             SizedBox(height: 8.h),
-                            Container(
-                              padding:  REdgeInsets.all(8),
-                              height: 80.h,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(order.description),
-                            ),
-                             SizedBox(height: 20.h),
-                            _sectionTitle("From:"),
-                            CustomAddressBlock(
-                              values: [
-                                order.orderGovernorateFrom,
-                                order.orderCityFrom,
-                                order.orderZoneFrom,
-                                order.detailesAddressFrom,
-                              ],
-                            ),
-                             SizedBox(height: 20.h),
-                            _sectionTitle("To:"),
-                            CustomAddressBlock(
-                              values: [
-                                order.orderGovernorateTo,
-                                order.orderCityTo,
-                                order.orderZoneTo,
-                                order.detailesAddressTo,
-                              ],
-                              isArabic: false,
-                            ),
-                             SizedBox(height: 24.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                CustomOrderButton(
-                                  backgroundColor: ColorsManager.primaryColorApp,
-                                  text: "Edit",
-                                  onPressed: () {
-                                    final makeOrderCubit =
-                                        context.read<MakeOrderCubit>();
-                                    showEditOrderDialog(
-                                      context,
-                                      makeOrderCubit,
-                                      order,
-                                    );
-                                  },
-                                ),
-                                CustomOrderButton(
-                                  backgroundColor: ColorsManager.buttonColorApp,
-                                  text: "Cancel",
-                                  onPressed: () {
-                                    lastDeletedOrderId = order.orderId;
-                                    showMissingFieldsDialog(
-                                      context,
-                                      'Are you sure you want to cancel the order?',
-                                      onOkPressed: () {
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback((_) {
-                                              context
-                                                  .read<DeleteOrderCubit>()
-                                                  .deleteOrder(order.orderId);
-                                            });
-                                      },
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            // هذا هو المكان الذي يتم فيه عرض Offers
-                            DeliveryOffersWidget(orderId: order.orderId),
-                          ],
-                        ),
-                      ),
-                    );
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await context.read<GetAllOrdersCubit>().getAllOrders();
                   },
+                  child: ListView.builder(
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      final order = orders[index];
+                      return Center(
+                        child: Container(
+                          margin: REdgeInsets.all(16),
+                          padding: REdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: ColorsManager.primaryColorApp,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 3,
+                                blurRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomInfoRow(
+                                title: "Price:",
+                                value: order.price.toString(),
+                                valueColor: Colors.green,
+                              ),
+                              CustomInfoRow(
+                                title: "Date:",
+                                value:
+                                    order.orderTime.toString().split(' ').first,
+                              ),
+                              CustomInfoRow(
+                                title: "Time:",
+                                value:
+                                    order.orderTime
+                                        .toString()
+                                        .split(' ')
+                                        .last
+                                        .split('.')
+                                        .first,
+                              ),
+                              SizedBox(height: 16.h),
+                              const Text(
+                                "Order Details:",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 8.h),
+                              Container(
+                                padding: REdgeInsets.all(8),
+                                height: 80.h,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(order.description),
+                              ),
+                              SizedBox(height: 20.h),
+                              _sectionTitle("From:"),
+                              CustomAddressBlock(
+                                values: [
+                                  order.orderGovernorateFrom,
+                                  order.orderCityFrom,
+                                  order.orderZoneFrom,
+                                  order.detailesAddressFrom,
+                                ],
+                              ),
+                              SizedBox(height: 20.h),
+                              _sectionTitle("To:"),
+                              CustomAddressBlock(
+                                values: [
+                                  order.orderGovernorateTo,
+                                  order.orderCityTo,
+                                  order.orderZoneTo,
+                                  order.detailesAddressTo,
+                                ],
+                                isArabic: false,
+                              ),
+                              SizedBox(height: 24.h),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  CustomOrderButton(
+                                    backgroundColor:
+                                        ColorsManager.primaryColorApp,
+                                    text: "Edit",
+                                    onPressed: () {
+                                      final makeOrderCubit =
+                                          context.read<MakeOrderCubit>();
+                                      showEditOrderDialog(
+                                        context,
+                                        makeOrderCubit,
+                                        order,
+                                      );
+                                    },
+                                  ),
+                                  CustomOrderButton(
+                                    backgroundColor:
+                                        ColorsManager.buttonColorApp,
+                                    text: "Cancel",
+                                    onPressed: () {
+                                      lastDeletedOrderId = order.orderId;
+                                      showMissingFieldsDialog(
+                                        context,
+                                        'Are you sure you want to cancel the order?',
+                                        onOkPressed: () {
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback((_) {
+                                                context
+                                                    .read<DeleteOrderCubit>()
+                                                    .deleteOrder(order.orderId);
+                                              });
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                              DeliveryOffersWidget(orderId: order.orderId),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 );
               } else {
                 return const SizedBox.shrink();
@@ -257,7 +271,7 @@ class _MyOrdersState extends State<MyOrders> {
   Widget _sectionTitle(String title) {
     return Text(
       title,
-      style:  TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
     );
   }
 }

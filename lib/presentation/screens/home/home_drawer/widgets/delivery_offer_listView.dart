@@ -22,12 +22,11 @@ class DeliveryOffersWidget extends StatefulWidget {
 class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
   final List<Map<String, dynamic>> _offers = [];
 
-  // ************* التغيير الأول: اتصالات SignalR منفصلة *************
-  late final HubConnection _hubConnectionForNewOffers; // لاستقبال العروض الجديدة
-  late final HubConnection _hubConnectionForOfferResponses; // لإرسال القبول/الرفض
+  late final HubConnection _hubConnectionForNewOffers;
+  late final HubConnection _hubConnectionForOfferResponses;
 
   static const String _newOffersServerUrl =
-      "https://hatley.runasp.net/NotifyNewOfferForUser"; // رابط استقبال العروض الجديدة
+      "https://hatley.runasp.net/NotifyNewOfferForUser";
   String? _userEmail;
   late final TokenStorage _tokenStorage;
 
@@ -44,7 +43,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
     final prefs = await SharedPreferences.getInstance();
     _tokenStorage = TokenStorageImpl(prefs);
     _userEmail = await _tokenStorage.getEmail();
-    // ************* التغيير الثاني: بدء الاتصالين *************
     await _startSignalRConnectionForNewOffers();
   }
 
@@ -64,14 +62,13 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
 
     try {
       await _hubConnectionForNewOffers.start();
-      _registerSignalRListenerForNewOffers(); // استدعاء دالة الاستماع للعروض الجديدة
+      _registerSignalRListenerForNewOffers();
     } catch (e) {
       print("Error connecting to SignalR for NEW offers: $e");
     }
   }
 
 
-  // ************* التغيير الثالث: فصل دالة الاستماع للعروض الجديدة *************
   void _registerSignalRListenerForNewOffers() {
     _hubConnectionForNewOffers.on("NotifyNewOfferForUser", (arguments) {
       if (arguments != null && arguments.length == 2) {
@@ -156,7 +153,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
 
   @override
   void dispose() {
-    // ************* التغيير الخامس: إيقاف الاتصالين عند التخلص من الـ Widget *************
     _hubConnectionForNewOffers.stop();
     _hubConnectionForOfferResponses.stop();
     super.dispose();
@@ -170,7 +166,6 @@ class _DeliveryOffersWidgetState extends State<DeliveryOffersWidget> {
       );
     }
 
-    // ... (باقي كود الـ build كما هو)
     return BlocListener<OfferCubit, OfferState>(
       listener: (context, state) {
         if (state is OfferAcceptedSuccess) {
