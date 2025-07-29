@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hatley/presentation/cubit/tracking_cubit/tracking_state.dart';
-import 'package:hatley/data/model/traking_response.dart';
 import 'package:hatley/core/local/token_storage.dart';
 import 'package:hatley/injection_container.dart';
 import 'package:hatley/presentation/screens/auth/widgets/custom_toast.dart';
